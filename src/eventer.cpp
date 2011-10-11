@@ -13,7 +13,6 @@ int Eventer::start( int n ) {
     fd_set currentSockets;
     timeval socketTime;
    
-
     for( urls = 0; urls < n; ) {
 
        /* create new sockets, perform gets, and add descriptors to vector */
