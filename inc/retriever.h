@@ -5,11 +5,13 @@
 
 class Retriever {
      std::string url;
+     int socket;
 
      public:
 
      Retriever( const std::string& url );
-     std::string getData();
+     int createSocket();
+     std::string readData();
 };
 
 #endif 

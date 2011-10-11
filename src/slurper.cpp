@@ -10,6 +10,7 @@ int main(int argc, char** argv) {
     if( checkArgs( argc, argv ) ) {
         eventer = new Eventer();
         eventer -> retrieve( argv[1] );
+        eventer -> start();
     } else {
         std::cerr << "checkArgs failed\n";
     }
