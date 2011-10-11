@@ -9,6 +9,7 @@ class Tokenizer {
      public:
 
      Tokenizer( const std::string& data );
+     std::string next();
 };
 
 #endif 

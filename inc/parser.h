@@ -10,7 +10,7 @@ class Parser {
      public:
 
      Parser( const std::vector< std::string >& tokens );
-     std::vector< std::string > parseLinks();
+     std::vector< std::string > parseLinks() const;
 };
 
 #endif 
