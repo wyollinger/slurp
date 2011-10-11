@@ -7,6 +7,7 @@ class Retriever {
      std::string url;
 
      public:
+
      Retriever( const std::string& url );
      std::string getData();
 };

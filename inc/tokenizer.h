@@ -7,6 +7,7 @@ class Tokenizer {
      std::string data;
 
      public:
+
      Tokenizer( const std::string& data );
 };
 
