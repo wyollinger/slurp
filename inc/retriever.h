@@ -8,6 +8,7 @@ class Retriever {
 
      public:
      Retriever( const std::string& url );
+     std::string getData();
 };
 
 #endif 
