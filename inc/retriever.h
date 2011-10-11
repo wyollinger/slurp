@@ -10,11 +10,15 @@ class Retriever {
      public:
 
      Retriever( const std::string& url );
-     int createSocket();
+     void createSocket();
      std::string readData();
 
      inline int getSocket() const {
          return socket;
+     }
+
+     inline std::string getUrl() const {
+         return url;
      }
 };
 

@@ -16,7 +16,7 @@ class Eventer {
      public:
 
      Eventer();
-     int start( int n );
+     int run( int n );
      void retrieve( std::string url );
 };
 

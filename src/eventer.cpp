@@ -6,35 +6,36 @@ Eventer::Eventer() {
     /* stub */
 }
 
-int Eventer::start( int n ) {
+int Eventer::run( int n ) {
     int ret, urls, sock, max;
     std::vector< Retriever >::iterator ri;
-    Retriever* cret = NULL;
     fd_set currentSockets;
     timeval socketTime;
    
     for( urls = 0; urls < n; ) {
 
-       /* create new sockets, perform gets, and add descriptors to vector */
-       while( !createQueue.empty() ) {
-          cret =& createQueue.back();
-          createQueue.pop_back();
-          
-          readQueue.push_back(*cret);
-       }
-
-       /* prepare for the call to select */
+       socketTime.tv_sec = 0;
+       socketTime.tv_usec = 100;
        FD_ZERO( &currentSockets );
        max = -1;
+
+       /* empty create queue into read queue, creating sockets for each url */
+       while( !createQueue.empty() ) {
+          Retriever& cret = createQueue.back(); /* get reference to next retriever */
+          cret.createSocket(); /* perform the request and get the socket */
+          readQueue.push_back(cret); /* put this retriever data into the readQueue */
+          createQueue.pop_back(); /* remove the retriever object from the create queue */
+
+       }
+
+       /* prepare for the call to select, all sockets have been created already */
        for(ri = readQueue.begin(); ri != readQueue.end(); ri ++ ) {
-          sock = ri -> createSocket();
+          sock = ri -> getSocket(); 
           max = ( sock > max ) ? ( sock ) : ( max );
           FD_SET( sock, &currentSockets );
        }
        
        /* do the select and process the results*/
-       socketTime.tv_sec = 0;
-       socketTime.tv_usec = 100;
        switch( 
            ret = select( max+1, 
                    &currentSockets, 
@@ -51,7 +52,7 @@ int Eventer::start( int n ) {
                    for( ri = readQueue.begin(); ri != readQueue.end(); ri ++ ) {                                 if( FD_ISSET( ri->getSocket(), &currentSockets ) ) {
                            /* do a read and call tokenize/parse+queue the results */
                            /* if the read fails discard the url as invalid noisily */
-                           /* increment urls in here somewhere */
+                           /* increment urls in here to avoid infinite loop */
                        }
                    }
                    break;

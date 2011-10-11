@@ -4,11 +4,10 @@ Retriever::Retriever( const std::string& url ) {
     this->url = url;
 }
 
-int Retriever::createSocket() {
+void Retriever::createSocket() {
+    socket = 0;
 
     /* stub */
-  
-    return 1;
 }
 
 std::string Retriever::readData() {

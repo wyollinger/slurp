@@ -4,14 +4,18 @@
 static int checkArgs( int argc, char** argv );
 
 int main(int argc, char** argv) {
-    int ret;
+    int i, ret;
     const static int DEFAULT_URLS = 1024;
     Eventer* eventer = NULL;
 
     if( checkArgs( argc, argv ) ) {
         eventer = new Eventer();
-        eventer -> retrieve( argv[1] );
-        eventer -> start( DEFAULT_URLS );
+
+        for( i = 1; i <= argc-1; i++ ) {
+            eventer -> retrieve( argv[i] );
+        }
+
+        eventer -> run( DEFAULT_URLS );
     } else {
         std::cerr << "checkArgs failed\n";
     }
@@ -22,6 +26,14 @@ int main(int argc, char** argv) {
 }
 
 static int checkArgs( int argc, char** argv ) {
-    /* stub */
-    return 1;
+    int ret;
+
+    if( argc < 2 ) {
+       ret = 0;
+    } else {
+       /* validate the urls */
+       ret = 1;
+    }
+
+    return ret;
 }

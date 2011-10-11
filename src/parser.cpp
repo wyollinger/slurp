@@ -7,6 +7,8 @@ Parser::Parser( const std::vector< std::string >& tokens ) {
 std::vector< std::string > Parser::parseLinks() const {
     std::vector< std::string > links;
 
+    /* stub */
+
     return links;
 }
 

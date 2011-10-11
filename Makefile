@@ -5,7 +5,7 @@ SRCDIR=src
 OBJDIR=obj
 INCDIR=inc
 BINDIR=bin
-CFLAGS=-c -Wall -I$(INCDIR)
+CFLAGS=-c -g -Wall -I$(INCDIR)
 LDFLAGS=
 MODULES=slurper retriever tokenizer parser eventer
 OBJECTS=$(MODULES:=.o)
