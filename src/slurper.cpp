@@ -1,20 +1,22 @@
 #include <iostream>
-#include "slurper.h"
+#include "eventer.h"
 
 static int checkArgs( int argc, char** argv );
 
 int main(int argc, char** argv) {
     int ret;
+    Eventer* eventer = NULL;
 
     if( checkArgs( argc, argv ) ) {
-        /* create eventer and send it an initial URL, begin event loop */
-        ret = 0;
+        eventer = new Eventer();
+        eventer -> retrieve( argv[1] );
     } else {
-        std::cerr << "error stub\n";
-        ret = 1;
+        std::cerr << "checkArgs failed\n";
     }
-
-    return ret;
+    
+    ret = eventer ? 0 : 1;
+    delete eventer;
+    return  ret; 
 }
 
 static int checkArgs( int argc, char** argv ) {
