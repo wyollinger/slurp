@@ -16,9 +16,9 @@ INCDIR=inc
 BINDIR=bin
 
 #flags
-CFLAGS=-c -g -Wall -I$(INCDIR)
+CFLAGS=-c -g -Wall -lpthread -I$(INCDIR)
 FLEXFLAGS=--read --full --header-file=$(INCDIR)/$(FLEXFILE).h --outfile=$(SRCDIR)/$(FLEXFILE).c
-LDFLAGS=
+LDFLAGS=-lpthread
 
 #rules
 all: $(FLEXFILE) $(MODULES) $(EXECUTABLE)

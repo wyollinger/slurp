@@ -1,4 +1,5 @@
 #include <cctype>
+#include <iostream>
 
 #include "scanner.h"
 
@@ -11,17 +12,16 @@ Scanner::Scanner( const std::string& data ) {
 
 std::string Scanner::next() {
     std::string next;
+    /*
+    something like this..
+
     YY_BUFFER_STATE buf;
-
     buf = yy_scan_string("test");
-
     yy_delete_buffer(buf);
+     */
 
     /* stub */
     /* todo: figure out how to call yylex/if it is needed */
 
     return next;
 }
-
-
-

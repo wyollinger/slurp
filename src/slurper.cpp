@@ -6,11 +6,14 @@
 using namespace slurp;
 
 static int checkArgs( int argc, char** argv );
+static void doUnitTests();
 
 int main(int argc, char** argv) {
     int i, ret;
     const static int DEFAULT_URLS = 1024;
     Eventer* eventer = NULL;
+
+    doUnitTests();
 
     if( checkArgs( argc, argv ) ) {
         eventer = new Eventer();
@@ -46,4 +49,14 @@ static int checkArgs( int argc, char** argv ) {
     }
 
     return ret;
+}
+
+static void doUnitTests() {
+    const char testBlock[] = "<html><head><title>test</title></head><body><a href='index.html'</body></html>";
+    yyscan_t scanner;
+
+    yylex_init(&scanner);
+    yy_scan_string(testBlock, scanner);
+    yylex(scanner);
+    yylex_destroy(scanner);
 }

@@ -7,6 +7,8 @@
 #include "htmlscanner.h"
 
 namespace slurp {
+ 
+ 
    class URI {
     std::string uri;
 
