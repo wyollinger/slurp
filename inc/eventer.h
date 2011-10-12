@@ -6,7 +6,8 @@
 #include <string>
 #include <vector>
 
-class Eventer {
+namespace slurp {
+  class Eventer {
      std::vector< Retriever > createQueue;
      std::vector< Retriever > readQueue;
 
@@ -18,7 +19,8 @@ class Eventer {
      Eventer();
      int run( int n );
      void retrieve( std::string url );
-};
+  };
+}
 
 #endif 
 

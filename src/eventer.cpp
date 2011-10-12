@@ -2,6 +2,8 @@
 #include <sys/select.h>
 #include "eventer.h"
 
+using namespace slurp;
+
 Eventer::Eventer() {
     /* stub */
 }
@@ -81,4 +83,3 @@ std::vector< std::string > Eventer::parseUrls( std::vector< std::string > tokens
     
     return urls;
 }
-

@@ -3,9 +3,10 @@
 
 #include <string>
 
-class Retriever {
+namespace slurp {
+  class Retriever {
      std::string url;
-     int socket;
+     int socket;   
 
      public:
 
@@ -20,7 +21,8 @@ class Retriever {
      inline std::string getUrl() const {
          return url;
      }
-};
 
+  };
+}
 #endif 
 

@@ -1,6 +1,8 @@
 #include <iostream>
 #include "eventer.h"
 
+using namespace slurp;
+
 static int checkArgs( int argc, char** argv );
 
 int main(int argc, char** argv) {

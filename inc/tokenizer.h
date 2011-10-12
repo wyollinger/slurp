@@ -3,13 +3,15 @@
 
 #include <string>
 
-class Tokenizer {
+namespace slurp {
+  class Tokenizer {
      std::string data;
 
      public:
 
      Tokenizer( const std::string& data );
      std::string next();
-};
+  };
+}
 
 #endif 

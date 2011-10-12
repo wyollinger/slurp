@@ -4,14 +4,21 @@
 #include <vector>
 #include <string>
 
-class Parser {
-     std::vector< std::string > tokens;
+namespace slurp {
+  class Parser {
+    std::vector< std::string > tokens;
 
-     public:
+    public:
 
-     Parser( const std::vector< std::string >& tokens );
-     std::vector< std::string > parseLinks() const;
-};
+    Parser( const std::vector< std::string >& tokens );
+    std::vector< std::string > parseLinks() const;
+  };
+
+  class URI {
+
+    public:
+  };
+}
 
 #endif 
 

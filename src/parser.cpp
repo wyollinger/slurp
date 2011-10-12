@@ -1,5 +1,7 @@
 #include "parser.h"
 
+using namespace slurp;
+
 Parser::Parser( const std::vector< std::string >& tokens ) {
     this->tokens = tokens;
 }
