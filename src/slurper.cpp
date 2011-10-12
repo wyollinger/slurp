@@ -1,4 +1,6 @@
 #include <iostream>
+
+#include "parser.h"
 #include "eventer.h"
 
 using namespace slurp;
@@ -19,7 +21,7 @@ int main(int argc, char** argv) {
 
         eventer -> run( DEFAULT_URLS );
     } else {
-        std::cerr << "checkArgs failed\n";
+        std::cerr << "insufficient or malformed arguments\n";
     }
     
     ret = eventer ? 0 : 1;
@@ -28,13 +30,19 @@ int main(int argc, char** argv) {
 }
 
 static int checkArgs( int argc, char** argv ) {
-    int ret;
+    int i, ret;
 
     if( argc < 2 ) {
        ret = 0;
     } else {
-       /* validate the urls */
        ret = 1;
+
+       /* validate the urls */
+       for( i = 1; ret && i <= argc-1; i++ ) {
+          if( !URI::isValid( argv[i] ) ) {
+            ret = 0;
+          }
+       }
     }
 
     return ret;

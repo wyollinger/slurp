@@ -6,8 +6,8 @@ Parser::Parser( const std::vector< std::string >& tokens ) {
     this->tokens = tokens;
 }
 
-std::vector< std::string > Parser::parseLinks() const {
-    std::vector< std::string > links;
+std::vector< URI > Parser::parseLinks() const {
+    std::vector< URI > links;
 
     /* stub */
 
