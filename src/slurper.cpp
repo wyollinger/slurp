@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "parser.h"
 #include "eventer.h"
+#include "scanner.h"
 
 using namespace slurp;
 
