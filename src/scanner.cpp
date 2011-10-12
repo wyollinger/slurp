@@ -16,14 +16,12 @@ std::string Scanner::next() {
     buf = yy_scan_string("test");
 
     yy_delete_buffer(buf);
-    
+
+    /* stub */
+    /* todo: figure out how to call yylex/if it is needed */
 
     return next;
 }
 
-/*
-int Scanner::yylex() {
-    return 0;
-}*/
 
 
