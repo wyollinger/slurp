@@ -1,3 +1,5 @@
-An event driven web crawler.
+An event driven web crawler for unix-like systems.
+Depends on only flex.
+I will probably make a configure script once the program gets larger.
 
 
