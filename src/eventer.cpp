@@ -32,7 +32,6 @@ int Eventer::run( int n ) {
     timeval socketTime;
    
     for( urls = 0; urls < n; ) {
-
        socketTime.tv_sec = 0;
        socketTime.tv_usec = 100;
        FD_ZERO( &currentSockets );
@@ -44,7 +43,6 @@ int Eventer::run( int n ) {
           cret.createSocket(); /* perform the request and get the socket */
           readQueue.push_back(cret); /* put this retriever data into the readQueue */
           createQueue.pop_back(); /* remove the retriever object from the create queue */
-
        }
 
        /* prepare for the call to select, all sockets have been created already */
@@ -68,11 +66,12 @@ int Eventer::run( int n ) {
                case 0:
                    break;
                default:
-                   for( ri = readQueue.begin(); ri != readQueue.end(); ri ++ ) {                                 if( FD_ISSET( ri->getSocket(), &currentSockets ) ) {
+                   for( ri = readQueue.begin(); ri != readQueue.end(); ri ++ ) {                                 
+                      if( FD_ISSET( ri->getSocket(), &currentSockets ) ) {
                            /* do a read and call tokenize/parse+queue the results */
                            /* if the read fails discard the url as invalid noisily */
                            /* increment urls in here to avoid infinite loop */
-                       }
+                      }
                    }
                    break;
            }
