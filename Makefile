@@ -2,6 +2,7 @@
 CXX=g++
 FLEX=flex
 STRIP=strip
+INSTALL=install
 
 # files
 MODULES=slurper retriever scanner eventer
@@ -34,7 +35,8 @@ debug: $(FLEXFILE) $(MODULES) $(EXECUTABLE)
 clean: 
 	rm -f $(OBJDIR)/*.o $(BINDIR)/$(EXECUTABLE) 
 
-#test - to be added
+install:
+	install $(BINDIR)/$(EXECUTABLE) /usr/local/bin
 
 $(FLEXFILE):
 	$(FLEX) $(FLEXFLAGS) $(FLEXDIR)/$(FLEXFILE).flex 
