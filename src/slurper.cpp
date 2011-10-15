@@ -18,7 +18,7 @@
 #include <iostream>
 
 #include "eventer.h"
-#include "htmlscanner.h"
+#include "slurpscanner.h"
 #include "scanner.h"
 #include "uri.h"
 

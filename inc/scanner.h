@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#include "htmlscanner.h"
+#include "slurpscanner.h"
 
 namespace slurp {
   class Scanner {
