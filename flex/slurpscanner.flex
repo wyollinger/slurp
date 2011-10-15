@@ -22,6 +22,8 @@
 #include <string>
 #include <cerrno>
 
+#include "uri.h"
+
 inline void yyerror(const char *msg) { std::cerr << msg << std::endl; }
 
 %}
@@ -106,5 +108,11 @@ namespace slurp {
     yylex_destroy( scanner );
      
     return tagVec;
+  }
+
+  void constructURI( const char* rawURI ) {
+    URI newURI;
+
+    /* stub */
   }
 }
