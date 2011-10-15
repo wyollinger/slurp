@@ -1,6 +1,7 @@
 # executables
-CC=g++
+CXX=g++
 FLEX=flex
+STRIP=strip
 
 # files
 MODULES=slurper retriever scanner eventer
@@ -16,22 +17,29 @@ INCDIR=inc
 BINDIR=bin
 
 #flags
-CFLAGS=-c -g -Wall -lpthread -I$(INCDIR)
+CXXFLAGS=-c -Wall -lpthread -I$(INCDIR)
 FLEXFLAGS=--read --full --header-file=$(INCDIR)/$(FLEXFILE).h --outfile=$(SRCDIR)/$(FLEXFILE).c
-LDFLAGS=-lpthread
+LDFLAGS=-lpthread 
 
 #rules
-all: $(FLEXFILE) $(MODULES) $(EXECUTABLE)
+all: release
+
+release: CXXFLAGS += -O3 -pipe 
+release: $(FLEXFILE) $(MODULES) $(EXECUTABLE)
+	$(STRIP) $(BINDIR)/$(EXECUTABLE)
+
+debug: CXXFLAGS += -g
+debug: $(FLEXFILE) $(MODULES) $(EXECUTABLE)
 
 $(FLEXFILE):
 	$(FLEX) $(FLEXFLAGS) $(FLEXDIR)/$(FLEXFILE).flex 
-	$(CC) $(CFLAGS) $(SRCDIR)/$(FLEXFILE).c -o $(OBJDIR)/$(FLEXFILE).o
+	$(CXX) $(CXXFLAGS) $(SRCDIR)/$(FLEXFILE).c -o $(OBJDIR)/$(FLEXFILE).o
 
 $(MODULES):
-	$(CC) $(CFLAGS) $(SRCDIR)/$@.cpp -o $(OBJDIR)/$@.o 
+	$(CXX) $(CXXFLAGS) $(SRCDIR)/$@.cpp -o $(OBJDIR)/$@.o 
 
 $(EXECUTABLE):
-	$(CC) $(LDFLAGS) $(addprefix $(OBJDIR)/,$(OBJECTS)) $(OBJDIR)/$(FLEXFILE).o -o $(BINDIR)/$@
+	$(CXX) $(LDFLAGS) $(addprefix $(OBJDIR)/,$(OBJECTS)) $(OBJDIR)/$(FLEXFILE).o -o $(BINDIR)/$@
 
 clean: 
 	rm -f $(OBJDIR)/*.o $(BINDIR)/$(EXECUTABLE) 
