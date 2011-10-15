@@ -24,7 +24,7 @@ LDFLAGS=-lpthread
 #rules
 all: release
 
-release: CXXFLAGS += -O3 -pipe 
+release: CXXFLAGS += -O3 -pipe -m64 -msse4
 release: $(FLEXFILE) $(MODULES) $(EXECUTABLE)
 	$(STRIP) $(BINDIR)/$(EXECUTABLE)
 
