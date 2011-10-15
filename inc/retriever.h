@@ -20,23 +20,25 @@
 
 #include <string>
 
+#include "uri.h"
+
 namespace slurp {
   class Retriever {
-     std::string url;
      int socket;   
+     URI uri;
 
      public:
 
-     Retriever( const std::string& url );
-     void createSocket();
+     Retriever( const URI& uri );
+     void initiateRequest();
      std::string readData();
 
      inline int getSocket() const {
          return socket;
      }
 
-     inline std::string getUrl() const {
-         return url;
+     inline URI getUri() const {
+         return uri;
      }
   };
 }

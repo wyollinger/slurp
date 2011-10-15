@@ -20,6 +20,7 @@
 #include "eventer.h"
 #include "htmlscanner.h"
 #include "scanner.h"
+#include "uri.h"
 
 using namespace slurp;
 
@@ -37,7 +38,7 @@ int main(int argc, char** argv) {
         eventer = new Eventer();
 
         for( i = 1; i <= argc-1; i++ ) {
-            eventer -> retrieve( argv[i] );
+            eventer -> retrieve( URI( argv[i] ) );
         }
 
         eventer -> run( DEFAULT_URLS );

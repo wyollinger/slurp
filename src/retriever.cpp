@@ -21,14 +21,15 @@
 #include <netdb.h>
 
 #include "retriever.h"
+#include "uri.h"
 
 using namespace slurp;
 
-Retriever::Retriever( const std::string& url ) {
-    this->url = url;
+Retriever::Retriever( const URI& uri ) {
+
 }
 
-void Retriever::createSocket() {
+void Retriever::initiateRequest() {
     std::string hostname;
     addrinfo hints;   
 

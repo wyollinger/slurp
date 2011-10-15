@@ -5,7 +5,7 @@ STRIP=strip
 INSTALL=install
 
 # files
-MODULES=slurper retriever scanner eventer
+MODULES=slurper retriever scanner eventer uri
 OBJECTS=$(MODULES:=.o)
 FLEXFILE=htmlscanner
 EXECUTABLE=slurp

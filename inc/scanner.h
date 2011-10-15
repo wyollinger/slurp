@@ -18,7 +18,6 @@
 #ifndef SCANNER_H
 #define SCANNER_H
 
-#include <errno.h>
 #include <string>
 #include <vector>
 
@@ -26,32 +25,6 @@
 #include "htmlscanner.h"
 
 namespace slurp {
- 
-   class URI {
-    std::string uri;
-
-    public:
-
-    URI( std::string uri );
-    static bool isValid( std::string uri ) {
-      bool valid;
- 
-      valid = false;
-      /* 
-         stub - we will need another flex file for this
-        
-            URI = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-            hier-part   = "//" authority path-abempty
-               / path-absolute
-               / path-rootless
-               / path-empty
-      */
-
-      return valid;
-    }
-  };
-
   class Scanner {
      std::string data;
      std::vector<std::string>* tokens;

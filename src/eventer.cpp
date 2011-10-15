@@ -17,7 +17,9 @@
 
 #include <iostream>
 #include <sys/select.h>
+
 #include "eventer.h"
+#include "uri.h"
 
 using namespace slurp;
 
@@ -40,7 +42,7 @@ int Eventer::run( int n ) {
        /* empty create queue into read queue, creating sockets for each url */
        while( !createQueue.empty() ) {
           Retriever& cret = createQueue.back(); /* get reference to next retriever */
-          cret.createSocket();                  /* perform the request and get the socket */
+          cret.initiateRequest();                  /* perform the request to get the socket */
           readQueue.push_back(cret);            /* put this retriever data into the readQueue */
           createQueue.pop_back();               /* remove the retriever object from the create queue */
        }
@@ -80,8 +82,15 @@ int Eventer::run( int n ) {
     return urls;
 }
 
-void Eventer::retrieve( std::string url ) {
-    createQueue.push_back( Retriever( url ) );
+bool Eventer::retrieve( URI uri ) {
+  bool ret = false;
+
+  if( uri.isValid() ) {
+    createQueue.push_back( Retriever( uri ) );
+    ret = true;
+  }
+
+  return ret;
 }
 
 std::vector< std::string > Eventer::tokenize( std::string data ) {

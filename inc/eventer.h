@@ -35,7 +35,7 @@ namespace slurp {
 
      Eventer();
      int run( int n );
-     void retrieve( std::string url );
+     bool retrieve( URI uri );
   };
 }
 
