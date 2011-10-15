@@ -24,12 +24,17 @@ LDFLAGS=-lpthread
 #rules
 all: release
 
-release: CXXFLAGS += -O3 -pipe -m64 -msse4
+release: CXXFLAGS += -O2 -pipe -m64 
 release: $(FLEXFILE) $(MODULES) $(EXECUTABLE)
 	$(STRIP) $(BINDIR)/$(EXECUTABLE)
 
 debug: CXXFLAGS += -g
 debug: $(FLEXFILE) $(MODULES) $(EXECUTABLE)
+
+clean: 
+	rm -f $(OBJDIR)/*.o $(BINDIR)/$(EXECUTABLE) 
+
+#test - to be added
 
 $(FLEXFILE):
 	$(FLEX) $(FLEXFLAGS) $(FLEXDIR)/$(FLEXFILE).flex 
@@ -41,7 +46,5 @@ $(MODULES):
 $(EXECUTABLE):
 	$(CXX) $(LDFLAGS) $(addprefix $(OBJDIR)/,$(OBJECTS)) $(OBJDIR)/$(FLEXFILE).o -o $(BINDIR)/$@
 
-clean: 
-	rm -f $(OBJDIR)/*.o $(BINDIR)/$(EXECUTABLE) 
 	
 
