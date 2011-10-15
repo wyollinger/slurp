@@ -21,7 +21,6 @@
 #include <string>
 #include <vector>
 
-#include "scanner.h"
 #include "htmlscanner.h"
 
 namespace slurp {

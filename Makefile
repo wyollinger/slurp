@@ -4,10 +4,10 @@ FLEX=flex
 STRIP=strip
 INSTALL=install
 
-# files
+# files - there can be no name collisions between MODULES and FLEX_MODULES
 MODULES=slurper retriever scanner eventer uri
 OBJECTS=$(MODULES:=.o)
-FLEX_MODULES=htmlscanner
+FLEX_MODULES=slurpscanner
 FLEX_OBJECTS=$(FLEX_MODULES:=.o)
 EXECUTABLE=slurp
 
