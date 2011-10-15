@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
     const static int DEFAULT_URLS = 1024;
     Eventer* eventer = NULL;
 
-    doUnitTests();
+    doUnitTests(); 
 
     if( checkArgs( argc, argv ) ) {
         eventer = new Eventer();
@@ -70,10 +70,19 @@ static int checkArgs( int argc, char** argv ) {
 
 static void doUnitTests() {
     const char testBlock[] = "<html><head><title>test</title></head><body><a href='index.html'</body></html>";
+    std::vector<std::string>* tagVector = new std::vector<std::string>();
     yyscan_t scanner;
 
     yylex_init(&scanner);
+    yylex_init_extra(tagVector, &scanner);
+
     yy_scan_string(testBlock, scanner);
     yylex(scanner);
+
+    std::cout << "got " << tagVector->size() << " elements\n";
+    std::cout << "test complete\n";
+
+    yylex(scanner);
     yylex_destroy(scanner);
+    delete tagVector; 
 }

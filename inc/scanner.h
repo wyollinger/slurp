@@ -20,6 +20,7 @@
 
 #include <errno.h>
 #include <string>
+#include <vector>
 
 #include "htmlscanner.h"
 

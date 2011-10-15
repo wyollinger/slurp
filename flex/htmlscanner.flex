@@ -1,15 +1,31 @@
-%option stack 8bit noyywrap yylineno reentrant
- 
+/*
+ * Slurp - a web crawler
+ * Copyright (C) 2011 Joseph Max DeLiso
+
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 of the License.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 %{
  
 #include <iostream>
 #include <vector>
 #include <string>
- 
-static std::vector<std::string> hrefs;
+
 inline void yyerror(const char *msg) { std::cerr << msg << std::endl; }
  
 %}
+
+%option stack 8bit noyywrap yylineno reentrant extra-type="std::vector<std::string>*"
  
 SPACE   [ \t]
 ID      [[:alpha:]]([[:alnum:]]|:|-|_)*
@@ -36,28 +52,24 @@ ATTR    {ID}{SPACE}*={SPACE}*
 <X_REF1>\'                      yy_push_state(X_REFP, yyscanner);
 <X_REF1>{SPACE}|\n              {
   yyless(yyleng-1);
-  hrefs.push_back(std::string(yytext));
-  std::cout<<yytext<<" ";
+  yyextra->push_back(yytext);
   yy_pop_state(yyscanner);
 }
 <X_REF1>">"                     {
   yyless(yyleng-1);
-  hrefs.push_back(std::string(yytext));
-  std::cout<<yytext<<" ";
+  yyextra->push_back(yytext);
   yy_pop_state(yyscanner);
 }
  
 <X_REFA>\"                      {
   yyless(yyleng-1);
-  hrefs.push_back(std::string(yytext));
-  std::cout<<yytext<<" ";
+  yyextra->push_back(yytext);
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
 }
 <X_REFP>\'                      {
   yyless(yyleng-1);
-  hrefs.push_back(std::string(yytext));
-  std::cout<<yytext<<" ";
+  yyextra->push_back(yytext);
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
 }
@@ -78,4 +90,6 @@ ATTR    {ID}{SPACE}*={SPACE}*
 .|\n                            ;
  
 %%
+
+
  
