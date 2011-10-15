@@ -40,9 +40,9 @@ int Eventer::run( int n ) {
        /* empty create queue into read queue, creating sockets for each url */
        while( !createQueue.empty() ) {
           Retriever& cret = createQueue.back(); /* get reference to next retriever */
-          cret.createSocket(); /* perform the request and get the socket */
-          readQueue.push_back(cret); /* put this retriever data into the readQueue */
-          createQueue.pop_back(); /* remove the retriever object from the create queue */
+          cret.createSocket();                  /* perform the request and get the socket */
+          readQueue.push_back(cret);            /* put this retriever data into the readQueue */
+          createQueue.pop_back();               /* remove the retriever object from the create queue */
        }
 
        /* prepare for the call to select, all sockets have been created already */
