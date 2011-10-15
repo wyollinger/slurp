@@ -18,12 +18,13 @@
 #include <iostream>
 
 #include "eventer.h"
+#include "htmlscanner.h"
 #include "scanner.h"
 
 using namespace slurp;
 
 static int checkArgs( int argc, char** argv );
-static void doUnitTests();
+void doUnitTests();
 
 int main(int argc, char** argv) {
     int i, ret;
@@ -68,21 +69,13 @@ static int checkArgs( int argc, char** argv ) {
     return ret;
 }
 
-static void doUnitTests() {
+void doUnitTests() {
     const char testBlock[] = "<html><head><title>test</title></head><body><a href='index.html'</body></html>";
-    std::vector<std::string>* tagVector = new std::vector<std::string>();
-    yyscan_t scanner;
+    std::vector<std::string>* tagVector;
 
-    yylex_init(&scanner);
-    yylex_init_extra(tagVector, &scanner);
+    tagVector = scanHTML(testBlock);
 
-    yy_scan_string(testBlock, scanner);
-    yylex(scanner);
+    std::cout << tagVector -> size() << std::endl;
 
-    std::cout << "got " << tagVector->size() << " elements\n";
-    std::cout << "test complete\n";
-
-    yylex(scanner);
-    yylex_destroy(scanner);
     delete tagVector; 
 }

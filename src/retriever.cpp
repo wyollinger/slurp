@@ -37,8 +37,6 @@ void Retriever::createSocket() {
     hints.ai_socktype = SOCK_STREAM; /* TCP socket */
     hints.ai_protocol = 0;          /* Any protocol */
 
-    
-
     /* getaddrinfo( hostname, 80,  */
 
     /* socket = ... */

@@ -38,7 +38,6 @@ namespace slurp {
      inline std::string getUrl() const {
          return url;
      }
-
   };
 }
 #endif 

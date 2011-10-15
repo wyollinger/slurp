@@ -22,7 +22,7 @@
 #include <string>
 
 inline void yyerror(const char *msg) { std::cerr << msg << std::endl; }
- 
+
 %}
 
 %option stack 8bit noyywrap yylineno reentrant extra-type="std::vector<std::string>*"
@@ -91,5 +91,19 @@ ATTR    {ID}{SPACE}*={SPACE}*
  
 %%
 
+namespace slurp {
+  std::vector<std::string>* scanHTML( const char* html )
+  {
+    yyscan_t scanner;
+    std::vector<std::string>* tagVec = new std::vector<std::string>();
 
- 
+    yylex_init(&scanner); 
+    yylex_init_extra( tagVec, &scanner );
+    yy_scan_string( html, scanner );
+
+    yylex( scanner );
+    yylex_destroy( scanner );
+     
+    return tagVec;
+  }
+}

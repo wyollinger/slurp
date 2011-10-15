@@ -26,7 +26,6 @@
 
 namespace slurp {
  
- 
    class URI {
     std::string uri;
 
@@ -53,6 +52,8 @@ namespace slurp {
      std::string next();
      int yylex();
   };
+
+   std::vector<std::string>* scanHTML( const char* html );
 }
 
 #endif 
