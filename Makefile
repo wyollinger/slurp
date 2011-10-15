@@ -7,7 +7,8 @@ INSTALL=install
 # files
 MODULES=slurper retriever scanner eventer uri
 OBJECTS=$(MODULES:=.o)
-FLEXFILE=htmlscanner
+FLEX_MODULES=htmlscanner
+FLEX_OBJECTS=$(FLEX_MODULES:=.o)
 EXECUTABLE=slurp
 
 #directories
@@ -16,37 +17,38 @@ SRCDIR=src
 OBJDIR=obj
 INCDIR=inc
 BINDIR=bin
+INSTALLPATH=/usr/local/bin
 
 #flags
 CXXFLAGS=-c -Wall -lpthread -I$(INCDIR)
-FLEXFLAGS=--read --full --header-file=$(INCDIR)/$(FLEXFILE).h --outfile=$(SRCDIR)/$(FLEXFILE).c
+FLEXFLAGS=--read --full 
 LDFLAGS=-lpthread 
 
 #rules
 all: release
 
 release: CXXFLAGS += -O2 -pipe -m64 
-release: $(FLEXFILE) $(MODULES) $(EXECUTABLE)
+release: $(FLEX_MODULES) $(MODULES) $(EXECUTABLE)
 	$(STRIP) $(BINDIR)/$(EXECUTABLE)
 
 debug: CXXFLAGS += -g
-debug: $(FLEXFILE) $(MODULES) $(EXECUTABLE)
+debug: $(FLEX_MODULES) $(MODULES) $(EXECUTABLE)
 
 clean: 
 	rm -f $(OBJDIR)/*.o $(BINDIR)/$(EXECUTABLE) 
 
 install:
-	install $(BINDIR)/$(EXECUTABLE) /usr/local/bin
+	install $(BINDIR)/$(EXECUTABLE) $(INSTALLPATH)
 
-$(FLEXFILE):
-	$(FLEX) $(FLEXFLAGS) $(FLEXDIR)/$(FLEXFILE).flex 
-	$(CXX) $(CXXFLAGS) $(SRCDIR)/$(FLEXFILE).c -o $(OBJDIR)/$(FLEXFILE).o
+$(FLEX_MODULES):
+	$(FLEX) $(FLEXFLAGS) --header-file=$(INCDIR)/$@.h --outfile=$(SRCDIR)/$@.c $(FLEXDIR)/$@.flex 
+	$(CXX) $(CXXFLAGS) $(SRCDIR)/$@.c -o $(OBJDIR)/$@.o
 
 $(MODULES):
 	$(CXX) $(CXXFLAGS) $(SRCDIR)/$@.cpp -o $(OBJDIR)/$@.o 
 
 $(EXECUTABLE):
-	$(CXX) $(LDFLAGS) $(addprefix $(OBJDIR)/,$(OBJECTS)) $(OBJDIR)/$(FLEXFILE).o -o $(BINDIR)/$@
+	$(CXX) $(LDFLAGS) $(addprefix $(OBJDIR)/,$(OBJECTS)) $(addprefix $(OBJDIR)/,$(FLEX_OBJECTS)) -o $(BINDIR)/$@
 
 	
 
