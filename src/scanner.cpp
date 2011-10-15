@@ -19,26 +19,36 @@
 #include <iostream>
 
 #include "scanner.h"
+#include "retriever.h"
 
 using namespace slurp;
 
 Scanner::Scanner( const std::string& data ) {
+    tokens = NULL;
     this->data = data;
     pos = 0;
 }
 
+Scanner::~Scanner() {
+   if( tokens ) {
+      delete tokens;
+   }
+}
+
 std::string Scanner::next() {
     std::string next;
-    /*
-    something like this..
 
-    YY_BUFFER_STATE buf;
-    buf = yy_scan_string("test");
-    yy_delete_buffer(buf);
-     */
-
-    /* stub */
-    /* todo: figure out how to call yylex/if it is needed */
+    /* simply iterate accross tokens */
 
     return next;
+}
+
+void Scanner::scan() {
+   if( tokens ) {
+      delete tokens;
+   }
+
+   /* do a retrieval here */
+
+   /* call scanHTML on the results */
 }

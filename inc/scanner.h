@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 
+#include "scanner.h"
 #include "htmlscanner.h"
 
 namespace slurp {
@@ -44,13 +45,16 @@ namespace slurp {
 
   class Scanner {
      std::string data;
+     std::vector<std::string>* tokens;
+     std::vector<std::string>::const_iterator ti;
      int pos;
 
      public:
 
      Scanner( const std::string& data );
+     ~Scanner();
      std::string next();
-     int yylex();
+     void scan();
   };
 
    std::vector<std::string>* scanHTML( const char* html );
