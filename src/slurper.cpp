@@ -71,12 +71,12 @@ static int checkArgs( int argc, char** argv ) {
 }
 
 void doUnitTests() {
-    const char testBlock[] = "<html><head><title>test</title></head><body><a href='index.html'</body></html>";
-    std::vector<URI>* tagVector;
+    const char testBlock[] = "<html><head><title>test</title></head><body><a href='http://www.balls.com/index.html'</body></html>";
+    std::vector<URI>* uriVector;
 
-    tagVector = scanHTML(testBlock);
+    uriVector = scanHTML(testBlock);
 
-    std::cout << tagVector -> size() << std::endl;
+    std::cout << uriVector -> size() << std::endl;
 
-    delete tagVector; 
+    delete uriVector; 
 }

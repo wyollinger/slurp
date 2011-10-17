@@ -38,67 +38,136 @@ ATTR    {ID}{SPACE}*={SPACE}*
 %x X_COMMENT X_TAG
 %x X_DONTCARE X_DCA X_DCP
 %x X_REF1 X_REFA X_REFP
-%x X_LINK
+%x X_LINK 
  
 %%
 
-<INITIAL,X_COMMENT>"<!--"       yy_push_state(X_COMMENT, yyscanner);
-<X_COMMENT>"-->"                yy_pop_state(yyscanner);
-<X_COMMENT>.|\n                 ;
+<INITIAL,X_COMMENT>"<!--"       {
+  yy_push_state(X_COMMENT, yyscanner);
+}
+
+<X_COMMENT>"-->"                {
+  yy_pop_state(yyscanner);
+}
+
+<X_COMMENT>.|\n                 {
+
+}
  
-"<"{ID}                         yy_push_state(X_TAG, yyscanner);
-<X_TAG>">"                      yy_pop_state(yyscanner);
-<X_TAG>{HREF}                   yy_push_state(X_REF1, yyscanner);
-<X_TAG>{ATTR}                   yy_push_state(X_DONTCARE, yyscanner);
-<X_TAG>.|\n                     ;
+"<"{ID}                         {
+  std::cout << "tag start: " << yytext << std::endl;
+  yy_push_state(X_TAG, yyscanner);
+}
+
+<X_TAG>">"                      {
+  yy_pop_state(yyscanner);
+  std::cout << "tag end: " << yytext << std::endl;
+}
+
+<X_TAG>{HREF}                   {
+  yy_push_state(X_REF1, yyscanner);
+}
+
+<X_TAG>{ATTR}                   {
+  yy_push_state(X_DONTCARE, yyscanner);
+}
+
+<X_TAG>.|\n                     {
+
+}
  
-<X_REF1>\"                      yy_push_state(X_REFA, yyscanner);
-<X_REF1>\'                      yy_push_state(X_REFP, yyscanner);
+<X_REF1>\"                      {
+  yy_push_state(X_REFA, yyscanner);
+}
+
+<X_REF1>\'                      {
+  yy_push_state(X_REFP, yyscanner);
+}
+
 <X_REF1>{SPACE}|\n              {
   yyless(yyleng-1);
+  std::cout << "pushing link state with " << yytext << std::endl;
   yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
 }
+
 <X_REF1>">"                     {
   yyless(yyleng-1);
+  std::cout << "pushing link state with " << yytext << std::endl;
   yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
 }
  
 <X_REFA>\"                      {
   yyless(yyleng-1);
+  std::cout << "pushing link state with " << yytext << std::endl;
   yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
 }
+
 <X_REFP>\'                      {
   yyless(yyleng-1);
+  std::cout << "pushing link state with " << yytext << std::endl;
   yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
 }
-<X_REF1,X_REFA,X_REFP>.         yymore();
-<X_REFA,X_REFP>\n               yyerror("ERRO");
- 
-<X_DONTCARE>" "|\n              yy_pop_state(yyscanner);
-<X_DONTCARE>\"                  yy_push_state(X_DCA, yyscanner);
-<X_DONTCARE>\'                  yy_push_state(X_DCP, yyscanner);
-<X_DONTCARE>">"                 yyless(yyleng-1); yy_pop_state(yyscanner);
-<X_DONTCARE>.                   ;
- 
-<X_DCA>\"                       yy_pop_state(yyscanner); yy_pop_state(yyscanner);
-<X_DCP>\'                       yy_pop_state(yyscanner); yy_pop_state(yyscanner);
-<X_DCA,X_DCP>.                  ;
-<X_DCA,X_DCP>\n                 yyerror("There was a scan error");
- 
-.|\n                            ;
- 
-<X_LINK>.                        {
-  std::cout << "in X_LINK with " << yytext << " and " << yyextra << "\n";
-  /* yyextra->push_back(yytext); */
-  yy_pop_state(yyscanner);                     
+
+<X_REF1,X_REFA,X_REFP>.         {
+  yymore();
+}
+
+<X_REFA,X_REFP>\n               {
+  yyerror("ERRO");
 }
  
+<X_DONTCARE>" "|\n              {
+  yy_pop_state(yyscanner);
+}
+
+<X_DONTCARE>\"                  {
+  yy_push_state(X_DCA, yyscanner);
+}
+
+<X_DONTCARE>\'                  {
+  yy_push_state(X_DCP, yyscanner);
+}
+
+<X_DONTCARE>">"                 {
+  yyless(yyleng-1); yy_pop_state(yyscanner);
+}
+
+<X_DONTCARE>.                   {
+
+}
+ 
+<X_DCA>\"                       {
+  yy_pop_state(yyscanner); yy_pop_state(yyscanner);
+}
+
+<X_DCP>\'                       {
+  yy_pop_state(yyscanner); 
+  yy_pop_state(yyscanner);
+}
+
+<X_DCA,X_DCP>.                  {
+
+}
+
+<X_DCA,X_DCP>\n                 {
+  yyerror("There was a scan error");
+}
+ 
+.|\n                            {
+
+}
+ 
+<X_LINK>{SPACE}                     {
+  std::cout << "in link state with " << yytext << std::endl;
+  yy_pop_state(yyscanner);                     
+}
+
 %%
 
 namespace slurp {
