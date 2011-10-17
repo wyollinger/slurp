@@ -71,7 +71,7 @@ static int checkArgs( int argc, char** argv ) {
 }
 
 void doUnitTests() {
-    const char testBlock[] = "<html><head><title>test</title></head><body><a href='http://www.balls.com/index.html'</body></html>";
+    const char testBlock[] = "<html><head><title>test</title></head><body><a href=\"http://www.balls.com/index.html\">l1</a><a href='http://www.sack.com/test.php'>l2</a></body></html>";
     std::vector<URI>* uriVector;
 
     std::cout << "initiating lexing\n";

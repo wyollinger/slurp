@@ -43,7 +43,7 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 %x X_COMMENT X_TAG
 %x X_DONTCARE X_DCA X_DCP
 %x X_REF1 X_REFA X_REFP
-%x X_LINK 
+%x X_LINK_D2 X_LINK_D3
  
 %%
 
@@ -99,24 +99,22 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 <X_REF1>">"                     {
   /* entry depth: 1 */
   yyless(yyleng-1);
-  std::cout << "pushing link state with " << yytext << std::endl;
-  yy_pop_state(yyscanner);
+  std::cout << "pushing link state of depth 2 with " << yytext << std::endl;
+  yy_push_state(X_LINK_D2, yyscanner);
 }
  
 <X_REFA>\"                      {
   /* entry depth: 2*/
   yyless(yyleng-1);
-  std::cout << "pushing link state with " << yytext << std::endl;
-  yy_pop_state(yyscanner);
-  yy_pop_state(yyscanner);
+  std::cout << "pushing link state of depth 3 with " << yytext << std::endl;
+  yy_push_state(X_LINK_D3, yyscanner);
 }
 
 <X_REFP>\'                      {
   /* entry depth: 2 */
   yyless(yyleng-1);
-  std::cout << "pushing link state with " << yytext << std::endl;
-  yy_pop_state(yyscanner);
-  yy_pop_state(yyscanner);
+  std::cout << "pushing link state of depth 3 with " << yytext << std::endl;
+  yy_push_state(X_LINK_D3, yyscanner);
 }
 
 <X_REF1,X_REFA,X_REFP>.         {
@@ -168,8 +166,16 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 
 }
  
-<X_LINK>.                       {
-  std::cout << "in link state with " << yytext << std::endl;
+<X_LINK_D2>.                    {
+  std::cout << "in link state d2 at beginning of URI " << std::endl;
+  yy_pop_state(yyscanner);                     
+  yy_pop_state(yyscanner);                     
+}
+
+<X_LINK_D3>.                    {
+  std::cout << "in link state d3 at beginning of URI " << std::endl;
+  yy_pop_state(yyscanner);                     
+  yy_pop_state(yyscanner);                     
   yy_pop_state(yyscanner);                     
 }
 
