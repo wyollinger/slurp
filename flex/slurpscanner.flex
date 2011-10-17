@@ -90,31 +90,31 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 }
 
 <X_REF1>{SPACE}|\n              {
+  /* entry depth: 1 */
   yyless(yyleng-1);
   std::cout << "pushing link state with " << yytext << std::endl;
-  yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
 }
 
 <X_REF1>">"                     {
+  /* entry depth: 1 */
   yyless(yyleng-1);
   std::cout << "pushing link state with " << yytext << std::endl;
-  yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
 }
  
 <X_REFA>\"                      {
+  /* entry depth: 2*/
   yyless(yyleng-1);
   std::cout << "pushing link state with " << yytext << std::endl;
-  yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
 }
 
 <X_REFP>\'                      {
+  /* entry depth: 2 */
   yyless(yyleng-1);
   std::cout << "pushing link state with " << yytext << std::endl;
-  yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
 }
@@ -168,7 +168,7 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 
 }
  
-<X_LINK>{SPACE}                     {
+<X_LINK>.                       {
   std::cout << "in link state with " << yytext << std::endl;
   yy_pop_state(yyscanner);                     
 }
