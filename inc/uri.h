@@ -19,15 +19,18 @@
 #define URI_H
 
 #include <string>
+#include <vector>
 
 namespace slurp {
   class URI {
     std::string rawUri;
-
+    std::string proto;
+    std::vector< std::string> hnameParts;
     public:
 
     URI( );
     URI( std::string rawUri );
+
     static bool isValid( std::string rawUri ) {
       bool valid;
  
