@@ -24,7 +24,7 @@
 
 #include "uri.h"
 
-inline void yyerror(const char *msg) { std::cerr << msg << std::endl; }
+inline void yyerror(const char *msg) { std::cerr << "ERROR! [" << msg << "]\n"; }
 
 %}
 
@@ -39,6 +39,7 @@ HEX4      ([[:xdigit:]]{1,4})
 HEXSEQ    ({hex4}(:{hex4}*)) 
 HEXPART   ({hexseq}|({hexseq}::({hexseq}?))|::{hexseq})
 IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
+PROTO_OPT ((("http")|("https")|("ftp"))"://")*
 
 %x X_COMMENT X_TAG
 %x X_DONTCARE X_DCA X_DCP
@@ -60,13 +61,13 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 }
  
 "<"{ID}                         {
-  std::cout << "tag start: " << yytext << std::endl;
+  std::cout << "tag start [" << yytext << "]\n";
   yy_push_state(X_TAG, yyscanner);
 }
 
 <X_TAG>">"                      {
   yy_pop_state(yyscanner);
-  std::cout << "tag end: " << yytext << std::endl;
+  std::cout << "tag end [" << yytext << "]\n";
 }
 
 <X_TAG>{HREF}                   {
@@ -92,28 +93,28 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 <X_REF1>{SPACE}|\n              {
   /* entry depth: 1 */
   yyless(yyleng-1);
-  std::cout << "pushing link state with " << yytext << std::endl;
+  std::cout << "pushing link state with [" << yytext << "]\n";
   yy_pop_state(yyscanner);
 }
 
 <X_REF1>">"                     {
   /* entry depth: 1 */
   yyless(yyleng-1);
-  std::cout << "pushing link state of depth 2 with " << yytext << std::endl;
+  std::cout << "pushing link state of depth 2 with [" << yytext << "]\n";
   yy_push_state(X_LINK_D2, yyscanner);
 }
  
 <X_REFA>\"                      {
   /* entry depth: 2*/
   yyless(yyleng-1);
-  std::cout << "pushing link state of depth 3 with " << yytext << std::endl;
+  std::cout << "pushing link state of depth 3 with [" << yytext << "]\n";
   yy_push_state(X_LINK_D3, yyscanner);
 }
 
 <X_REFP>\'                      {
   /* entry depth: 2 */
   yyless(yyleng-1);
-  std::cout << "pushing link state of depth 3 with " << yytext << std::endl;
+  std::cout << "pushing link state of depth 3 with [" << yytext << "]\n";
   yy_push_state(X_LINK_D3, yyscanner);
 }
 
@@ -138,7 +139,8 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 }
 
 <X_DONTCARE>">"                 {
-  yyless(yyleng-1); yy_pop_state(yyscanner);
+  yyless(yyleng-1); 
+  yy_pop_state(yyscanner);
 }
 
 <X_DONTCARE>.                   {
@@ -146,7 +148,8 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 }
  
 <X_DCA>\"                       {
-  yy_pop_state(yyscanner); yy_pop_state(yyscanner);
+  yy_pop_state(yyscanner); 
+  yy_pop_state(yyscanner);
 }
 
 <X_DCP>\'                       {
@@ -166,14 +169,16 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 
 }
  
-<X_LINK_D2>.                    {
+<X_LINK_D2>{PROTO_OPT}          {
   std::cout << "in link state d2 at beginning of URI " << std::endl;
+  std::cout << "optional protocol info: [" << yytext << "]\n";
   yy_pop_state(yyscanner);                     
   yy_pop_state(yyscanner);                     
 }
 
-<X_LINK_D3>.                    {
+<X_LINK_D3>{PROTO_OPT}          {
   std::cout << "in link state d3 at beginning of URI " << std::endl;
+  std::cout << "optional protocol info: [" << yytext << "]\n";
   yy_pop_state(yyscanner);                     
   yy_pop_state(yyscanner);                     
   yy_pop_state(yyscanner);                     
