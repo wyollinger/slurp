@@ -74,9 +74,9 @@ void doUnitTests() {
     const char testBlock[] = "<html><head><title>test</title></head><body><a href='http://www.balls.com/index.html'</body></html>";
     std::vector<URI>* uriVector;
 
+    std::cout << "initiating lexing\n";
     uriVector = scanHTML(testBlock);
-
-    std::cout << uriVector -> size() << std::endl;
+    std::cout << "done lexing with " << uriVector->size() << " URIs\n";
 
     delete uriVector; 
 }
