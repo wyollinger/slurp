@@ -42,16 +42,4 @@ namespace slurp {
   };
 }
 
-/* 
-       stub - we will need another flex file for this
-        
-       URI = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-       hier-part   = "//" authority path-abempty
-            / path-absolute
-            / path-rootless
-            / path-empty
-*/
-
-
 #endif
