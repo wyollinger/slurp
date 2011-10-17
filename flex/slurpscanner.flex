@@ -28,7 +28,7 @@ inline void yyerror(const char *msg) { std::cerr << msg << std::endl; }
 
 %}
 
-%option stack 8bit noyywrap yylineno reentrant extra-type="std::vector<std::string>*"
+%option stack 8bit noyywrap yylineno reentrant
  
 SPACE   [ \t]
 ID      [[:alpha:]]([[:alnum:]]|:|-|_)*
@@ -55,24 +55,24 @@ ATTR    {ID}{SPACE}*={SPACE}*
 <X_REF1>\'                      yy_push_state(X_REFP, yyscanner);
 <X_REF1>{SPACE}|\n              {
   yyless(yyleng-1);
-  yyextra->push_back(yytext);
+  /* yyextra->push_back(yytext); */
   yy_pop_state(yyscanner);
 }
 <X_REF1>">"                     {
   yyless(yyleng-1);
-  yyextra->push_back(yytext);
+  /* yyextra->push_back(yytext); */
   yy_pop_state(yyscanner);
 }
  
 <X_REFA>\"                      {
   yyless(yyleng-1);
-  yyextra->push_back(yytext);
+  /* yyextra->push_back(yytext); */
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
 }
 <X_REFP>\'                      {
   yyless(yyleng-1);
-  yyextra->push_back(yytext);
+  /* yyextra->push_back(yytext); */
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
 }
@@ -95,24 +95,18 @@ ATTR    {ID}{SPACE}*={SPACE}*
 %%
 
 namespace slurp {
-  std::vector<std::string>* scanHTML( const char* html )
+  std::vector<URI>* scanHTML( const char* html )
   {
     yyscan_t scanner;
-    std::vector<std::string>* tagVec = new std::vector<std::string>();
+    std::vector<URI>* URIs = new std::vector<URI>();
 
     yylex_init(&scanner); 
-    yylex_init_extra( tagVec, &scanner );
+    yylex_init_extra( URIs, &scanner );
     yy_scan_string( html, scanner );
 
     yylex( scanner );
     yylex_destroy( scanner );
      
-    return tagVec;
-  }
-
-  void constructURI( const char* rawURI ) {
-    URI newURI;
-
-    /* stub */
+    return URIs;
   }
 }
