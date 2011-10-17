@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 
+#include "uri.h"
 #include "slurpscanner.h"
 
 namespace slurp {
@@ -38,7 +39,7 @@ namespace slurp {
      void scan();
   };
 
-   std::vector<std::string>* scanHTML( const char* html );
+   std::vector<URI>* scanHTML( const char* html );
 }
 
 #endif 

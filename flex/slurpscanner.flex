@@ -28,7 +28,7 @@ inline void yyerror(const char *msg) { std::cerr << msg << std::endl; }
 
 %}
 
-%option stack 8bit noyywrap yylineno reentrant
+%option stack 8bit noyywrap yylineno reentrant extra-type="std::vector<slurp::URI>*"
  
 SPACE   [ \t]
 ID      [[:alpha:]]([[:alnum:]]|:|-|_)*
@@ -38,9 +38,10 @@ ATTR    {ID}{SPACE}*={SPACE}*
 %x X_COMMENT X_TAG
 %x X_DONTCARE X_DCA X_DCP
 %x X_REF1 X_REFA X_REFP
+%x X_LINK
  
 %%
- 
+
 <INITIAL,X_COMMENT>"<!--"       yy_push_state(X_COMMENT, yyscanner);
 <X_COMMENT>"-->"                yy_pop_state(yyscanner);
 <X_COMMENT>.|\n                 ;
@@ -55,24 +56,24 @@ ATTR    {ID}{SPACE}*={SPACE}*
 <X_REF1>\'                      yy_push_state(X_REFP, yyscanner);
 <X_REF1>{SPACE}|\n              {
   yyless(yyleng-1);
-  /* yyextra->push_back(yytext); */
+  yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
 }
 <X_REF1>">"                     {
   yyless(yyleng-1);
-  /* yyextra->push_back(yytext); */
+  yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
 }
  
 <X_REFA>\"                      {
   yyless(yyleng-1);
-  /* yyextra->push_back(yytext); */
+  yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
 }
 <X_REFP>\'                      {
   yyless(yyleng-1);
-  /* yyextra->push_back(yytext); */
+  yy_push_state(X_LINK, yyscanner);
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
 }
@@ -91,6 +92,12 @@ ATTR    {ID}{SPACE}*={SPACE}*
 <X_DCA,X_DCP>\n                 yyerror("There was a scan error");
  
 .|\n                            ;
+ 
+<X_LINK>.                        {
+  std::cout << "in X_LINK with " << yytext << " and " << yyextra << "\n";
+  /* yyextra->push_back(yytext); */
+  yy_pop_state(yyscanner);                     
+}
  
 %%
 

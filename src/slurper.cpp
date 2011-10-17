@@ -72,7 +72,7 @@ static int checkArgs( int argc, char** argv ) {
 
 void doUnitTests() {
     const char testBlock[] = "<html><head><title>test</title></head><body><a href='index.html'</body></html>";
-    std::vector<std::string>* tagVector;
+    std::vector<URI>* tagVector;
 
     tagVector = scanHTML(testBlock);
 
