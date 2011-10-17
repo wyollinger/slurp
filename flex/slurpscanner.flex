@@ -30,11 +30,16 @@ inline void yyerror(const char *msg) { std::cerr << msg << std::endl; }
 
 %option stack 8bit noyywrap yylineno reentrant extra-type="std::vector<slurp::URI>*"
  
-SPACE   [ \t]
-ID      [[:alpha:]]([[:alnum:]]|:|-|_)*
-HREF    [Hh][Rr][Ee][Ff]{SPACE}*={SPACE}*
-ATTR    {ID}{SPACE}*={SPACE}*
- 
+SPACE     [ \t]
+ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
+HREF      [Hh][Rr][Ee][Ff]{SPACE}*={SPACE}*
+ATTR      {ID}{SPACE}*={SPACE}*
+IPV4ADDR  (([[:digit:]]{1,3}"."){3}([[:digit:]]{1,3}))
+HEX4      ([[:xdigit:]]{1,4})
+HEXSEQ    ({hex4}(:{hex4}*)) 
+HEXPART   ({hexseq}|({hexseq}::({hexseq}?))|::{hexseq})
+IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
+
 %x X_COMMENT X_TAG
 %x X_DONTCARE X_DCA X_DCP
 %x X_REF1 X_REFA X_REFP
