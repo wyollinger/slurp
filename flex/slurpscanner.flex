@@ -182,7 +182,6 @@ PROTO_OPT ((("http")|("https")|("ftp"))"://")*
 }
  
 <X_LINK_D2>{PROTO_OPT}          {
-  std::cout << "in link state d2 at beginning of URI " << std::endl;
   std::cout << "optional protocol info: [" << yytext << "]\n";
   yy_pop_state(yyscanner);                     
   yy_pop_state(yyscanner);                     
@@ -190,7 +189,6 @@ PROTO_OPT ((("http")|("https")|("ftp"))"://")*
 }
 
 <X_LINK_D3>{PROTO_OPT}          {
-  std::cout << "in link state d3 at beginning of URI " << std::endl;
   std::cout << "optional protocol info: [" << yytext << "]\n";
   yy_pop_state(yyscanner);                     
   yy_pop_state(yyscanner);                     

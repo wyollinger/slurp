@@ -1,2 +1,2 @@
 A web crawler for unix-like systems.
-Depends on only flex.
+Uses flex and pthreads.

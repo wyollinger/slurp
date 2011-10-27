@@ -3,4 +3,4 @@ You should be able to simply type:
 make
 make install
 
-slurp will be installed to /usr/loca/bin by default.
+slurp will be installed to /usr/local/bin by default.
