@@ -25,7 +25,9 @@ URI::URI() {
 }
 
 URI::URI(std::string uri) {
-    /* stub */
+    rawUri = uri;
+
+    /* parse out proto */
 }
 
 bool URI::isValid() {

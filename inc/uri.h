@@ -25,7 +25,6 @@ namespace slurp {
   class URI {
     std::string rawUri;
     std::string proto;
-    std::vector< std::string> hnameParts;
     public:
 
     URI( );
@@ -39,6 +38,8 @@ namespace slurp {
       return valid;
     }
     bool isValid();
+    const std::string & getRawData() const { return rawUri; }
+
   };
 }
 
