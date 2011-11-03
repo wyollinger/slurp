@@ -27,7 +27,7 @@ LDFLAGS=-lpthread
 #rules
 all: release
 
-release: CXXFLAGS += -O2 -pipe -m64 -march=native -mtune=native
+release: CXXFLAGS += -O3 -pipe -m64 -march=native -mtune=native
 release: $(FLEX_MODULES) $(MODULES) $(EXECUTABLE)
 	$(STRIP) $(BINDIR)/$(EXECUTABLE)
 
