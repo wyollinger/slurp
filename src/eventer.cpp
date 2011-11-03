@@ -33,6 +33,8 @@ int Eventer::run( int n ) {
     fd_set currentSockets;
     timeval socketTime;
    
+    std::cout << "Eventer::run()\n";
+
     for( urls = 0; urls < n; ) {
        socketTime.tv_sec = 0;
        socketTime.tv_usec = 100;
@@ -40,6 +42,7 @@ int Eventer::run( int n ) {
        max = -1;
 
        /* empty create queue into read queue, creating sockets for each url */
+       /* there will be a mutex needed here */
        while( !createQueue.empty() ) {
           Retriever& cret = createQueue.back(); /* get reference to next retriever */
           cret.initiateRequest();                  /* perform the request to get the socket */
