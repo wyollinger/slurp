@@ -16,7 +16,9 @@
  */
 
 #include <iostream>
-#include <sys/select.h>
+#include <sys/epoll.h>
+#include <cstdio>
+#include <cerrno>
 
 #include "eventer.h"
 #include "uri.h"
@@ -28,19 +30,21 @@ Eventer::Eventer() {
 }
 
 int Eventer::run( int n ) {
-    int ret, urls, sock, max;
+    int ret, urls, sock, epollfd, i;
     std::vector< Retriever >::iterator ri;
     fd_set currentSockets;
-    timeval socketTime;
-   
+    epoll_event ev, *epollEvents;
+    const int MAX_EVENTS = 256;
+
+    epollEvents = new epoll_event[MAX_EVENTS];
+
     std::cout << "Eventer::run()\n";
 
-    for( urls = 0; urls < n; ) {
-       socketTime.tv_sec = 0;
-       socketTime.tv_usec = 100;
-       FD_ZERO( &currentSockets );
-       max = -1;
+    if( ( epollfd = epoll_create( MAX_EVENTS )) == -1 ) { /* change so not using magic number */
+        return -1;
+    }
 
+    for( urls = 0; urls < n; ) {
        /* empty create queue into read queue, creating sockets for each url */
        /* there will be a mutex needed here */
        while( !createQueue.empty() ) {
@@ -50,38 +54,39 @@ int Eventer::run( int n ) {
           createQueue.pop_back();               /* remove the retriever object from the create queue */
        }
 
-       /* prepare for the call to select, all sockets have been created already */
+       /* prepare for the call to epoll, all sockets have been created already */
        for(ri = readQueue.begin(); ri != readQueue.end(); ri ++ ) {
           sock = ri -> getSocket(); 
-          max = ( sock > max ) ? ( sock ) : ( max );
-          FD_SET( sock, &currentSockets );
+	  ev.events = EPOLLIN;
+	  ev.data.fd = sock;
+	  if( epoll_ctl( epollfd, EPOLL_CTL_ADD, sock, &ev ) == -1 ) {
+             perror("epoll_ctl: adding sock from read queue");
+	  }
        }
        
-       /* do the select and process the results*/
-       switch( 
-           ret = select( max+1, 
-                   &currentSockets, 
-                   NULL, 
-                   &currentSockets, 
-                   &socketTime ) )
+       /* 
+	* a call to epollctl( epollfd, EPOLL_CTL_DEL, sock, NULL ) 
+	* is needed is needed in the parse/queue thread
+	*
+	*/
+
+       /* do the epoll and process the results*/
+       switch( ret = epoll_wait( epollfd, epollEvents, MAX_EVENTS, -1 ) )
            {
                case -1:
-                   std::cerr << "select()\n"; 
+                   perror("epoll_wait");
                    return urls;
                case 0:
                    break;
                default:
-                   for( ri = readQueue.begin(); ri != readQueue.end(); ri ++ ) {                                 
-                      if( FD_ISSET( ri->getSocket(), &currentSockets ) ) {
-                           /* do a read and call tokenize/parse+queue the results */
-                           /* if the read fails discard the url as invalid noisily */
-                           /* increment urls in here to avoid infinite loop */
-                      }
+                   for( i = 0; i < ret; i ++ ) {                                 
+	              /* spawn a thread for events[i] */
                    }
                    break;
            }
     }
 
+    delete epollEvents;
     return urls;
 }
 
