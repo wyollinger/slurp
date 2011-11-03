@@ -1,2 +1,2 @@
-switch from select() to epoll()
 add a pthread for each get/parse/queue
+finish networking code
