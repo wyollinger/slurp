@@ -114,6 +114,7 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
   yyless(yyleng-1);
   yy_push_state(X_LINK_D3, yyscanner);
   std::cout << "pushing LINK_D3 state from X_REFA with [" << yytext << "]\n";
+  yyget_extra(yyscanner) -> push_back( std::string(yytext) );
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
@@ -124,6 +125,7 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
   yyless(yyleng-1);
   yy_push_state(X_LINK_D3, yyscanner);
   std::cout << "pushing LINK_D3 stat from X_REFP with [" << yytext << "]\n";
+  yyget_extra(yyscanner) -> push_back( std::string(yytext) );
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
   yy_pop_state(yyscanner);
