@@ -15,7 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
+#define _POSIX_SOURCE
+
+#include <iostream>
+#include <cstring>
+
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -26,23 +31,39 @@
 using namespace slurp;
 
 Retriever::Retriever( const URI& uri ) {
-
+    this-> uri = uri;
 }
 
 void Retriever::initiateRequest() {
-    std::string hostname;
-    addrinfo hints;   
+    std::string hostname = uri.getRawData();
+    addrinfo hints, *result, *rp;   
+    int ret;
 
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
     hints.ai_socktype = SOCK_STREAM; /* TCP socket */
     hints.ai_protocol = 0;          /* Any protocol */
+    hints.ai_flags = AI_ADDRCONFIG | AI_V4MAPPED | AI_ALL;
 
-    /* getaddrinfo( hostname, 80,  */
+    if( !( ret = getaddrinfo(hostname.c_str(), "80", &hints, &result)) ) 
+    {
+       std::cerr << "getaddrinfo: " << gai_strerror(ret) << "\n";
+       return;    
+    }
 
-    /* socket = ... */
+    for( rp = result; rp; rp = rp->ai_next) {
+        if( ( sock = socket( rp->ai_family, rp->ai_socktype, rp->ai_protocol) ) 
+	   != -1 ) {
 
-    /* stub */
+           rp = NULL; /* signal a break */
+	} 
+    }
+
+    freeaddrinfo(result);
+
+    if( sock != -1 ) {
+       	/* we managed to connect, so now do the HTTP GET */
+    }
 }
 
 std::string Retriever::readData() {

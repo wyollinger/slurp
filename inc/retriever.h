@@ -24,7 +24,7 @@
 
 namespace slurp {
   class Retriever {
-     int socket;   
+     int sock;   
      URI uri;
 
      public:
@@ -34,7 +34,7 @@ namespace slurp {
      std::string readData();
 
      inline int getSocket() const {
-         return socket;
+         return sock;
      }
 
      inline URI getUri() const {
