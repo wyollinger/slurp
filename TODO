@@ -1,3 +1,4 @@
 add a pthread for each get/parse/queue
 finish networking code
 unify include scheme to C++ style
+fix the flex ruleset, it is badly broken
