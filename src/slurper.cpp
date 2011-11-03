@@ -24,14 +24,20 @@
 using namespace slurp;
 
 static int checkArgs( int argc, char** argv );
-void doUnitTests();
 
 int main(int argc, char** argv) {
     int i, ret;
     const static int DEFAULT_URLS = 1024;
     Eventer* eventer = NULL;
 
-    doUnitTests(); 
+    /* debugging for the flex code */
+    SlurpScanner ss( 
+        &std::stringstream( 
+            std::string("< html><body><a href='tits'></a></body><body>"), 
+             std::stringstream::in | std::stringstream::out ),
+        &std::cout);
+
+    ss.yylex();
 
     if( checkArgs( argc, argv ) ) {
         eventer = new Eventer();
@@ -51,8 +57,8 @@ int main(int argc, char** argv) {
 }
 
 static int checkArgs( int argc, char** argv ) {
-    int i, ret = 1;
-    
+    int i, ret = 1;   
+ 
     if( argc < 2 ) {
       ret = 0;
     } else {
@@ -61,21 +67,4 @@ static int checkArgs( int argc, char** argv ) {
     }
 
     return ret;
-}
-
-void doUnitTests() {
-    const char testBlock[] = "<html><head><title>test</title></head><body><a href=\"http://www.balls.com/index.html\">l1</a><a href='http://www.sack.com/test.php'>l2</a></body></html>";
-    std::vector<URI>* uriVector;
-    unsigned int i;
-
-    std::cout << "initiating lexing\n**FLEX OUTPUT BEGINS:\n";
-    uriVector = scanHTML(testBlock);
-    std::cout << "\n**FLEX OUTPUT ENDS\ndone lexing with " << uriVector->size() << " URIs\n";
-
-    for( i = 0; i < uriVector->size(); i++ ) {
-        std::cout << i << " : " << (*uriVector)[i].getRawData() << std::endl;
-
-    }
-
-    delete uriVector; 
 }

@@ -24,8 +24,10 @@
 #include <string>
 #include <cerrno>
 
+#include "scanner.h"
 #include "uri.h"
 
+using namespace slurp;
 inline void yyerror(const char *msg) { std::cerr << "ERROR! [" << msg << "]\n"; }
 
 %}
@@ -35,6 +37,7 @@ inline void yyerror(const char *msg) { std::cerr << "ERROR! [" << msg << "]\n"; 
 %option noyywrap 
 %option yylineno 
 %option c++
+%option yyclass="SlurpScanner"
  
 SPACE     [ \t]
 ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
@@ -69,12 +72,12 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
  
 "<"{ID}                         {
   yy_push_state(X_TAG);
-  std::cout << "tag start [" << yytext << "]\npushing TAG state\n";
+  std::cout << "tag start [" << YYText() << "]\npushing TAG state\n";
 }
 
 <X_TAG>">"                      {
   yy_pop_state();
-  std::cout << "tag end [" << yytext << "]\npopping TAG state\n";
+  std::cout << "tag end [" << YYText() << "]\npopping TAG state\n";
 }
 
 <X_TAG>{HREF}                   {
@@ -105,21 +108,21 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
   /* entry depth: 1 */
   yyless(YYLeng()-1);
   yy_push_state(X_LINK_D2);
-  std::cout << "pushing LINK_D2 state with [" << yytext << "]\n";
+  std::cout << "pushing LINK_D2 state with [" << YYText() << "]\n";
 }
 
 <X_REF1>">"                     {
   /* entry depth: 1 */
   yyless(YYLeng()-1);
   yy_push_state(X_LINK_D2);
-  std::cout << "pushing LINK_D2 state with [" << yytext << "]\n";
+  std::cout << "pushing LINK_D2 state with [" << YYText() << "]\n";
 }
  
 <X_REFA>\"                      {
   /* entry depth: 2*/
   yyless(YYLeng()-1);
   yy_push_state(X_LINK_D3 );
-  std::cout << "pushing LINK_D3 state from X_REFA with [" << yytext << "]\n";
+  std::cout << "pushing LINK_D3 state from X_REFA with [" << YYText() << "]\n";
   yy_pop_state();
   yy_pop_state();
   yy_pop_state();
@@ -129,7 +132,7 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
   /* entry depth: 2 */
   yyless(YYLeng()-1);
   yy_push_state(X_LINK_D3);
-  std::cout << "pushing LINK_D3 stat from X_REFP with [" << yytext << "]\n";
+  std::cout << "pushing LINK_D3 stat from X_REFP with [" << YYText() << "]\n";
   yy_pop_state();
   yy_pop_state();
   yy_pop_state();
@@ -191,19 +194,7 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 .|\n                            {
 
 }
+
 %%
 
-namespace slurp {
-  std::vector<URI>* scanHTML( const char* html )
-  {
-    std::vector<URI>* URIs = new std::vector<URI>();
-    std::istringstream* iStringStream = new std::istringstream( std::string(html), std::istringstream::in );
-    yyFlexLexer* lexer = new yyFlexLexer( iStringStream, &std::cout );
-    
-    lexer->yylex();
-
-    delete lexer; 
-    delete iStringStream;
-    return URIs;
-  }
-}
+/* define any SlurpScanner methods here */
