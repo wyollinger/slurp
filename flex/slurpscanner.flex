@@ -39,7 +39,6 @@ HEX4      ([[:xdigit:]]{1,4})
 HEXSEQ    ({hex4}(:{hex4}*)) 
 HEXPART   ({hexseq}|({hexseq}::({hexseq}?))|::{hexseq})
 IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
-PROTO_OPT ((("http")|("https")|("ftp"))"://")*
 
 %x X_COMMENT X_TAG
 %x X_DONTCARE X_DCA X_DCP
@@ -114,14 +113,18 @@ PROTO_OPT ((("http")|("https")|("ftp"))"://")*
   /* entry depth: 2*/
   yyless(yyleng-1);
   yy_push_state(X_LINK_D3, yyscanner);
-  std::cout << "pushing LINK_D3 state with [" << yytext << "]\n";
+  std::cout << "pushing LINK_D3 state from X_REFA with [" << yytext << "]\n";
+  yy_pop_state(yyscanner);
+  yy_pop_state(yyscanner);
 }
 
 <X_REFP>\'                      {
   /* entry depth: 2 */
   yyless(yyleng-1);
   yy_push_state(X_LINK_D3, yyscanner);
-  std::cout << "pushing LINK_D3 with [" << yytext << "]\n";
+  std::cout << "pushing LINK_D3 stat from X_REFP with [" << yytext << "]\n";
+  yy_pop_state(yyscanner);
+  yy_pop_state(yyscanner);
 }
 
 <X_REF1,X_REFA,X_REFP>.         {
@@ -180,22 +183,6 @@ PROTO_OPT ((("http")|("https")|("ftp"))"://")*
 .|\n                            {
 
 }
- 
-<X_LINK_D2>{PROTO_OPT}          {
-  std::cout << "optional protocol info: [" << yytext << "]\n";
-  yy_pop_state(yyscanner);                     
-  yy_pop_state(yyscanner);                     
-  std::cout << "popping state\npopping state\n";
-}
-
-<X_LINK_D3>{PROTO_OPT}          {
-  std::cout << "optional protocol info: [" << yytext << "]\n";
-  yy_pop_state(yyscanner);                     
-  yy_pop_state(yyscanner);                     
-  yy_pop_state(yyscanner);                     
-  std::cout << "popping state\npopping state\npopping state\n";
-}
-
 %%
 
 namespace slurp {
