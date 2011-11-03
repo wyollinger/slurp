@@ -22,7 +22,6 @@
 #include <vector>
 
 #include "uri.h"
-#include "slurpscanner.h"
 
 namespace slurp {
   class Scanner {

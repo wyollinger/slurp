@@ -18,6 +18,8 @@
 %{
  
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
 #include <string>
 #include <cerrno>
@@ -28,7 +30,11 @@ inline void yyerror(const char *msg) { std::cerr << "ERROR! [" << msg << "]\n"; 
 
 %}
 
-%option stack 8bit noyywrap yylineno reentrant extra-type="std::vector<slurp::URI>*"
+%option stack 
+%option 8bit 
+%option noyywrap 
+%option yylineno 
+%option c++
  
 SPACE     [ \t]
 ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
@@ -48,12 +54,12 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 %%
 
 <INITIAL,X_COMMENT>"<!--"       {
-  yy_push_state(X_COMMENT, yyscanner);
+  yy_push_state(X_COMMENT);
   std::cout << "pushing COMMENT state\n";
 }
 
 <X_COMMENT>"-->"                {
-  yy_pop_state(yyscanner);
+  yy_pop_state();
   std::cout << "popping COMMENT state\n";
 }
 
@@ -62,22 +68,22 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 }
  
 "<"{ID}                         {
-  yy_push_state(X_TAG, yyscanner);
+  yy_push_state(X_TAG);
   std::cout << "tag start [" << yytext << "]\npushing TAG state\n";
 }
 
 <X_TAG>">"                      {
-  yy_pop_state(yyscanner);
+  yy_pop_state();
   std::cout << "tag end [" << yytext << "]\npopping TAG state\n";
 }
 
 <X_TAG>{HREF}                   {
-  yy_push_state(X_REF1, yyscanner);
+  yy_push_state(X_REF1 );
   std::cout << "pushing REF1 state\n";
 }
 
 <X_TAG>{ATTR}                   {
-  yy_push_state(X_DONTCARE, yyscanner);
+  yy_push_state(X_DONTCARE);
   std::cout << "pushing DONTCARE state\n";
 }
 
@@ -86,49 +92,47 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 }
  
 <X_REF1>\"                      {
-  yy_push_state(X_REFA, yyscanner);
+  yy_push_state(X_REFA );
   std::cout << "pushing REFA state\n";
 }
 
 <X_REF1>\'                      {
-  yy_push_state(X_REFP, yyscanner);
+  yy_push_state(X_REFP);
   std::cout << "pushing REFP state\n";
 }
 
 <X_REF1>{SPACE}|\n              {
   /* entry depth: 1 */
   yyless(yyleng-1);
-  yy_push_state(X_LINK_D2, yyscanner);
+  yy_push_state(X_LINK_D2);
   std::cout << "pushing LINK_D2 state with [" << yytext << "]\n";
 }
 
 <X_REF1>">"                     {
   /* entry depth: 1 */
   yyless(yyleng-1);
-  yy_push_state(X_LINK_D2, yyscanner);
+  yy_push_state(X_LINK_D2);
   std::cout << "pushing LINK_D2 state with [" << yytext << "]\n";
 }
  
 <X_REFA>\"                      {
   /* entry depth: 2*/
-  yyless(yyleng-1);
-  yy_push_state(X_LINK_D3, yyscanner);
+  yyless(YYLeng()-1);
+  yy_push_state(X_LINK_D3 );
   std::cout << "pushing LINK_D3 state from X_REFA with [" << yytext << "]\n";
-  yyget_extra(yyscanner) -> push_back( std::string(yytext) );
-  yy_pop_state(yyscanner);
-  yy_pop_state(yyscanner);
-  yy_pop_state(yyscanner);
+  yy_pop_state();
+  yy_pop_state();
+  yy_pop_state();
 }
 
 <X_REFP>\'                      {
   /* entry depth: 2 */
   yyless(yyleng-1);
-  yy_push_state(X_LINK_D3, yyscanner);
+  yy_push_state(X_LINK_D3);
   std::cout << "pushing LINK_D3 stat from X_REFP with [" << yytext << "]\n";
-  yyget_extra(yyscanner) -> push_back( std::string(yytext) );
-  yy_pop_state(yyscanner);
-  yy_pop_state(yyscanner);
-  yy_pop_state(yyscanner);
+  yy_pop_state();
+  yy_pop_state();
+  yy_pop_state();
 }
 
 <X_REF1,X_REFA,X_REFP>.         {
@@ -140,23 +144,23 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 }
  
 <X_DONTCARE>" "|\n              {
-  yy_pop_state(yyscanner);
+  yy_pop_state();
   std::cout << "popping DONTCARE state\n";
 }
 
 <X_DONTCARE>\"                  {
-  yy_push_state(X_DCA, yyscanner);
+  yy_push_state(X_DCA);
   std::cout << "pushing DCA state\n";
 }
 
 <X_DONTCARE>\'                  {
-  yy_push_state(X_DCP, yyscanner);
+  yy_push_state(X_DCP);
   std::cout << "pushing DCP state\n";
 }
 
 <X_DONTCARE>">"                 {
   yyless(yyleng-1); 
-  yy_pop_state(yyscanner);
+  yy_pop_state();
   std::cout << "popping DONTCARE state\n";
 }
 
@@ -165,14 +169,14 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 }
  
 <X_DCA>\"                       {
-  yy_pop_state(yyscanner); 
-  yy_pop_state(yyscanner);
+  yy_pop_state(); 
+  yy_pop_state();
   std::cout << "popping state\npopping state\n";
 }
 
 <X_DCP>\'                       {
-  yy_pop_state(yyscanner); 
-  yy_pop_state(yyscanner);
+  yy_pop_state(); 
+  yy_pop_state();
   std::cout << "popping state\npopping state\n";
 }
 
@@ -192,16 +196,14 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 namespace slurp {
   std::vector<URI>* scanHTML( const char* html )
   {
-    yyscan_t scanner;
     std::vector<URI>* URIs = new std::vector<URI>();
+    std::istringstream* iStringStream = new std::istringstream( std::string(html), std::istringstream::in );
+    yyFlexLexer* lexer = new yyFlexLexer( iStringStream, &std::cout );
+    
+    lexer->yylex();
 
-    yylex_init(&scanner); 
-    yylex_init_extra( URIs, &scanner );
-    yy_scan_string( html, scanner );
-
-    yylex( scanner );
-    yylex_destroy( scanner );
-     
+    delete lexer; 
+    delete iStringStream;
     return URIs;
   }
 }

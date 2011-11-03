@@ -21,13 +21,12 @@ INSTALLPATH=/usr/local/bin
 
 #flags
 CXXFLAGS=-c -Wall -lpthread -I$(INCDIR) 
-FLEXFLAGS=--read --full 
-LDFLAGS=-lpthread 
+LDFLAGS=-lpthread
 
 #rules
 all: release
 
-release: CXXFLAGS += -O3 -pipe -m64 -march=native -mtune=native
+release: CXXFLAGS += -O3 -pipe -m64 
 release: $(FLEX_MODULES) $(MODULES) $(EXECUTABLE)
 	$(STRIP) $(BINDIR)/$(EXECUTABLE)
 
@@ -41,8 +40,8 @@ install:
 	install $(BINDIR)/$(EXECUTABLE) $(INSTALLPATH)
 
 $(FLEX_MODULES):
-	$(FLEX) $(FLEXFLAGS) --header-file=$(INCDIR)/$@.h --outfile=$(SRCDIR)/$@.c $(FLEXDIR)/$@.flex 
-	$(CXX) $(CXXFLAGS) $(SRCDIR)/$@.c -o $(OBJDIR)/$@.o
+	$(FLEX) -o$(SRCDIR)/$@.cpp $(FLEXDIR)/$@.flex 
+	$(CXX) $(CXXFLAGS) $(SRCDIR)/$@.cpp -o $(OBJDIR)/$@.o 
 
 $(MODULES):
 	$(CXX) $(CXXFLAGS) $(SRCDIR)/$@.cpp -o $(OBJDIR)/$@.o 
