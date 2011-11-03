@@ -82,15 +82,10 @@ int Eventer::run( int n ) {
     return urls;
 }
 
-bool Eventer::retrieve( URI uri ) {
-  bool ret = false;
-
+void Eventer::queueURI( URI uri ) {
   if( uri.isValid() ) {
     createQueue.push_back( Retriever( uri ) );
-    ret = true;
   }
-
-  return ret;
 }
 
 std::vector< std::string > Eventer::tokenize( std::string data ) {

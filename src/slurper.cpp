@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
         eventer = new Eventer();
 
         for( i = 1; i <= argc-1; i++ ) {
-            eventer -> retrieve( URI( argv[i] ) );
+            eventer -> queueURI( URI( argv[i] ) );
         }
 
         eventer -> run( DEFAULT_URLS );
@@ -52,19 +52,13 @@ int main(int argc, char** argv) {
 }
 
 static int checkArgs( int argc, char** argv ) {
-    int i, ret;
-
+    int i, ret = 1;
+    
     if( argc < 2 ) {
-       ret = 0;
+      ret = 0;
     } else {
-       ret = 1;
 
-       /* validate the urls */
-       for( i = 1; ret && i <= argc-1; i++ ) {
-          if( !URI::isValid( argv[i] ) ) {
-            ret = 0;
-          }
-       }
+
     }
 
     return ret;

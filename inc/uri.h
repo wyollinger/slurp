@@ -37,9 +37,9 @@ namespace slurp {
 
       return valid;
     }
+
     bool isValid();
     const std::string & getRawData() const { return rawUri; }
-
   };
 }
 

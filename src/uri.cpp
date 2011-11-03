@@ -31,7 +31,7 @@ URI::URI(std::string uri) {
 }
 
 bool URI::isValid() {
-   bool valid = false;
+   bool valid = true;
 
     /* stub */
 

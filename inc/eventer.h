@@ -35,7 +35,7 @@ namespace slurp {
 
      Eventer();
      int run( int n );
-     bool retrieve( URI uri );
+     void queueURI( URI uri );
   };
 }
 
