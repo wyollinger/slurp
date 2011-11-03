@@ -103,14 +103,14 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 
 <X_REF1>{SPACE}|\n              {
   /* entry depth: 1 */
-  yyless(yyleng-1);
+  yyless(YYLeng()-1);
   yy_push_state(X_LINK_D2);
   std::cout << "pushing LINK_D2 state with [" << yytext << "]\n";
 }
 
 <X_REF1>">"                     {
   /* entry depth: 1 */
-  yyless(yyleng-1);
+  yyless(YYLeng()-1);
   yy_push_state(X_LINK_D2);
   std::cout << "pushing LINK_D2 state with [" << yytext << "]\n";
 }
@@ -127,7 +127,7 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 
 <X_REFP>\'                      {
   /* entry depth: 2 */
-  yyless(yyleng-1);
+  yyless(YYLeng()-1);
   yy_push_state(X_LINK_D3);
   std::cout << "pushing LINK_D3 stat from X_REFP with [" << yytext << "]\n";
   yy_pop_state();
@@ -159,7 +159,7 @@ IPV6ADDR  ({hexpart}(":"{IPV4ADDR})?)
 }
 
 <X_DONTCARE>">"                 {
-  yyless(yyleng-1); 
+  yyless(YYLeng()-1); 
   yy_pop_state();
   std::cout << "popping DONTCARE state\n";
 }
