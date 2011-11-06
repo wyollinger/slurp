@@ -1,2 +1,26 @@
-A web crawler for unix-like systems.
-Uses flex and pthreads.
+Abstract:
+  A cross platform web crawler written in C++.
+
+Dependencies:
+  libevent - for cross platform asynchronous event handling
+  libcurl - for formulating and handling various network i/o requests
+  Qt - for gui support as well as a myriad other things ( hash tables, thread pools, ... )
+
+The general flow of execution:
+  Initialization:
+    An initial set of URLs is passed to the program
+    Create a queue of URLs called pendingURLs
+    Create a hashtable of URLs called processedURLs
+    Add the initial set of URLs to pendingURLs
+    Set up libevent + libcurl
+    Initialize thread pool
+  Main loop:
+    Pop a predetermined number of items off of pendingURLs
+    For each: 
+      Acquire a thread from the thread pool
+      Use libcurl to initiate the appropriate network request
+      Tell libevent to listen for i/o on the newly created socket
+    (...more stuff...)
+    
+
+  
