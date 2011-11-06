@@ -3,24 +3,49 @@ Abstract:
 
 Dependencies:
   libevent - for cross platform asynchronous event handling
-  libcurl - for formulating and handling various network i/o requests
+  libcurl - for formulating and handling various network requests
   Qt - for gui support as well as a myriad other things ( hash tables, thread pools, ... )
 
-The general flow of execution:
-  Initialization:
-    An initial set of URLs is passed to the program
-    Create a queue of URLs called pendingURLs
-    Create a hashtable of URLs called processedURLs
-    Add the initial set of URLs to pendingURLs
-    Set up libevent + libcurl
-    Initialize thread pool
-  Main loop:
-    Pop a predetermined number of items off of pendingURLs
-    For each: 
-      Acquire a thread from the thread pool
-      Use libcurl to initiate the appropriate network request
-      Tell libevent to listen for i/o on the newly created socket
-    (...more stuff...)
+Program Flow:
+  Main thread:
+    Initialization:
+      An initial set of URLs is passed to the program
+      Create a queue of URLs called pendingURLs
+      Create a hashtable of URLs called processedURLs
+      Add the initial set of URLs to pendingURLs
+      Set up libevent + libcurl
+      Initialize thread pool
+      Initialize mutexes for queue and hashtable
+    Main loop:
+      Pop items off of pendingURLs while there is still space in the threadpool
+      For each: 
+        Acquire a thread from the thread pool
+        Pass the URL information to the thread, 
+            the pendingURLs queue and mutex,
+            the processedURLs hashtable and mutex
+        Start the net thread
+      Wait for events:
+        Switch on the result of the net thread completion:
+          Update accounting information
+          Reuse the newly free entry in the threadpool if there is a pending URL
+
+  Net thread:
+    Acquire libcurl context
+    Perform a blocking page request on url
+    ... ( wait for request to complete ) ...
+    On success:
+      Parse the results (using flex)
+      Do two lookups per parse result in the processedURLs table and the pendingURLs 
+        to ensure that there are no duplicates
+      If resultant URL list is not empty:
+        Acquire pendingURLs queue
+        Add each result to queue
+    
+(..more stuff..)
+
+
+
+    
     
 
   
