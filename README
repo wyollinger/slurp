@@ -16,7 +16,7 @@ Program Flow:
       Set up libevent + libcurl
       Initialize thread pool
       Initialize mutexes for queue and hashtable
-    Main loop:
+    While URL quota is not met (Main loop):
       Pop items off of pendingURLs while there is still space in the threadpool
       For each: 
         Acquire a thread from the thread pool
@@ -28,6 +28,7 @@ Program Flow:
         Switch on the result of the net thread completion:
           Update accounting information
           Reuse the newly free entry in the threadpool if there is a pending URL
+    Clean up and exit
 
   Net thread:
     Acquire libcurl context
@@ -40,10 +41,11 @@ Program Flow:
       If resultant URL list is not empty:
         Acquire pendingURLs queue
         Add each result to queue
-    
-(..more stuff..)
+        Release pendingURLs queue
+      Acquire the processedURL tale and add the current url to it
 
-
+Classes:
+  (..more to do ..)
 
     
     
