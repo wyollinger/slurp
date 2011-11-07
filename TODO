@@ -1,4 +1,3 @@
-finish networking code
 update the flex ruleset, it is largely unwritten
-use libevent instead of calling epoll directly ( for cross platform asynchronous event handling )
-use libcurl(++) to formulate http get requests
+use libevent to wait on threading events
+use libcurl to formulate and handle network io requests
