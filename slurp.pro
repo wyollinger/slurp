@@ -22,4 +22,4 @@ PKGCONFIG = libevent libcurl
 
 # Input
 HEADERS += inc/eventer.h inc/retriever.h inc/scanner.h
-SOURCES += src/eventer.cpp src/retriever.cpp src/scanner.cpp src/slurper.cpp
+SOURCES += src/slurper.cpp src/eventer.cpp src/retriever.cpp 
