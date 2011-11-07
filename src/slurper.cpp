@@ -84,7 +84,7 @@ static void initLibraries() {
 static int validateArgs( int argc, char** argv, char** env, 
     QQueue<QString>& seedURIs, int& quota, int& maxThreads ) {
     int i;
-    int flags = 0;
+    int flags = FLAGS_INVALID;
 
     if( argc == 1 ) { 
       /* no urls were passed, so return failure */

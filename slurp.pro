@@ -12,7 +12,6 @@ UI_DIR = obj/ui
 
 # Tell QT to use flex 
 include(flex.pri)
-
 QMAKE_LEX = flex
 FLEXSOURCES = flex/scanner.fl
 

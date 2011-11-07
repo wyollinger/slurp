@@ -22,8 +22,28 @@
 using namespace slurp;
 
 Retriever::Retriever( const QString& uri, int flags ) {
+  CURLMcode rc;
+  
   this -> uri = uri;
   conn = curl_easy_init();
+
+  /* TODO: get a handle to the creating retriever */
+
+  /*
+  curl_easy_setopt(conn, CURLOPT_URL, conn->url);
+  curl_easy_setopt(conn, CURLOPT_WRITEFUNCTION, write_cb);
+  curl_easy_setopt(conn, CURLOPT_WRITEDATA, &conn);
+  curl_easy_setopt(conn, CURLOPT_VERBOSE, 1L);
+  curl_easy_setopt(conn, CURLOPT_ERRORBUFFER, conn->error);
+  curl_easy_setopt(conn, CURLOPT_PRIVATE, conn);
+  curl_easy_setopt(conn, CURLOPT_NOPROGRESS, 0L);
+  curl_easy_setopt(conn, CURLOPT_PROGRESSFUNCTION, prog_cb);
+  curl_easy_setopt(conn, CURLOPT_PROGRESSDATA, conn);
+
+  rc = curl_multi_add_handle(g->multi, conn->easy);
+  mcode_or_die("new_conn: curl_multi_add_handle", rc);
+ 
+  */
 }
 
 Retriever::~Retriever() {

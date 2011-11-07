@@ -48,8 +48,6 @@ namespace slurp {
      int flags;
      struct event_base* eventPtr;
 
-     void newConnection();
-
      public:
 
      Eventer( 
