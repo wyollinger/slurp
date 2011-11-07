@@ -32,10 +32,13 @@ Eventer::Eventer(
       multi = curl_multi_init();
       curl_multi_setopt(multi, CURLMOPT_SOCKETFUNCTION, socketCallback);
       curl_multi_setopt(multi, CURLMOPT_TIMERFUNCTION, timerCallback);
+
+      eventPtr = event_base_new();
 }
 
 Eventer::~Eventer() {
   threadPool.waitForDone();	
+  event_base_free( eventPtr );
   if( multi )
   {
     curl_multi_cleanup(multi);

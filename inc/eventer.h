@@ -45,6 +45,7 @@ namespace slurp {
      QMutex uriQueueMutex;
      CURLM *multi;
      int quota;
+     struct event_base* eventPtr;
 
      void newConnection();
 
