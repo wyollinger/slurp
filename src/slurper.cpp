@@ -108,7 +108,7 @@ static int validateArgs( int argc, char** argv, char** env,
                         << "\nusing " << curl_version()
 			<< "\nusing QT " << qVersion() << "\n";
 
-	      die("refer to COPYING file for license information", 
+	      die(LICENSE_INFO, 
                   EXIT_SUCCESS);
             break;
 
