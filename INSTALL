@@ -1,4 +1,5 @@
 Before attempting to compile make sure you have libevent, libcurl, and qt configured.
+Additionally, you will need a version of flex installed which supports generation of reentrant scanners.
 Not only do the libraries need to be installed, but their development headers.
 Pkg-config needs to know about libevent and libcurl, and qt needs to be in a searchable path.
 
