@@ -29,11 +29,6 @@ Retriever::Retriever( const QString& url ) {
 
 }
 
-void Retriever::initiateRequest() {
+void Retriever::run() {
 
 }
-
-void Retriever::readData() {
-
-}
-

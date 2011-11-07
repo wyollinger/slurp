@@ -15,9 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
+
 #include <QString>
 #include <QQueue>
 #include <QSet>
+#include <QThreadPool>
 
 #include <cstdio>
 #include <cerrno>
@@ -33,16 +36,19 @@ Eventer::Eventer(
     int maxThreads ) {
       pendingURIs = initialURIs;
       this->quota = quota;
-      this->maxThreads = maxThreads;
+      threadPool.setMaxThreadCount( maxThreads );
 }
 
 int Eventer::run() {
 
+  //threadPool.start( new QRunnable() );
+
+  threadPool.waitForDone();
   return 0;
 }
 
 void Eventer::queueURI( const QString& uri ) {
-
+  pendingURIs.enqueue( uri );
 }
 
 

@@ -19,25 +19,17 @@
 #define RETRIEVER_H
 
 #include <QString>
+#include <QRunnable>
 
 namespace slurp {
-  class Retriever {
+  class Retriever : public QRunnable {
      int sock;   
      QString url;
 
      public:
 
      Retriever( const QString& uri );
-     void initiateRequest();
-     void readData();
-
-     inline int getSocket() const {
-         return sock;
-     }
-
-     inline QString getUrl() const {
-         return url;
-     }
+     void run();
   };
 }
 #endif 

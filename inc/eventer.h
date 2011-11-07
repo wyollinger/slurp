@@ -21,6 +21,8 @@
 #include <QString>
 #include <QSet>
 #include <QThreadPool>
+#include <QThread>
+#include <QRunnable>
 
 #include <event2/event.h>
 #include <event2/thread.h>
@@ -32,7 +34,9 @@ namespace slurp {
   class Eventer {
      QQueue<QString> pendingURIs;
      QSet<QString> processedURIs;
-     int quota, maxThreads;
+     QThreadPool threadPool;
+
+     int quota;
 
      public:
 
