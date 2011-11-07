@@ -42,9 +42,10 @@ int main(int argc, char** argv, char** env) {
   int flags;
   int quota = -1; /* no quota */
   int maxThreads = 512;
-
   QQueue<QString> seedURIs;
-  
+
+  initLibraries();
+
   flags = validateArgs( argc, argv, env, seedURIs, quota, maxThreads );
 
   if( !flags ) {
