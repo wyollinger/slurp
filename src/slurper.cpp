@@ -24,7 +24,6 @@
 #include <cstring>
 
 #include "eventer.h"
-#include "retriever.h"
 #include "scanner.h"
 
 const static char* USAGE_MESSAGE = "slurp [options] urls";
@@ -32,24 +31,27 @@ const static char* USAGE_MESSAGE = "slurp [options] urls";
 using namespace slurp;
 
 static int validateArgs( int argc, char** argv, char** env, 
-    QQueue<QString>& pendingURIs);
+    QQueue<QString>& seedURIs, int& quota);
 static void die( const char* errmsg, int errcode );
 
 int main(int argc, char** argv, char** env) {
   int flags;
-  QQueue<QString> pendingURIs;
-
-  flags = validateArgs( argc, argv, env, pendingURIs );
+  int quota = -1;
+  QQueue<QString> seedURIs;
+  
+  flags = validateArgs( argc, argv, env, seedURIs, quota );
 
   if( !flags ) {
      die(USAGE_MESSAGE, 1);
   }
 
-  return  EXIT_SUCCESS; 
+  Eventer evntr(seedURIs);
+
+  return  evntr.run(quota); 
 }
 
 static int validateArgs( int argc, char** argv, char** env, 
-    QQueue<QString>& pendingURIs ) {
+    QQueue<QString>& seedURIs, int& quota ) {
     int i;
     int flags = 0;
 
@@ -64,7 +66,7 @@ static int validateArgs( int argc, char** argv, char** env,
 		   << argv[i] 
 		   << std::endl;
        } else {
-         pendingURIs.enqueue( argv[i] );
+         seedURIs.enqueue( argv[i] );
        }
     }
 
