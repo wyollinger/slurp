@@ -1,0 +1,25 @@
+# QT Variables
+TEMPLATE = app
+TARGET = slurp
+DEPENDPATH += . inc src
+INCLUDEPATH += . inc
+DESTDIR = bin
+OBJECTS_DIR = obj
+MOC_DIR = obj/moc
+RCC_DIR = obj/rcc
+UI_DIR = obj/ui
+
+# Tell QT to use flex 
+include(flex.pri)
+
+QMAKE_LEX = flex
+FLEXSOURCES = flex/scanner.fl
+
+# Link in the required libraries
+CONFIG += qt link_pkgconfig 
+QT = gui network thread
+PKGCONFIG = libevent libcurl
+
+# Input
+HEADERS += inc/eventer.h inc/retriever.h inc/scanner.h
+SOURCES += src/eventer.cpp src/retriever.cpp src/scanner.cpp src/slurper.cpp

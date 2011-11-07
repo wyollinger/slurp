@@ -18,53 +18,21 @@
 #include <iostream>
 
 #include "eventer.h"
+#include "retriever.h"
 #include "scanner.h"
-#include "uri.h"
 
 using namespace slurp;
 
-static int checkArgs( int argc, char** argv );
+static int validateArgs( int argc, char** argv, char** env);
 
-int main(int argc, char** argv) {
-    int i, ret;
-    const static int DEFAULT_URLS = 1024;
-    Eventer* eventer = NULL;
+int main(int argc, char** argv, char** env) {
 
-    /* debugging for the flex code */
-    SlurpScanner ss( 
-        &std::stringstream( 
-            std::string("< html><body><a href='tits'></a></body><body>"), 
-             std::stringstream::in | std::stringstream::out ),
-        &std::cout);
+     validateArgs( argc, argv, env );
 
-    ss.yylex();
-
-    if( checkArgs( argc, argv ) ) {
-        eventer = new Eventer();
-
-        for( i = 1; i <= argc-1; i++ ) {
-            eventer -> queueURI( URI( argv[i] ) );
-        }
-
-        eventer -> run( DEFAULT_URLS );
-    } else {
-        std::cerr << "insufficient or malformed arguments\n";
-    }
-    
-    ret = eventer ? 0 : 1;
-    delete eventer;
-    return  ret; 
+     return  0; 
 }
 
-static int checkArgs( int argc, char** argv ) {
-    int i, ret = 1;   
- 
-    if( argc < 2 ) {
-      ret = 0;
-    } else {
+static int validateArgs( int argc, char** argv, char** env ) {
 
-
-    }
-
-    return ret;
+    return 0;
 }

@@ -45,7 +45,8 @@ Program Flow:
       Acquire the processedURL tale and add the current url to it
 
 Classes:
-  (..more to do ..)
+  Retriever - responsible for retrieving data from urls using libcurl
+  Eventer - responsible for handling the main event loop
 
     
     

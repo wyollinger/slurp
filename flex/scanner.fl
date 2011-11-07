@@ -1,0 +1,68 @@
+/*
+ * Slurp - a web crawler
+ * Copyright (C) 2011 Joseph Max DeLiso
+
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 of the License.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+%{
+ 
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <string>
+#include <cerrno>
+
+#include "scanner.h"
+
+using namespace slurp;
+inline void yyerror(const char *msg) { std::cerr << "ERROR! [" << msg << "]\n"; }
+
+%}
+
+%option stack 
+%option 8bit 
+%option noyywrap 
+%option yylineno 
+%option reentrant
+%option extra-type="void*"
+ 
+SPACE     [ \t]
+ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
+
+%x X_COMMENT X_TAG
+ 
+%%
+
+<INITIAL,X_COMMENT>"<!--"       {
+  yy_push_state(X_COMMENT, yyscanner);
+  std::cout << "pushing COMMENT state\n";
+}
+
+<X_COMMENT>"-->"                {
+  yy_pop_state(yyscanner);
+  std::cout << "popping COMMENT state\n";
+}
+
+<X_COMMENT>.|\n                 {
+
+}
+ 
+.|\n                            {
+  /* ignore whitespace */
+}
+
+%%
+
+/* define any SlurpScanner methods here */

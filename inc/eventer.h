@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 
+#include <QUrlInfo>
+
 namespace slurp {
   class Eventer {
      std::vector< Retriever > createQueue;
@@ -35,7 +37,7 @@ namespace slurp {
 
      Eventer();
      int run( int n );
-     void queueURI( URI uri );
+     void queueURI( const QUrlInfo& url );
   };
 }
 
