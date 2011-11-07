@@ -168,7 +168,6 @@ static int validateArgs( int argc, char** argv, char** env,
        /* search for relevant environment variables */
     }
 
-    /* todo: use flags to pass option effects back to main */
     return flags;
 }
 

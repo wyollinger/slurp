@@ -23,15 +23,19 @@
 
 #include <curl/curl.h>
 
+#include "eventer.h"
+
 namespace slurp {
   class Retriever : public QRunnable {
-     int sock;   
      QString uri;
+     CURL* conn;
 
      public:
 
-     Retriever( const QString& uri );
+     Retriever( const QString& uri, int flags );
+     ~Retriever();
      void run();
+     bool isValid() const;
   };
 }
 #endif 

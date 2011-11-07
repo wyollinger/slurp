@@ -21,12 +21,21 @@
 
 using namespace slurp;
 
-Retriever::Retriever( const QString& uri ) {
-  /* create socket here so we can be guaranteed that a call to getSocket
-   * will return either a valid value or -1 for error immediately after
-   * construction */
+Retriever::Retriever( const QString& uri, int flags ) {
+  this -> uri = uri;
+  conn = curl_easy_init();
+}
+
+Retriever::~Retriever() {
+  if( conn ) {
+     curl_easy_cleanup( conn );
+  }
 }
 
 void Retriever::run() {
   /* perform the request */
+}
+
+bool Retriever::isValid() const {
+  return (uri.length() > 0) && ( conn != NULL );
 }
