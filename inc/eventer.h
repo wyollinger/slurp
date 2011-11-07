@@ -18,23 +18,18 @@
 #ifndef EVENTER_H
 #define EVENTER_H
 
+#include <QString>
+
 #include "retriever.h"
-
-#include <string>
-#include <vector>
-
-#include <QUrlInfo>
 
 namespace slurp {
   class Eventer {
-     std::vector< Retriever > createQueue;
-     std::vector< Retriever > readQueue;
 
      public:
 
      Eventer();
      int run( int n );
-     void queueURI( const QUrlInfo& url );
+     void queueURI( const QString& uri );
   };
 }
 

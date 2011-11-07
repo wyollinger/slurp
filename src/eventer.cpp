@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
-#include <sys/epoll.h>
+#include <QString>
+
 #include <cstdio>
 #include <cerrno>
 
@@ -30,9 +30,10 @@ Eventer::Eventer() {
 
 int Eventer::run( int n ) {
 
+  return 0;
 }
 
-void Eventer::queueURI( const QUrlInfo& url ) {
+void Eventer::queueURI( const QString& uri ) {
 
 }
 

@@ -18,10 +18,6 @@
 #ifndef SCANNER_H
 #define SCANNER_H
 
-#include <vector>
-#include <iostream>
-#include <sstream>
-
 namespace slurp {
 
 

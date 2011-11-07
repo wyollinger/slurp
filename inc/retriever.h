@@ -18,18 +18,16 @@
 #ifndef RETRIEVER_H
 #define RETRIEVER_H
 
-#include <string>
-
-#include <QUrlInfo>
+#include <QString>
 
 namespace slurp {
   class Retriever {
      int sock;   
-     QUrlInfo url;
+     QString url;
 
      public:
 
-     Retriever( const QUrlInfo& uri );
+     Retriever( const QString& uri );
      void initiateRequest();
      void readData();
 
@@ -37,7 +35,7 @@ namespace slurp {
          return sock;
      }
 
-     inline QUrlInfo getUrl() const {
+     inline QString getUrl() const {
          return url;
      }
   };

@@ -18,20 +18,14 @@
 #define _POSIX_SOURCE
 
 #include <iostream>
-#include <cstring>
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-
-#include <QUrlInfo>
+#include <QString>
 
 #include "retriever.h"
 
 using namespace slurp;
 
-Retriever::Retriever( const QUrlInfo& url ) {
+Retriever::Retriever( const QString& url ) {
 
 }
 

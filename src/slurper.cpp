@@ -17,7 +17,8 @@
 
 #include <iostream>
 
-#include <QUrlInfo>
+#include <QQueue>
+#include <QString>
 
 #include <cstdlib>
 #include <cstring>
@@ -35,6 +36,7 @@ static void die( const char* errmsg, int errcode );
 
 int main(int argc, char** argv, char** env) {
   int flags;
+  QQueue<QString> pendingURIs;
 
   flags = validateArgs( argc, argv, env );
 
