@@ -19,7 +19,6 @@
 
 #include <QQueue>
 #include <QString>
-#include <QSet>
 
 #include <cstdlib>
 #include <cstring>
@@ -32,15 +31,15 @@ const static char* USAGE_MESSAGE = "slurp [options] urls";
 
 using namespace slurp;
 
-static int validateArgs( int argc, char** argv, char** env);
+static int validateArgs( int argc, char** argv, char** env, 
+    QQueue<QString>& pendingURIs);
 static void die( const char* errmsg, int errcode );
 
 int main(int argc, char** argv, char** env) {
   int flags;
   QQueue<QString> pendingURIs;
-  QSet<QString> processedURIs;
 
-  flags = validateArgs( argc, argv, env );
+  flags = validateArgs( argc, argv, env, pendingURIs );
 
   if( !flags ) {
      die(USAGE_MESSAGE, 1);
@@ -49,7 +48,8 @@ int main(int argc, char** argv, char** env) {
   return  EXIT_SUCCESS; 
 }
 
-static int validateArgs( int argc, char** argv, char** env ) {
+static int validateArgs( int argc, char** argv, char** env, 
+    QQueue<QString>& pendingURIs ) {
     int i;
     int flags;
 
@@ -64,9 +64,7 @@ static int validateArgs( int argc, char** argv, char** env ) {
 		   << argv[i] 
 		   << std::endl;
        } else {
-         std::cout << "stub: process url: " 
-		   << argv[i] 
-		   << std::endl;
+	       
        }
     }
 

@@ -19,15 +19,18 @@
 #define EVENTER_H
 
 #include <QString>
+#include <QSet>
 
 #include "retriever.h"
 
 namespace slurp {
   class Eventer {
+     QQueue<QString> pendingURIs;
+     QSet<QString> processedURIs;
 
      public:
 
-     Eventer();
+     Eventer( const QQueue<QString>& initialURIs );
      int run( int n );
      void queueURI( const QString& uri );
   };

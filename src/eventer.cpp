@@ -16,6 +16,8 @@
  */
 
 #include <QString>
+#include <QQueue>
+#include <QSet>
 
 #include <cstdio>
 #include <cerrno>
@@ -24,8 +26,8 @@
 
 using namespace slurp;
 
-Eventer::Eventer() {
-
+Eventer::Eventer( const QQueue<QString>& initialURIs ) {
+  pendingURIs = initialURIs;
 }
 
 int Eventer::run( int n ) {
