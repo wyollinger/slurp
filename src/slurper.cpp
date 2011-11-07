@@ -16,23 +16,34 @@
  */
 
 #include <iostream>
+#include <cstdlib>
 
 #include "eventer.h"
 #include "retriever.h"
 #include "scanner.h"
 
+const static char* USAGE_MESSAGE = "slurp [options] urls";
+
 using namespace slurp;
 
 static int validateArgs( int argc, char** argv, char** env);
+static void die( const char* errmsg, int errcode );
 
 int main(int argc, char** argv, char** env) {
+     if( !validateArgs( argc, argv, env ) ) {
+        die(USAGE_MESSAGE, 1);
+     }
 
-     validateArgs( argc, argv, env );
-
-     return  0; 
+     return  EXIT_SUCCESS; 
 }
 
 static int validateArgs( int argc, char** argv, char** env ) {
 
     return 0;
+}
+
+static void die( const char* errmsg, int errcode )
+{
+    std::cerr << errmsg << std::endl;
+    exit( errcode );
 }

@@ -65,4 +65,4 @@ ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
 
 %%
 
-/* define any SlurpScanner methods here */
+/* define the flex routines here */

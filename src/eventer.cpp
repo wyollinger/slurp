@@ -25,7 +25,7 @@
 using namespace slurp;
 
 Eventer::Eventer() {
-    /* stub */
+
 }
 
 int Eventer::run( int n ) {

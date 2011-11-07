@@ -30,9 +30,6 @@ namespace slurp {
      std::vector< Retriever > createQueue;
      std::vector< Retriever > readQueue;
 
-     std::vector< std::string > tokenize( std::string data );
-     std::vector< std::string > parseUrls( std::vector< std::string > tokens );
-
      public:
 
      Eventer();
