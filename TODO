@@ -1,6 +1,4 @@
 finish networking code
-switch from awful generated flex scanner classes to reentrant C routines, (use external linkage?)
-fix the flex ruleset, it is badly broken
-use QT for socket io, threadpool, hash table, url validation
+update the flex ruleset, it is largely unwritten
 use libevent instead of calling epoll directly ( for cross platform asynchronous event handling )
 use libcurl(++) to formulate http get requests
