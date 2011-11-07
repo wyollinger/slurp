@@ -16,7 +16,11 @@
  */
 
 #include <iostream>
+
+#include <QUrlInfo>
+
 #include <cstdlib>
+#include <cstring>
 
 #include "eventer.h"
 #include "retriever.h"
@@ -30,16 +34,45 @@ static int validateArgs( int argc, char** argv, char** env);
 static void die( const char* errmsg, int errcode );
 
 int main(int argc, char** argv, char** env) {
-     if( !validateArgs( argc, argv, env ) ) {
-        die(USAGE_MESSAGE, 1);
-     }
+  int flags;
 
-     return  EXIT_SUCCESS; 
+  flags = validateArgs( argc, argv, env );
+
+  if( !flags ) {
+     die(USAGE_MESSAGE, 1);
+  }
+
+  return  EXIT_SUCCESS; 
 }
 
 static int validateArgs( int argc, char** argv, char** env ) {
+    int i;
+    int flags;
 
-    return 0;
+    if( argc == 1 ) { 
+      /* no urls were passed, so return failure */
+      return 0;
+    }
+
+    for( i = 1; i < argc; i++ ) {
+       if( argv[i][0] == '-' ) {
+         std::cout << "stub: process option: " 
+		   << argv[i] 
+		   << std::endl;
+       } else {
+         std::cout << "stub: process url: " 
+		   << argv[i] 
+		   << std::endl;
+       }
+    }
+
+    for( i = 0; env[i]; i++ ) {
+       /* search for relevant environment variables */
+    }
+
+    /* todo: use flags to pass option effects back to main */
+    flags = 1;
+    return flags;
 }
 
 static void die( const char* errmsg, int errcode )
