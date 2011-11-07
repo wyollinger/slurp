@@ -23,6 +23,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <curl/curl.h>
+
 #include "eventer.h"
 #include "scanner.h"
 

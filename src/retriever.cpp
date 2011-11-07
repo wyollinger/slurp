@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define _POSIX_SOURCE
-
 #include <iostream>
 
 #include <QString>
+
+#include <curl/curl.h>
 
 #include "retriever.h"
 

@@ -22,6 +22,10 @@
 #include <QSet>
 #include <QThreadPool>
 
+#include <event2/event.h>
+#include <event2/thread.h>
+#include <event2/buffer.h>
+
 #include "retriever.h"
 
 namespace slurp {
