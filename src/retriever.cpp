@@ -25,10 +25,12 @@
 
 using namespace slurp;
 
-Retriever::Retriever( const QString& url ) {
-
+Retriever::Retriever( const QString& uri ) {
+  /* create socket here so we can be guaranteed that a call to getSocket
+   * will return either a valid value or -1 for error immediately after
+   * construction */
 }
 
 void Retriever::run() {
-
+  /* perform the request */
 }

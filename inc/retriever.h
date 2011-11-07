@@ -24,7 +24,7 @@
 namespace slurp {
   class Retriever : public QRunnable {
      int sock;   
-     QString url;
+     QString uri;
 
      public:
 
