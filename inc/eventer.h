@@ -23,6 +23,7 @@
 #include <QThreadPool>
 #include <QThread>
 #include <QRunnable>
+#include <QMutex>
 
 #include <event2/event.h>
 #include <event2/thread.h>
@@ -35,7 +36,7 @@ namespace slurp {
      QQueue<QString> pendingURIs;
      QSet<QString> processedURIs;
      QThreadPool threadPool;
-
+     QMutex uriQueueMutex;
      int quota;
 
      public:
