@@ -24,6 +24,7 @@
 #include <cstring>
 
 #include <curl/curl.h>
+#include <event2/event-config.h>
 
 #include "eventer.h"
 #include "scanner.h"
@@ -32,6 +33,7 @@ const static char* USAGE_MESSAGE = "slurp [options] urls";
 
 using namespace slurp;
 
+static void initLibraries();
 static int validateArgs( int argc, char** argv, char** env, 
     QQueue<QString>& seedURIs, int& quota, int& maxThreads);
 static void die( const char* errmsg, int errcode );
@@ -52,6 +54,13 @@ int main(int argc, char** argv, char** env) {
   Eventer ev(seedURIs, quota, maxThreads);
 
   return ev.run(); 
+}
+
+static void initLibraries() {
+   /* insert some marco magic here for a windows compile */	
+   if( evthread_use_pthreads() ) {
+      die("could not initialize libevent with pthreads", 2 );
+   }
 }
 
 static int validateArgs( int argc, char** argv, char** env, 
