@@ -1,6 +1,9 @@
 Abstract:
   A cross platform web crawler written in C++.
 
+Programmer:
+  Max DeLiso
+
 Dependencies:
   libevent - for cross platform asynchronous event handling
   libcurl - for formulating and handling various network requests

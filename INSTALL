@@ -1,6 +1,5 @@
 You should be able to simply type:
 
+qmake
 make
 make install
-
-slurp will be installed to /usr/local/bin by default.
