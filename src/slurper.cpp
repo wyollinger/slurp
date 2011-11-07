@@ -31,27 +31,29 @@ const static char* USAGE_MESSAGE = "slurp [options] urls";
 using namespace slurp;
 
 static int validateArgs( int argc, char** argv, char** env, 
-    QQueue<QString>& seedURIs, int& quota);
+    QQueue<QString>& seedURIs, int& quota, int& maxThreads);
 static void die( const char* errmsg, int errcode );
 
 int main(int argc, char** argv, char** env) {
   int flags;
   int quota = -1;
+  int maxThreads = 32;
+
   QQueue<QString> seedURIs;
   
-  flags = validateArgs( argc, argv, env, seedURIs, quota );
+  flags = validateArgs( argc, argv, env, seedURIs, quota, maxThreads );
 
   if( !flags ) {
      die(USAGE_MESSAGE, 1);
   }
 
-  Eventer evntr(seedURIs);
+  Eventer ev(seedURIs, quota, maxThreads);
 
-  return  evntr.run(quota); 
+  return ev.run(); 
 }
 
 static int validateArgs( int argc, char** argv, char** env, 
-    QQueue<QString>& seedURIs, int& quota ) {
+    QQueue<QString>& seedURIs, int& quota, int& maxThreads ) {
     int i;
     int flags = 0;
 

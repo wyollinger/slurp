@@ -27,11 +27,16 @@
 
 using namespace slurp;
 
-Eventer::Eventer( const QQueue<QString>& initialURIs ) {
-  pendingURIs = initialURIs;
+Eventer::Eventer( 
+    const QQueue<QString>& initialURIs, 
+    int quota, 
+    int maxThreads ) {
+      pendingURIs = initialURIs;
+      this->quota = quota;
+      this->maxThreads = maxThreads;
 }
 
-int Eventer::run( int n ) {
+int Eventer::run() {
 
   return 0;
 }

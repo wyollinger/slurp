@@ -20,6 +20,7 @@
 
 #include <QString>
 #include <QSet>
+#include <QThreadPool>
 
 #include "retriever.h"
 
@@ -27,11 +28,12 @@ namespace slurp {
   class Eventer {
      QQueue<QString> pendingURIs;
      QSet<QString> processedURIs;
+     int quota, maxThreads;
 
      public:
 
-     Eventer( const QQueue<QString>& initialURIs );
-     int run( int n );
+     Eventer( const QQueue<QString>& initialURIs, int quota, int maxThreads );
+     int run();
      void queueURI( const QString& uri );
   };
 }
