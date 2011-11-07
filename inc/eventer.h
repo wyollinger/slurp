@@ -45,13 +45,33 @@ namespace slurp {
      CURLM *multi;
      int quota;
 
+     void newConnection();
+
      public:
 
      Eventer( const QQueue<QString>& initialURIs, int quota, int maxThreads );
      ~Eventer();
 
      static void curlVerify(const char *where, CURLMcode code);
-
+     static void eventCallback(int fd, short kind, void *userp);
+     static void timerCallback(int fd, short kind, void *userp);
+     static int socketCallback(
+        CURL *e, 
+	curl_socket_t s, 
+	int what, 
+	void *cbp, 
+	void *sockp);
+     static size_t writeCallback(
+        void *ptr, 
+	size_t size, 
+	size_t nmemb, 
+	void *data);
+     static int progessCallback(
+	void *p, 
+	double dltotal, 
+	double dlnow, 
+	double ult,
+        double uln);
      int run();
      void queueURI( const QString& uri );
   };
