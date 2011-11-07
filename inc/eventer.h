@@ -24,10 +24,15 @@
 #include <QThread>
 #include <QRunnable>
 #include <QMutex>
+#include <QQueue>
 
 #include <event2/event.h>
 #include <event2/thread.h>
 #include <event2/buffer.h>
+
+#include <curl/curl.h>
+
+#include <cstdlib>
 
 #include "retriever.h"
 
@@ -37,15 +42,21 @@ namespace slurp {
      QSet<QString> processedURIs;
      QThreadPool threadPool;
      QMutex uriQueueMutex;
+     CURLM *multi;
      int quota;
 
      public:
 
      Eventer( const QQueue<QString>& initialURIs, int quota, int maxThreads );
+     ~Eventer();
+
+     static void curlVerify(const char *where, CURLMcode code);
+
      int run();
      void queueURI( const QString& uri );
   };
 }
+
 
 #endif 
 

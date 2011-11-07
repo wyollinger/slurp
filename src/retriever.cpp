@@ -17,10 +17,6 @@
 
 #include <iostream>
 
-#include <QString>
-
-#include <curl/curl.h>
-
 #include "retriever.h"
 
 using namespace slurp;

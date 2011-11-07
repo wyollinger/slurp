@@ -16,17 +16,7 @@
  */
 
 #include <iostream>
-
-#include <QString>
-#include <QQueue>
-#include <QSet>
-#include <QThreadPool>
-
-#include <cstdio>
-#include <cerrno>
-
 #include "eventer.h"
-#include "retriever.h"
 
 using namespace slurp;
 
@@ -37,6 +27,38 @@ Eventer::Eventer(
       pendingURIs = initialURIs;
       this->quota = quota;
       threadPool.setMaxThreadCount( maxThreads );
+      multi = curl_multi_init();
+}
+
+Eventer::~Eventer() {
+  threadPool.waitForDone();	
+  if( multi )
+  {
+    curl_multi_cleanup(multi);
+  }
+}
+
+void Eventer::curlVerify(const char *where, CURLMcode code)
+{
+  if ( CURLM_OK != code ) {
+    const char *s;
+    switch (code) {
+      case     CURLM_CALL_MULTI_PERFORM: s="CURLM_CALL_MULTI_PERFORM"; break;
+      case     CURLM_BAD_HANDLE:         s="CURLM_BAD_HANDLE";         break;
+      case     CURLM_BAD_EASY_HANDLE:    s="CURLM_BAD_EASY_HANDLE";    break;
+      case     CURLM_OUT_OF_MEMORY:      s="CURLM_OUT_OF_MEMORY";      break;
+      case     CURLM_INTERNAL_ERROR:     s="CURLM_INTERNAL_ERROR";     break;
+      case     CURLM_UNKNOWN_OPTION:     s="CURLM_UNKNOWN_OPTION";     break;
+      case     CURLM_LAST:               s="CURLM_LAST";               break;
+      default: s="CURLM_unknown";
+        break;
+    case     CURLM_BAD_SOCKET:         s="CURLM_BAD_SOCKET";
+       std::cerr << "ERROR: " << where << "returns" << s << std::endl;
+      return;
+    }
+    std::cerr << "ERROR: " << where << "returns" << s << std::endl;
+    exit(code);
+  }
 }
 
 int Eventer::run() {

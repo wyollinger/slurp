@@ -21,6 +21,8 @@
 #include <QString>
 #include <QRunnable>
 
+#include <curl/curl.h>
+
 namespace slurp {
   class Retriever : public QRunnable {
      int sock;   
