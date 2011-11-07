@@ -61,7 +61,7 @@ int main(int argc, char** argv, char** env) {
 }
 
 static void initLibraries() {
-   /* insert some marco magic here for a windows compile */	
+   /* insert some macro magic here for a windows compile */	
    if( evthread_use_pthreads() ) {
       die("could not initialize libevent with pthreads", 2 );
    }
