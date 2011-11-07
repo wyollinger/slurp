@@ -19,6 +19,7 @@
 
 #include <QQueue>
 #include <QString>
+#include <QHash>
 
 #include <cstdlib>
 #include <cstring>

@@ -14,7 +14,7 @@ Program Flow:
     Initialization:
       An initial set of URLs is passed to the program
       Create a queue of URLs called pendingURLs
-      Create a hashtable of URLs called processedURLs
+      Create a hashtable based set of URLs called processedURLs
       Add the initial set of URLs to pendingURLs
       Set up libevent + libcurl
       Initialize thread pool
