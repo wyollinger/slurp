@@ -19,7 +19,7 @@
 
 #include <QQueue>
 #include <QString>
-#include <QHash>
+#include <QSet>
 
 #include <cstdlib>
 #include <cstring>
@@ -38,6 +38,7 @@ static void die( const char* errmsg, int errcode );
 int main(int argc, char** argv, char** env) {
   int flags;
   QQueue<QString> pendingURIs;
+  QSet<QString> processedURIs;
 
   flags = validateArgs( argc, argv, env );
 
