@@ -26,8 +26,12 @@ Eventer::Eventer(
     int maxThreads ) {
       pendingURIs = initialURIs;
       this->quota = quota;
+
       threadPool.setMaxThreadCount( maxThreads );
+
       multi = curl_multi_init();
+      curl_multi_setopt(multi, CURLMOPT_SOCKETFUNCTION, socketCallback);
+      curl_multi_setopt(multi, CURLMOPT_TIMERFUNCTION, timerCallback);
 }
 
 Eventer::~Eventer() {
@@ -64,8 +68,7 @@ void Eventer::curlVerify(const char *where, CURLMcode code)
 int Eventer::run() {
 
   //threadPool.start( new QRunnable() );
-
-  threadPool.waitForDone();
+  //call libevent to start processing events
   return 0;
 }
 
@@ -108,3 +111,43 @@ void Eventer::newConnection()
   /* note that the add_handle() will set a time-out to trigger very soon so
      that the necessary socket_action() call will be called by this app */ 
 }
+
+void Eventer::eventCallback(int fd, short kind, void *userp)
+{
+
+}
+ 
+void Eventer::timerCallback(int fd, short kind, void *userp) 
+{
+
+}
+
+int Eventer::socketCallback(
+        CURL *e, 
+	curl_socket_t s, 
+	int what, 
+	void *cbp, 
+	void *sockp)
+{
+
+}
+ 
+size_t Eventer::writeCallback(
+        void *ptr, 
+	size_t size, 
+	size_t nmemb, 
+	void *data)
+{
+
+}
+ 
+int Eventer::progressCallback(
+	void *p, 
+	double dltotal, 
+	double dlnow, 
+	double ult,
+        double uln)
+{
+
+}
+

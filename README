@@ -1,59 +1,10 @@
 Abstract:
   A cross platform web crawler written in C++.
 
+Acknowledgements/Dependencies:
+  This program uses libevent, which was developed by Niels Provos and Nick Mathewson
+  It also uses libcurl, which was/is developed by Haxx a group of programmers based in Sweden.
+  Finally, it uses QT, A cross-platform application and UI framework developed by Nokia Corporation
+
 Programmer:
   Max DeLiso
-
-Dependencies:
-  libevent - for cross platform asynchronous event handling
-  libcurl - for formulating and handling various network requests
-  Qt - for gui support as well as a myriad other things ( hash tables, thread pools, ... )
-
-Program Flow:
-  Main thread:
-    Initialization:
-      An initial set of URLs is passed to the program
-      Create a queue of URLs called pendingURLs
-      Create a hashtable based set of URLs called processedURLs
-      Add the initial set of URLs to pendingURLs
-      Set up libevent + libcurl
-      Initialize thread pool
-      Initialize mutexes for queue and hashtable
-    While URL quota is not met (Main loop):
-      Pop items off of pendingURLs while there is still space in the threadpool
-      For each: 
-        Acquire a thread from the thread pool
-        Pass the URL information to the thread, 
-            the pendingURLs queue and mutex,
-            the processedURLs hashtable and mutex
-        Start the net thread
-      Wait for events:
-        Switch on the result of the net thread completion:
-          Update accounting information
-          Reuse the newly free entry in the threadpool if there is a pending URL
-    Clean up and exit
-
-  Net thread:
-    Acquire libcurl context
-    Perform a blocking page request on url
-    ... ( wait for request to complete ) ...
-    On success:
-      Parse the results (using flex)
-      Do two lookups per parse result in the processedURLs table and the pendingURLs 
-        to ensure that there are no duplicates
-      If resultant URL list is not empty:
-        Acquire pendingURLs queue
-        Add each result to queue
-        Release pendingURLs queue
-      Acquire the processedURL tale and add the current url to it
-
-Classes:
-  Retriever - responsible for retrieving data from urls using libcurl, 
-    hides all url validation and network protocol interaction
-  Eventer - responsible for handling the main event loop, hides all
-    thread pool management and synchronous i/o multiplexing
-
-    
-    
-
-  

@@ -19,6 +19,7 @@
 
 #include <QQueue>
 #include <QString>
+#include <QtGlobal>
 
 #include <cstdlib>
 
@@ -91,14 +92,14 @@ static int validateArgs( int argc, char** argv, char** env,
 	      std::cout << "slurp v" 
 		        << VERSION_ID[0] << "."
 		        << VERSION_ID[1] << "."
-		        << VERSION_ID[2] << std::endl;
-
-              std::cout << "using " 
-		        << (LIBEVENT_VERSION) << std::endl;
-              std::cout << "using "
-		        << curl_version( ) << std::endl;
+		        << VERSION_ID[2] 
+                        << "\nusing libevent " 
+		        << event_get_version() 
+                        << "\nusing " << curl_version()
+			<< "\nusing QT " << qVersion() << "\n";
 
 	      std::cout << "refer to COPYING file for license information\n";
+
               die("done.",EXIT_SUCCESS);
             break;
 

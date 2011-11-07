@@ -29,6 +29,7 @@
 #include <event2/event.h>
 #include <event2/thread.h>
 #include <event2/buffer.h>
+#include <event2/util.h>
 
 #include <curl/curl.h>
 
@@ -66,7 +67,7 @@ namespace slurp {
 	size_t size, 
 	size_t nmemb, 
 	void *data);
-     static int progessCallback(
+     static int progressCallback(
 	void *p, 
 	double dltotal, 
 	double dlnow, 
