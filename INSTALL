@@ -11,7 +11,6 @@ Once the dependencies are satisfied, you should be able to simply type:
 
 qmake
 make
-make install
 
 Linux is directly supported. 
 This code *SHOULD* compile on any current versions of Windows, Mac OS, and probably a few others.

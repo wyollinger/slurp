@@ -45,13 +45,18 @@ namespace slurp {
      QMutex uriQueueMutex;
      CURLM *multi;
      int quota;
+     int flags;
      struct event_base* eventPtr;
 
      void newConnection();
 
      public:
 
-     Eventer( const QQueue<QString>& initialURIs, int quota, int maxThreads );
+     Eventer( 
+         const QQueue<QString>& initialURIs, 
+	 int quota, 
+	 int maxThreads, 
+	 int flags );
      ~Eventer();
 
      static void curlVerify(const char *where, CURLMcode code);

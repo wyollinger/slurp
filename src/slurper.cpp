@@ -20,31 +20,30 @@
 #include <QQueue>
 #include <QString>
 #include <QtGlobal>
+#include <QThread>
 
 #include <cstdlib>
+#include <cstring>
 
 #include <curl/curl.h>
 
 #include <event2/event-config.h>
 #include <event2/util.h>
 
+#include "globals.h"
 #include "eventer.h"
 #include "scanner.h"
-
-const static char* USAGE_MESSAGE = "slurp [options] urls";
-const static int VERSION_ID[3] = {0,0,3};
 
 using namespace slurp;
 
 static void initLibraries();
 static int validateArgs( int argc, char** argv, char** env, 
     QQueue<QString>& seedURIs, int& quota, int& maxThreads);
-static void die( const char* errmsg, int errcode );
 
 int main(int argc, char** argv, char** env) {
   int flags;
   int quota = -1; /* no quota */
-  int maxThreads = 512;
+  int maxThreads = QThread::idealThreadCount();
   QQueue<QString> seedURIs;
 
   initLibraries();
@@ -53,9 +52,20 @@ int main(int argc, char** argv, char** env) {
 
   if( !flags ) {
      die(USAGE_MESSAGE, 1);
+  } else if( seedURIs.size() == 0 ) {
+     die(
+        "error: you must specify the initial URI to begin crawling from", 
+	EXIT_FAILURE );
   }
 
-  Eventer ev(seedURIs, quota, maxThreads);
+  if( flags & FLAGS_VERBOSE ) {
+    std::cout << "information: creating eventer instance with "
+	      << seedURIs.size() << " seed URI(s) and a quota of " 
+	      << quota << " with the contraint of " 
+	      << maxThreads << " maximum threads\n";
+  }
+
+  Eventer ev(seedURIs, quota, maxThreads, flags);
 
   return ev.run(); 
 }
@@ -63,11 +73,11 @@ int main(int argc, char** argv, char** env) {
 static void initLibraries() {
    /* insert some macro magic here for a windows compile */	
    if( evthread_use_pthreads() ) {
-      die("could not initialize libevent with pthreads", 2 );
+      die("error: could not initialize libevent with pthreads", EXIT_FAILURE );
    }
 
    if( curl_global_init( CURL_GLOBAL_ALL ) ) {
-      die("could not initialize libcurl", 3 );
+      die("error: could not initialize libcurl", EXIT_FAILURE );
    }
 }
 
@@ -81,7 +91,7 @@ static int validateArgs( int argc, char** argv, char** env,
       return flags;
     }
 
-    flags = 1;
+    flags = FLAGS_VALID;
 
     for( i = 1; i < argc; i++ ) {
        if( argv[i][0] == '-' ) {
@@ -98,15 +108,55 @@ static int validateArgs( int argc, char** argv, char** env,
                         << "\nusing " << curl_version()
 			<< "\nusing QT " << qVersion() << "\n";
 
-	      std::cout << "refer to COPYING file for license information\n";
-
-              die("done.",EXIT_SUCCESS);
+	      die("refer to COPYING file for license information", 
+                  EXIT_SUCCESS);
             break;
 
+	    case 'h':
+              die(HELP_MENU, EXIT_SUCCESS);
+	      break;
+
+	    case 'v':
+              flags |= FLAGS_VERBOSE;
+	      break;
+
+	    case 'n':
+	      if( strlen(argv[i]+2) ) {
+                quota = atoi((argv[i]+2));
+	      } else if( i+1 < argc ) {
+                quota = atoi (argv[i+1]);
+		i++;
+	      } else {
+	        die(
+	           "error: could not find numeric portion of -n option",
+		   EXIT_FAILURE);
+	      }
+
+	      break;
+
+	    case 't':
+              if( strlen(argv[i]+2) ) {
+                maxThreads = atoi((argv[i]+2));
+	      } else if( i+1 < argc ) {
+                maxThreads = atoi ( argv[i+1] );
+		i++;
+	      } else {
+	        die(
+                   "error: could not find numeric portion of -t option",
+		   EXIT_FAILURE);
+	      }
+
+	      if( maxThreads <= 0 ) {
+                die("error: t must be greater than zero", EXIT_FAILURE);
+	      }
+
+	      break;
+
 	    default:
-              std::cout << "stub: process option: " 
+              std::cout << "warning: unrecognized option: " 
 		   << argv[i] 
 		   << std::endl;
+
 	    break;
 	 }
       } else {
@@ -122,7 +172,7 @@ static int validateArgs( int argc, char** argv, char** env,
     return flags;
 }
 
-static void die( const char* errmsg, int errcode )
+void die( const char* errmsg, int errcode )
 {
     std::cerr << errmsg << std::endl;
     exit( errcode );

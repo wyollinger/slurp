@@ -23,9 +23,11 @@ using namespace slurp;
 Eventer::Eventer( 
     const QQueue<QString>& initialURIs, 
     int quota, 
-    int maxThreads ) {
+    int maxThreads,
+    int flags ) {
       pendingURIs = initialURIs;
-      this->quota = quota;
+      this -> quota = quota;
+      this -> flags = flags;
 
       threadPool.setMaxThreadCount( maxThreads );
 
