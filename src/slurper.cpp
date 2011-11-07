@@ -24,12 +24,15 @@
 #include <cstring>
 
 #include <curl/curl.h>
+
 #include <event2/event-config.h>
+#include <event2/util.h>
 
 #include "eventer.h"
 #include "scanner.h"
 
 const static char* USAGE_MESSAGE = "slurp [options] urls";
+const static int VERSION_ID[3] = {0,0,3};
 
 using namespace slurp;
 
@@ -62,6 +65,10 @@ static void initLibraries() {
    if( evthread_use_pthreads() ) {
       die("could not initialize libevent with pthreads", 2 );
    }
+
+   if( curl_global_init( CURL_GLOBAL_ALL ) ) {
+      die("could not initialize libcurl", 3 );
+   }
 }
 
 static int validateArgs( int argc, char** argv, char** env, 
@@ -74,12 +81,35 @@ static int validateArgs( int argc, char** argv, char** env,
       return flags;
     }
 
+    flags = 1;
+
     for( i = 1; i < argc; i++ ) {
        if( argv[i][0] == '-' ) {
-         std::cout << "stub: process option: " 
+	 switch( argv[i][1] ) {
+            case 'V':
+              flags = 0;      
+              
+	      std::cout << "slurp v" 
+		        << VERSION_ID[0] << "."
+		        << VERSION_ID[1] << "."
+		        << VERSION_ID[2] << std::endl;
+
+              std::cout << "using " 
+		        << (LIBEVENT_VERSION) << std::endl;
+              std::cout << "using "
+		        << curl_version( ) << std::endl;
+
+	      std::cout << "refer to COPYING file for license information\n";
+              die("done.",EXIT_SUCCESS);
+            break;
+
+	    default:
+              std::cout << "stub: process option: " 
 		   << argv[i] 
 		   << std::endl;
-       } else {
+	    break;
+	 }
+      } else {
          seedURIs.enqueue( argv[i] );
        }
     }
@@ -89,7 +119,6 @@ static int validateArgs( int argc, char** argv, char** env,
     }
 
     /* todo: use flags to pass option effects back to main */
-    flags = 1;
     return flags;
 }
 
