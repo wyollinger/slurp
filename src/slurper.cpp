@@ -51,11 +51,11 @@ int main(int argc, char** argv, char** env) {
 static int validateArgs( int argc, char** argv, char** env, 
     QQueue<QString>& pendingURIs ) {
     int i;
-    int flags;
+    int flags = 0;
 
     if( argc == 1 ) { 
       /* no urls were passed, so return failure */
-      return 0;
+      return flags;
     }
 
     for( i = 1; i < argc; i++ ) {
@@ -64,7 +64,7 @@ static int validateArgs( int argc, char** argv, char** env,
 		   << argv[i] 
 		   << std::endl;
        } else {
-	       
+         pendingURIs.enqueue( argv[i] );
        }
     }
 
