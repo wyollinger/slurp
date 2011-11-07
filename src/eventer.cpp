@@ -23,6 +23,7 @@
 #include <cerrno>
 
 #include "eventer.h"
+#include "retriever.h"
 
 using namespace slurp;
 

@@ -48,8 +48,10 @@ Program Flow:
       Acquire the processedURL tale and add the current url to it
 
 Classes:
-  Retriever - responsible for retrieving data from urls using libcurl
-  Eventer - responsible for handling the main event loop
+  Retriever - responsible for retrieving data from urls using libcurl, 
+    hides all url validation and network protocol interaction
+  Eventer - responsible for handling the main event loop, hides all
+    thread pool management and synchronous i/o multiplexing
 
     
     
