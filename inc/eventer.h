@@ -25,6 +25,7 @@
 #include <QRunnable>
 #include <QMutex>
 #include <QQueue>
+#include <QListIterator>
 
 #include <event2/event.h>
 #include <event2/thread.h>

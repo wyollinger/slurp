@@ -43,6 +43,7 @@ Eventer::Eventer(
 }
 
 Eventer::~Eventer() {
+  threadPool.waitForDone();
   event_base_free( eventPtr );
   curl_multi_cleanup(multi);
 }
@@ -72,9 +73,12 @@ void Eventer::curlVerify(const char *where, CURLMcode code)
 int Eventer::run() {
   int ret;
 
-  //threadPool.start( new QRunnable() );
-  //call libevent to start processing events
-  
+  /* create or schedule thread creation for every pending inital request. */
+  while (!pendingURIs.isEmpty()) {
+      threadPool.start( new Retriever( this, pendingURIs.dequeue(), flags ) );
+  }
+
+  /* start the event loop */
   ret = event_base_loop( eventPtr, 0 );
 
   std::cout << "debug: event loop returned " << ret << "\n";

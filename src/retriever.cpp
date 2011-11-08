@@ -24,7 +24,7 @@
 
 using namespace slurp;
 
-Retriever::Retriever( const Eventer& eventer, const QString& uri, int flags ) {
+Retriever::Retriever( const Eventer* eventer, QString uri, int flags ) {
   CURLMcode rc;
   this -> uri = uri;
   conn = curl_easy_init();
@@ -46,7 +46,7 @@ Retriever::Retriever( const Eventer& eventer, const QString& uri, int flags ) {
           CURLOPT_PROGRESSFUNCTION, 
           Eventer::progressCallback);
 
-      rc = curl_multi_add_handle(eventer.getMultiHandle(), conn);
+      rc = curl_multi_add_handle(eventer -> getMultiHandle(), conn);
       Eventer::curlVerify("curl_multi_add_handle from Retriever()", rc);
   } else {
       std::cerr << "error: could not initialize retriever curl handle\n";

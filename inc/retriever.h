@@ -34,7 +34,7 @@ namespace slurp {
 
      public:
 
-     Retriever( const Eventer& eventer, const QString& uri, int flags );
+     Retriever( const Eventer* eventer, QString uri, int flags );
      ~Retriever();
      void run();
      bool isValid() const;
