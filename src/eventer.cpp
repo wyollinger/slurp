@@ -16,7 +16,10 @@
  */
 
 #include <iostream>
-#include "eventer.h"
+
+#include "globals.h"
+#include "retriever.h"
+#include "scanner.h"
 
 using namespace slurp;
 

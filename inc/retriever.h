@@ -23,7 +23,9 @@
 
 #include <curl/curl.h>
 
+#include "globals.h"
 #include "eventer.h"
+#include "scanner.h"
 
 namespace slurp {
   class Retriever : public QRunnable {
@@ -32,7 +34,7 @@ namespace slurp {
 
      public:
 
-     Retriever( const QString& uri, int flags );
+     Retriever( const Eventer& eventer, const QString& uri, int flags );
      ~Retriever();
      void run();
      bool isValid() const;

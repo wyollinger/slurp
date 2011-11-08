@@ -17,13 +17,15 @@
 
 #include <iostream>
 
+#include "globals.h"
 #include "retriever.h"
+#include "eventer.h"
+#include "scanner.h"
 
 using namespace slurp;
 
-Retriever::Retriever( const QString& uri, int flags ) {
+Retriever::Retriever( const Eventer& eventer, const QString& uri, int flags ) {
   CURLMcode rc;
-  
   this -> uri = uri;
   conn = curl_easy_init();
 

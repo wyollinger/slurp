@@ -31,6 +31,7 @@
 #include <event2/util.h>
 
 #include "globals.h"
+#include "retriever.h"
 #include "eventer.h"
 #include "scanner.h"
 
