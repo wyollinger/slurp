@@ -43,14 +43,8 @@ Eventer::Eventer(
 }
 
 Eventer::~Eventer() {
-  threadPool.waitForDone();	
-
   event_base_free( eventPtr );
-
-  if( multi )
-  {
-    curl_multi_cleanup(multi);
-  }
+  curl_multi_cleanup(multi);
 }
 
 void Eventer::curlVerify(const char *where, CURLMcode code)
