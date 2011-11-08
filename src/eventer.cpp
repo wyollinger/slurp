@@ -43,7 +43,11 @@ Eventer::Eventer(
 
 Eventer::~Eventer() {
   threadPool.waitForDone();	
-  event_base_free( eventPtr );
+
+  if( eventPtr != -1 ) {
+    event_base_free( eventPtr );
+  }
+
   if( multi )
   {
     curl_multi_cleanup(multi);
