@@ -69,7 +69,6 @@ void Eventer::curlVerify(const char *where, CURLMcode code)
       return;
     }
     std::cerr << "ERROR: " << where << "returns" << s << std::endl;
-    exit(code);
   }
 }
 
