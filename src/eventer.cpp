@@ -70,11 +70,16 @@ void Eventer::curlVerify(const char *where, CURLMcode code)
 }
 
 int Eventer::run() {
+  int ret;
 
   //threadPool.start( new QRunnable() );
   //call libevent to start processing events
-  //
-  return 0;
+  
+  ret = event_base_loop( eventPtr, 0 );
+
+  std::cout << "debug: event loop returned " << ret << "\n";
+
+  return ret;
 }
 
 void Eventer::queueURI( const QString& uri ) {
