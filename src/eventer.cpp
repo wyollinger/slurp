@@ -89,12 +89,16 @@ void Eventer::queueURI( const QString& uri ) {
 
 void Eventer::eventCallback(int fd, short kind, void *userp)
 {
-
+ std::cout << "debug: in event callback with fd " 
+	   << fd << " kind " 
+	   << kind << "\n";
 }
  
 void Eventer::timerCallback(int fd, short kind, void *userp) 
 {
-
+ std::cout << "debug: in timer callback with fd " 
+	   << fd << " kind " 
+	   << kind << "\n";
 }
 
 int Eventer::socketCallback(
@@ -104,7 +108,8 @@ int Eventer::socketCallback(
 	void *cbp, 
 	void *sockp)
 {
-
+ std::cout << "debug: in socket callback with what " 
+	   << what << "\n";
 }
  
 size_t Eventer::writeCallback(
@@ -113,7 +118,8 @@ size_t Eventer::writeCallback(
 	size_t nmemb, 
 	void *data)
 {
-
+ std::cout << "debug: in write callback with fd " 
+	   << size << " bytes to write\n"; 
 }
  
 int Eventer::progressCallback(
@@ -123,6 +129,7 @@ int Eventer::progressCallback(
 	double ult,
         double uln)
 {
-
+ std::cout << "debug: in progress callback with fd " 
+	   << (dlnow/dltotal*100.0) << "% complete\n"; 
 }
 
