@@ -35,6 +35,7 @@ Eventer::Eventer(
       threadPool.setMaxThreadCount( maxThreads );
 
       multi = curl_multi_init();
+
       curl_multi_setopt(multi, CURLMOPT_SOCKETFUNCTION, socketCallback);
       curl_multi_setopt(multi, CURLMOPT_TIMERFUNCTION, timerCallback);
 
@@ -44,9 +45,7 @@ Eventer::Eventer(
 Eventer::~Eventer() {
   threadPool.waitForDone();	
 
-  if( eventPtr != -1 ) {
-    event_base_free( eventPtr );
-  }
+  event_base_free( eventPtr );
 
   if( multi )
   {
