@@ -1,4 +1,4 @@
 update the flex ruleset, it is largely unwritten
-use libevent to wait on threading events
+use libevent to wait on socket events
 use libcurl to formulate and handle network io requests
 use QT to add GUI support
