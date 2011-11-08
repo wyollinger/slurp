@@ -59,6 +59,10 @@ namespace slurp {
 	 int flags );
      ~Eventer();
 
+     inline CURLM* getMultiHandle() const {
+          return multi;
+     }
+
      static void curlVerify(const char *where, CURLMcode code);
      static void eventCallback(int fd, short kind, void *userp);
      static void timerCallback(int fd, short kind, void *userp);
