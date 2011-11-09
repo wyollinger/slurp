@@ -17,7 +17,7 @@
 
 #include <iostream>
 
-#include "globals.h"
+/* #include "globals.h" */
 #include "retriever.h"
 #include "eventer.h"
 #include "scanner.h"

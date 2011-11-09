@@ -23,7 +23,7 @@
 
 #include <curl/curl.h>
 
-#include "globals.h"
+#include "globals.h" 
 #include "eventer.h"
 #include "scanner.h"
 

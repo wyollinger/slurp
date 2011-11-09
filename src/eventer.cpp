@@ -17,7 +17,7 @@
 
 #include <iostream>
 
-#include "globals.h"
+/* #include "globals.h" */
 #include "retriever.h"
 #include "scanner.h"
 
@@ -138,9 +138,12 @@ void Eventer::eventCallback(int fd, short kind, void *userp)
 void Eventer::timerCallback(int fd, short kind, void* oEventer) 
 {
   CURLMcode mrc;
-  CURLcode rc;
   Eventer* eventer = (Eventer*) oEventer;
   int running;
+
+  /* to remove unused warnings */
+  (void)fd;
+  (void)kind;
 
   mrc = curl_multi_socket_action(
       eventer -> getMultiHandle(),
@@ -166,6 +169,8 @@ int Eventer::multiTimerCallback(
     Eventer* eventer = ((Eventer*) oEventer );
     struct event* timerEvent = eventer -> getTimerEvent();
     struct event_base* eventBase = eventer -> getEventBase();
+
+    (void)multi_handle;
 
     timeout.tv_sec = timeout_ms/1000;
     timeout.tv_usec = (timeout_ms%1000)*1000;
@@ -194,13 +199,14 @@ int Eventer::socketCallback(
 	void *cbp, 
 	void *sockp)
 {
-  Eventer* oEventer = (Eventer*) cbp;
+  Eventer* eventer = (Eventer*) cbp;
   /* SockInfo *fdp = (SockInfo*) sockp; */
   const char *whatLut[] = { "none", "IN", "OUT", "INOUT", "REMOVE" };
 
   std::cout << "debug: socket callback: socket " << s
 	    << "easy handle: " << e 
-	    << "event: " << whatLut[what] << "\n";
+	    << "event: " << whatLut[what] 
+	    << "and eventer @" << eventer;
 
   if (what == CURL_POLL_REMOVE) {
       std::cout << "debug: stub: remove socket\n";
@@ -225,8 +231,13 @@ size_t Eventer::writeCallback(
 	size_t nmemb, 
 	void *data)
 {
- std::cout << "debug: in write callback with fd " 
-	   << size << " bytes to write\n"; 
+ std::cout << "debug: in write callback with ptr @" 
+	   << ptr << " and size "
+	   << size << " and nmemb " 
+	   << nmemb << " and data @"
+           << data << "\n"; 
+
+ return 0;
 }
  
 int Eventer::progressCallback(
@@ -236,8 +247,14 @@ int Eventer::progressCallback(
 	double ult,
         double uln)
 {
- std::cout << "debug: in progress callback with fd " 
-	   << (dlnow/dltotal*100.0) << "% complete\n"; 
+ std::cout << "debug: in progress callback with ptr @" 
+	   << p << " and dltotal " 
+	   << dltotal << " and dlnow " 
+	   << dlnow << " and ult " 
+	   << ult << " and uln" 
+	   << uln << "\n";
+
+ return 0;
 }
 
 void Eventer::scanMultiInfo( Eventer* eventer)

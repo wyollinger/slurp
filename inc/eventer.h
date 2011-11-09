@@ -38,7 +38,7 @@
 
 #include <cstdlib>
 
-#include "globals.h"
+/* #include "globals.h" */
 #include "retriever.h"
 #include "scanner.h"
 
