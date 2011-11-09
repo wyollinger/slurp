@@ -111,6 +111,8 @@ int Eventer::run() {
   ret = event_base_dispatch( eventBasePtr );
   std::cout << "debug: event dispatch returned " << ret << "\n";
 
+  event_free( kbEvent );
+
   return ret;
 }
 
