@@ -29,12 +29,15 @@ Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
   this -> flags = flags;
   owner = eventer;
 
-  conn = curl_easy_init();
-
   errorBuffer[0] = '\0';
 
-  std::cout << "debug: constructed retriever with owner @" 
-	    << owner << "\n";
+  conn = curl_easy_init();
+  if( conn ) {
+    std::cout << "debug: constructed retriever with owner @" 
+	      << owner << "\n";
+  } else {
+    die("error: could not create handle for retriever", EXIT_FAILURE);
+  }
 }
 
 Retriever::~Retriever() {
