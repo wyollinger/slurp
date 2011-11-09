@@ -49,8 +49,7 @@ namespace slurp {
      QThreadPool threadPool;
      QMutex uriQueueMutex;
      CURLM *multi;
-     int quota;
-     int flags;
+     int quota, flags, running;
      struct event_base* eventBasePtr;
      struct event* timerEventPtr;
 
@@ -100,6 +99,10 @@ namespace slurp {
 
      int run();
      void queueURI( const QString& uri );
+     inline int& getRunning() {
+	 std::cout << "debug: getRunning = " << running << "\n";    
+         return running;
+     }
   };
 }
 

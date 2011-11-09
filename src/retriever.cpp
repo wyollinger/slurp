@@ -56,6 +56,8 @@ Retriever::Retriever( const Eventer* eventer, QString uri, int flags ) {
   } else {
       std::cerr << "error: could not initialize retriever curl handle\n";
   }
+
+  std::cout << "debug: constructed retriever and added it's handle to the eventer\n"; 
 }
 
 Retriever::~Retriever() {

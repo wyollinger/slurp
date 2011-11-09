@@ -29,6 +29,8 @@ Eventer::Eventer(
     int quota, 
     int maxThreads,
     int flags ) {
+      running = 0;
+
       pendingURIs = initialURIs;
       this -> quota = quota;
       this -> flags = flags;
@@ -97,9 +99,9 @@ void Eventer::queueURI( const QString& uri ) {
 
 void Eventer::eventCallback(int fd, short kind, void *userp)
 {
-  Eventer *oEventer = (Eventer*) userp;
+  Eventer *eventer = (Eventer*) userp;
   CURLMcode rc;
-  int action, running;
+  int action;
 
   std::cout << "debug: in event callback with fd " 
 	   << fd << " kind " 
@@ -110,18 +112,18 @@ void Eventer::eventCallback(int fd, short kind, void *userp)
     (kind & EV_WRITE ? CURL_CSELECT_OUT : 0);
 
   rc = curl_multi_socket_action(
-      oEventer -> getMultiHandle(), 
+      eventer -> getMultiHandle(), 
       fd, 
       action, 
-      &running);
+      &eventer -> getRunning() );
 
   Eventer::curlVerify("eventCallback: curl_multi_socket_action", rc);
-  Eventer::scanMultiInfo( oEventer );
+  Eventer::scanMultiInfo( eventer );
 
-  if ( running <= 0 ) {
+  if ( eventer -> getRunning() <= 0 ) {
     std::cout << "debug: last transfer complete\n";
-    if (evtimer_pending(oEventer->getTimerEvent(), NULL)) {
-      evtimer_del(oEventer->getTimerEvent());
+    if (evtimer_pending( eventer -> getTimerEvent(), NULL)) {
+      evtimer_del( eventer -> getTimerEvent() );
     }
   }
 }
@@ -130,20 +132,20 @@ void Eventer::timerCallback(int fd, short kind, void* oEventer)
 {
   CURLMcode mrc;
   CURLcode rc;
-  int running;
+  Eventer* eventer = (Eventer*) oEventer;
 
   mrc = curl_multi_socket_action(
-      ((Eventer*) oEventer ) -> getMultiHandle(),
+      eventer -> getMultiHandle(),
       CURL_SOCKET_TIMEOUT, 
       0, 
-      &running);
+      &eventer -> getRunning() );
 
   Eventer::curlVerify("timerCallback: curl_multi_socket_action", mrc);
 
   std::cout << "debug: in timerCallback, called curl_multi_socket_action recvd "
-	    << running << " live sockets\n";
+	    << ( eventer -> getRunning() ) << " live sockets\n";
 
-  scanMultiInfo( (Eventer*) oEventer );
+  scanMultiInfo( eventer );
 }
 
 int Eventer::multiTimerCallback(
