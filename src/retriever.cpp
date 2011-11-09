@@ -32,24 +32,42 @@ Retriever::Retriever( const Eventer* eventer, QString uri, int flags ) {
   errorBuffer[0] = '\0';
 
   if( conn ) {
-      curl_easy_setopt(conn, 
+      curl_easy_setopt(
+          conn, 
           CURLOPT_URL, 
 	  uri.data());
-      curl_easy_setopt(conn, 
+      curl_easy_setopt(
+          conn, 
           CURLOPT_WRITEFUNCTION, 
 	  Eventer::writeCallback);
-      curl_easy_setopt(conn, 
+      curl_easy_setopt(
+          conn,
+          CURLOPT_WRITEDATA,
+	  this);
+      curl_easy_setopt(
+          conn, 
           CURLOPT_VERBOSE, 
 	  flags & FLAGS_VERBOSE );
-      curl_easy_setopt(conn, 
+      curl_easy_setopt(
+          conn, 
           CURLOPT_NOPROGRESS, 
 	  !(flags & FLAGS_VERBOSE ));
-      curl_easy_setopt(conn, 
+      curl_easy_setopt( 
+          conn, 
           CURLOPT_PROGRESSFUNCTION, 
           Eventer::progressCallback);
-      curl_easy_setopt(conn, 
+      curl_easy_setopt( 
+          conn, 
+          CURLOPT_PROGRESSDATA, 
+          this);
+      curl_easy_setopt(
+          conn, 
           CURLOPT_ERRORBUFFER, 
 	  errorBuffer);
+      curl_easy_setopt( 
+          conn, 
+          CURLOPT_PRIVATE, 
+          this);
 
       rc = curl_multi_add_handle(eventer -> getMultiHandle(), conn);
       Eventer::curlVerify("curl_multi_add_handle from Retriever()", rc);
