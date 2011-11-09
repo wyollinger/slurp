@@ -97,9 +97,33 @@ void Eventer::queueURI( const QString& uri ) {
 
 void Eventer::eventCallback(int fd, short kind, void *userp)
 {
- std::cout << "debug: in event callback with fd " 
+  Eventer *oEventer = (Eventer*) userp;
+  CURLMcode rc;
+  int action, running;
+
+  std::cout << "debug: in event callback with fd " 
 	   << fd << " kind " 
 	   << kind << "\n";
+
+  action =
+    (kind & EV_READ ? CURL_CSELECT_IN : 0) |
+    (kind & EV_WRITE ? CURL_CSELECT_OUT : 0);
+
+  rc = curl_multi_socket_action(
+      oEventer -> getMultiHandle(), 
+      fd, 
+      action, 
+      &running);
+
+  Eventer::curlVerify("eventCallback: curl_multi_socket_action", rc);
+  Eventer::scanMultiInfo( oEventer );
+
+  if ( running <= 0 ) {
+    std::cout << "debug: last transfer complete\n";
+    if (evtimer_pending(oEventer->getTimerEvent(), NULL)) {
+      evtimer_del(oEventer->getTimerEvent());
+    }
+  }
 }
  
 void Eventer::timerCallback(int fd, short kind, void* oEventer) 
@@ -172,9 +196,6 @@ int Eventer::socketCallback(
   }
 
   return 0;
-
-
-
 }
  
 size_t Eventer::writeCallback(
