@@ -54,6 +54,7 @@ namespace slurp {
      struct event_base* eventBasePtr;
      struct event* timerEventPtr;
 
+    
      public:
 
      Eventer( 
@@ -95,6 +96,8 @@ namespace slurp {
 	double dlnow, 
 	double ult,
         double uln);
+     static void scanMultiInfo( Eventer* eventer );
+
      int run();
      void queueURI( const QString& uri );
   };

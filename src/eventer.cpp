@@ -23,6 +23,7 @@
 
 using namespace slurp;
 
+
 Eventer::Eventer( 
     const QQueue<QString>& initialURIs, 
     int quota, 
@@ -46,7 +47,6 @@ Eventer::Eventer(
 }
 
 Eventer::~Eventer() {
-
   threadPool.waitForDone();
   event_free( timerEventPtr );
   event_base_free( eventBasePtr );
@@ -106,17 +106,10 @@ void Eventer::timerCallback(int fd, short kind, void* oEventer)
 {
   CURLMcode mrc;
   CURLcode rc;
-  CURLM* multi;
-  CURLMsg *msgPtr;
-  CURL *easy;
-  Retriever* cRetriever;
-  char *effectiveUri;
-  int running, msgsRemaining;
-
-  multi = ((Eventer*) oEventer ) -> getMultiHandle();
+  int running;
 
   mrc = curl_multi_socket_action(
-      multi,
+      ((Eventer*) oEventer ) -> getMultiHandle(),
       CURL_SOCKET_TIMEOUT, 
       0, 
       &running);
@@ -126,22 +119,7 @@ void Eventer::timerCallback(int fd, short kind, void* oEventer)
   std::cout << "debug: in timerCallback, called curl_multi_socket_action recvd "
 	    << running << " live sockets\n";
 
-  while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
-    if (msgPtr->msg == CURLMSG_DONE) {
-      easy = msgPtr->easy_handle;
-      rc = msgPtr -> data.result;
-      curl_easy_getinfo(easy, CURLINFO_PRIVATE, &cRetriever);
-      curl_easy_getinfo(easy, CURLINFO_EFFECTIVE_URL, &effectiveUri);
-
-      std::cout << "debug: " << effectiveUri 
-	        << " complete, rc = " << rc 
-		<< " error buffer: " << cRetriever->getErrorBuffer() 
-		<< "\n";
-
-      curl_multi_remove_handle(multi, easy);
-      delete cRetriever;
-    }
-  }
+  scanMultiInfo( (Eventer*) oEventer );
 }
 
 int Eventer::multiTimerCallback(
@@ -171,8 +149,32 @@ int Eventer::socketCallback(
 	void *cbp, 
 	void *sockp)
 {
- std::cout << "debug: in socket callback with what " 
-	   << what << "\n";
+  Eventer* oEventer = (Eventer*) cbp;
+  /* SockInfo *fdp = (SockInfo*) sockp; */
+  const char *whatLut[] = { "none", "IN", "OUT", "INOUT", "REMOVE" };
+
+  std::cout << "debug: socket callback: socket " << s
+	    << "easy handle: " << e 
+	    << "event: " << whatLut[what] << "\n";
+
+  if (what == CURL_POLL_REMOVE) {
+      std::cout << "debug: stub: remove socket\n";
+       /* remsock(fdp); */
+  } else {
+    if (!sockp) {
+      std::cout << "debug: stub: add socket\n";
+      /* addsock(s, e, what, g); */
+    }
+    else {
+      std::cout << "debug: stub: changing actions\n";	    
+      /* setsock(fdp, s, e, what, g); */
+    }
+  }
+
+  return 0;
+
+
+
 }
  
 size_t Eventer::writeCallback(
@@ -194,5 +196,35 @@ int Eventer::progressCallback(
 {
  std::cout << "debug: in progress callback with fd " 
 	   << (dlnow/dltotal*100.0) << "% complete\n"; 
+}
+
+void Eventer::scanMultiInfo( Eventer* eventer)
+{
+  CURLMsg *msgPtr;
+  CURL *easy;
+  CURLM *multi;
+  CURLcode rc;
+  Retriever* cRetriever;
+  char *effectiveUri;
+  int msgsRemaining;
+
+  multi = eventer -> getMultiHandle();
+
+  while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
+    if (msgPtr->msg == CURLMSG_DONE) {
+      easy = msgPtr->easy_handle;
+      rc = msgPtr -> data.result;
+      curl_easy_getinfo(easy, CURLINFO_PRIVATE, &cRetriever);
+      curl_easy_getinfo(easy, CURLINFO_EFFECTIVE_URL, &effectiveUri);
+
+      std::cout << "debug: " << effectiveUri 
+	        << " complete, rc = " << rc 
+		<< " error buffer: " << cRetriever->getErrorBuffer() 
+		<< "\n";
+
+      curl_multi_remove_handle(multi, easy);
+      delete cRetriever;
+    }
+  }
 }
 
