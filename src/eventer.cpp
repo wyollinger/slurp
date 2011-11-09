@@ -90,13 +90,15 @@ int Eventer::run() {
       threadPool.start( new Retriever( this, pendingURIs.dequeue(), flags ) );
   }
 
-  /* start the event loop */
+  /* 
+   * need to add some kind of event here so that the event loop
+   * can begin.
+   *
+   */
 
-     std::cout << "debug: calling event_base_dispatch\n";
-
-     ret = event_base_dispatch( eventBasePtr );
-
-     std::cout << "debug: event dispatch returned " << ret << "\n";
+  std::cout << "debug: calling event_base_dispatch\n";
+  ret = event_base_dispatch( eventBasePtr );
+  std::cout << "debug: event dispatch returned " << ret << "\n";
 
   return ret;
 }
