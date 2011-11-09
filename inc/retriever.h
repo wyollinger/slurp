@@ -23,6 +23,8 @@
 
 #include <curl/curl.h>
 
+#include <cassert>
+
 #include "globals.h" 
 #include "eventer.h"
 #include "scanner.h"

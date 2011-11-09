@@ -37,6 +37,7 @@
 #include <curl/curl.h>
 
 #include <cstdlib>
+#include <cassert>
 
 /* #include "globals.h" */
 #include "retriever.h"
