@@ -32,10 +32,12 @@ namespace slurp {
      QString uri;
      CURL* conn;
      char errorBuffer[CURL_ERROR_SIZE];
+     int flags;
+     Eventer* owner;
 
      public:
 
-     Retriever( const Eventer* eventer, QString uri, int flags );
+     Retriever( Eventer* eventer, QString uri, int flags );
      ~Retriever();
      void run();
      bool isValid() const;

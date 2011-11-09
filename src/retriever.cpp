@@ -24,14 +24,29 @@
 
 using namespace slurp;
 
-Retriever::Retriever( const Eventer* eventer, QString uri, int flags ) {
-  CURLMcode rc;
+Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
   this -> uri = uri;
+  this -> flags = flags;
+  owner = eventer;
+
   conn = curl_easy_init();
 
   errorBuffer[0] = '\0';
 
+  std::cout << "debug: constructed retriever with owner @" 
+	    << owner << "\n";
+}
+
+Retriever::~Retriever() {
   if( conn ) {
+     curl_easy_cleanup( conn );
+  }
+}
+
+void Retriever::run() {
+    CURLMcode rc;
+
+    if( conn ) {
       curl_easy_setopt(
           conn, 
           CURLOPT_URL, 
@@ -69,23 +84,15 @@ Retriever::Retriever( const Eventer* eventer, QString uri, int flags ) {
           CURLOPT_PRIVATE, 
           this);
 
-      rc = curl_multi_add_handle(eventer -> getMultiHandle(), conn);
+      rc = curl_multi_add_handle(owner -> getMultiHandle(), conn);
       Eventer::curlVerify("curl_multi_add_handle from Retriever()", rc);
+
+      std::cout << "debug: added retriever to multi handle owned by eventer @"
+	        << owner << "\n";
   } else {
       std::cerr << "error: could not initialize retriever curl handle\n";
   }
 
-  std::cout << "debug: constructed retriever and added it's handle to the eventer with multi @" << eventer -> getMultiHandle() << "\n"; 
-}
-
-Retriever::~Retriever() {
-  if( conn ) {
-     curl_easy_cleanup( conn );
-  }
-}
-
-void Retriever::run() {
-  /* perform the request */
 }
 
 bool Retriever::isValid() const {

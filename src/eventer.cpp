@@ -91,9 +91,12 @@ int Eventer::run() {
   }
 
   /* start the event loop */
-  ret = event_base_loop( eventBasePtr, 0 );
 
-  std::cout << "debug: event loop returned " << ret << "\n";
+     std::cout << "debug: calling event_base_dispatch\n";
+
+     ret = event_base_dispatch( eventBasePtr );
+
+     std::cout << "debug: event dispatch returned " << ret << "\n";
 
   return ret;
 }
