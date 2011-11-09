@@ -47,8 +47,10 @@ Eventer::Eventer(
       curl_multi_setopt(multi, CURLMOPT_TIMERFUNCTION, multiTimerCallback);
       curl_multi_setopt(multi, CURLMOPT_TIMERDATA, this);
 
-      std::cout << "debug: constructed eventer instance with mutli @" 
-	        << multi << "\n";
+      std::cout << "debug: constructed eventer instance with multi @" 
+	        << multi << " and timerEvent @"
+		<< timerEventPtr << " and eventBase @"
+		<< eventBasePtr << "\n";
 }
 
 Eventer::~Eventer() {
@@ -91,9 +93,7 @@ int Eventer::run() {
   /* start the event loop */
   ret = event_base_loop( eventBasePtr, 0 );
 
-  if( ret != 1 ) {
-    std::cout << "debug: event loop returned " << ret << "\n";
-  }
+  std::cout << "debug: event loop returned " << ret << "\n";
 
   return ret;
 }
@@ -122,9 +122,9 @@ void Eventer::eventCallback(int fd, short kind, void *userp)
       action, 
       &running );
 
+  Eventer::curlVerify("eventCallback: curl_multi_socket_action", rc);
   eventer -> setRunning( running );
 
-  Eventer::curlVerify("eventCallback: curl_multi_socket_action", rc);
   Eventer::scanMultiInfo( eventer );
 
   if ( eventer -> getRunning() <= 0 ) {
@@ -163,15 +163,25 @@ int Eventer::multiTimerCallback(
 	void *oEventer)
 {
     struct timeval timeout;
+    Eventer* eventer = ((Eventer*) oEventer );
+    struct event* timerEvent = eventer -> getTimerEvent();
+    struct event_base* eventBase = eventer -> getEventBase();
 
     timeout.tv_sec = timeout_ms/1000;
     timeout.tv_usec = (timeout_ms%1000)*1000;
 
     std::cout << "debug: in multi timer callback setting timeout to "
-	      << timeout_ms << "ms\n";
+	      << timeout_ms << "ms with timerEvent @" 
+	      << timerEvent << " and eventBase @"
+	      << eventBase << "\n";
 
-    if( evtimer_add( ((Eventer*)oEventer) -> getTimerEvent(), &timeout) ) {
-        std::cerr << "evtimer_add(..) failed!\n";
+    if( evtimer_add( timerEvent, &timeout) == -1 ) {
+        std::cerr << "error: evtimer_add(..) failed!\n";
+    } else {
+	if( event_base_set( eventBase, timerEvent ) == -1 ) {
+           std::cerr << "error: could not set event base to data @" 
+		     << eventBase << "\n";
+	}
     }
 
     return 0;
