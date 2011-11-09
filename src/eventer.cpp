@@ -33,18 +33,23 @@ Eventer::Eventer(
       this -> flags = flags;
 
       threadPool.setMaxThreadCount( maxThreads );
+      eventBasePtr = event_base_new();
 
       multi = curl_multi_init();
 
-      curl_multi_setopt(multi, CURLMOPT_SOCKETFUNCTION, socketCallback);
-      curl_multi_setopt(multi, CURLMOPT_TIMERFUNCTION, timerCallback);
+      timerEventPtr = event_new( eventBasePtr, -1, 0, timerCallback, this );
 
-      eventPtr = event_base_new();
+      curl_multi_setopt(multi, CURLMOPT_SOCKETFUNCTION, socketCallback);
+      curl_multi_setopt(multi, CURLMOPT_SOCKETDATA, this);
+      curl_multi_setopt(multi, CURLMOPT_TIMERFUNCTION, multiTimerCallback);
+      curl_multi_setopt(multi, CURLMOPT_TIMERDATA, this);
 }
 
 Eventer::~Eventer() {
+
   threadPool.waitForDone();
-  event_base_free( eventPtr );
+  event_free( timerEventPtr );
+  event_base_free( eventBasePtr );
   curl_multi_cleanup(multi);
 }
 
@@ -79,7 +84,7 @@ int Eventer::run() {
   }
 
   /* start the event loop */
-  ret = event_base_loop( eventPtr, 0 );
+  ret = event_base_loop( eventBasePtr, 0 );
 
   std::cout << "debug: event loop returned " << ret << "\n";
 
@@ -102,6 +107,26 @@ void Eventer::timerCallback(int fd, short kind, void *userp)
  std::cout << "debug: in timer callback with fd " 
 	   << fd << " kind " 
 	   << kind << "\n";
+}
+
+int Eventer::multiTimerCallback(
+        CURLM * multi_handle, 
+	long timeout_ms,
+	Eventer *oEventer)
+{
+    struct timeval timeout;
+
+    timeout.tv_sec = timeout_ms/1000;
+    timeout.tv_usec = (timeout_ms%1000)*1000;
+
+    std::cout << "debug: in multi timer callback setting timeout to "
+	      << timeout_ms << "ms\n";
+
+    if( evtimer_add( oEventer->getTimerEvent(), &timeout) ) {
+        std::cerr << "evtimer_add(..) failed!\n";
+    }
+
+    return 0;
 }
 
 int Eventer::socketCallback(

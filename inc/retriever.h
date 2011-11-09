@@ -31,6 +31,7 @@ namespace slurp {
   class Retriever : public QRunnable {
      QString uri;
      CURL* conn;
+     char errorBuffer[CURL_ERROR_SIZE];
 
      public:
 

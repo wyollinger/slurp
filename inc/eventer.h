@@ -31,6 +31,8 @@
 #include <event2/thread.h>
 #include <event2/buffer.h>
 #include <event2/util.h>
+#include <event2/event-config.h>
+#include <event2/event_struct.h>
 
 #include <curl/curl.h>
 
@@ -49,7 +51,8 @@ namespace slurp {
      CURLM *multi;
      int quota;
      int flags;
-     struct event_base* eventPtr;
+     struct event_base* eventBasePtr;
+     struct event* timerEventPtr;
 
      public:
 
@@ -64,9 +67,17 @@ namespace slurp {
           return multi;
      }
 
+     inline struct event* getTimerEvent() const {
+          return timerEventPtr;
+     }
+
      static void curlVerify(const char *where, CURLMcode code);
      static void eventCallback(int fd, short kind, void *userp);
      static void timerCallback(int fd, short kind, void *userp);
+     static int multiTimerCallback(
+        CURLM * multi_handle, 
+	long timeout_ms, 
+	Eventer* oEventer);
      static int socketCallback(
         CURL *e, 
 	curl_socket_t s, 
