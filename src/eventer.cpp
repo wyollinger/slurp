@@ -46,6 +46,9 @@ Eventer::Eventer(
       curl_multi_setopt(multi, CURLMOPT_SOCKETDATA, this);
       curl_multi_setopt(multi, CURLMOPT_TIMERFUNCTION, multiTimerCallback);
       curl_multi_setopt(multi, CURLMOPT_TIMERDATA, this);
+
+      std::cout << "debug: constructed eventer instance with mutli @" 
+	        << multi << "\n";
 }
 
 Eventer::~Eventer() {
@@ -88,7 +91,9 @@ int Eventer::run() {
   /* start the event loop */
   ret = event_base_loop( eventBasePtr, 0 );
 
-  std::cout << "debug: event loop returned " << ret << "\n";
+  if( ret != 1 ) {
+    std::cout << "debug: event loop returned " << ret << "\n";
+  }
 
   return ret;
 }
@@ -101,7 +106,7 @@ void Eventer::eventCallback(int fd, short kind, void *userp)
 {
   Eventer *eventer = (Eventer*) userp;
   CURLMcode rc;
-  int action;
+  int action, running;
 
   std::cout << "debug: in event callback with fd " 
 	   << fd << " kind " 
@@ -115,7 +120,9 @@ void Eventer::eventCallback(int fd, short kind, void *userp)
       eventer -> getMultiHandle(), 
       fd, 
       action, 
-      &eventer -> getRunning() );
+      &running );
+
+  eventer -> setRunning( running );
 
   Eventer::curlVerify("eventCallback: curl_multi_socket_action", rc);
   Eventer::scanMultiInfo( eventer );
@@ -133,14 +140,16 @@ void Eventer::timerCallback(int fd, short kind, void* oEventer)
   CURLMcode mrc;
   CURLcode rc;
   Eventer* eventer = (Eventer*) oEventer;
+  int running;
 
   mrc = curl_multi_socket_action(
       eventer -> getMultiHandle(),
       CURL_SOCKET_TIMEOUT, 
       0, 
-      &eventer -> getRunning() );
+      &running );
 
   Eventer::curlVerify("timerCallback: curl_multi_socket_action", mrc);
+  eventer -> setRunning( running );
 
   std::cout << "debug: in timerCallback, called curl_multi_socket_action recvd "
 	    << ( eventer -> getRunning() ) << " live sockets\n";
@@ -232,6 +241,8 @@ void Eventer::scanMultiInfo( Eventer* eventer)
   int msgsRemaining;
 
   multi = eventer -> getMultiHandle();
+
+  std::cout << "debug: remaining " << eventer -> getRunning() << "\n";
 
   while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
     if (msgPtr->msg == CURLMSG_DONE) {

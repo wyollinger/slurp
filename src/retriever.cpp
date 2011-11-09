@@ -75,7 +75,7 @@ Retriever::Retriever( const Eventer* eventer, QString uri, int flags ) {
       std::cerr << "error: could not initialize retriever curl handle\n";
   }
 
-  std::cout << "debug: constructed retriever and added it's handle to the eventer\n"; 
+  std::cout << "debug: constructed retriever and added it's handle to the eventer with multi @" << eventer -> getMultiHandle() << "\n"; 
 }
 
 Retriever::~Retriever() {

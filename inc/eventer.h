@@ -53,7 +53,6 @@ namespace slurp {
      struct event_base* eventBasePtr;
      struct event* timerEventPtr;
 
-    
      public:
 
      Eventer( 
@@ -99,9 +98,11 @@ namespace slurp {
 
      int run();
      void queueURI( const QString& uri );
-     inline int& getRunning() {
-	 std::cout << "debug: getRunning = " << running << "\n";    
+     int getRunning() const {
          return running;
+     }
+     void setRunning(int running) {
+         this -> running = running; 
      }
   };
 }
