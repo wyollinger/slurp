@@ -73,11 +73,11 @@ namespace slurp {
 
      static void curlVerify(const char *where, CURLMcode code);
      static void eventCallback(int fd, short kind, void *userp);
-     static void timerCallback(int fd, short kind, void *userp);
+     static void timerCallback(int fd, short kind, void* oEventer);
      static int multiTimerCallback(
         CURLM * multi_handle, 
 	long timeout_ms, 
-	Eventer* oEventer);
+	void* oEventer);
      static int socketCallback(
         CURL *e, 
 	curl_socket_t s, 

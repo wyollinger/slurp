@@ -102,17 +102,52 @@ void Eventer::eventCallback(int fd, short kind, void *userp)
 	   << kind << "\n";
 }
  
-void Eventer::timerCallback(int fd, short kind, void *userp) 
+void Eventer::timerCallback(int fd, short kind, void* oEventer) 
 {
- std::cout << "debug: in timer callback with fd " 
-	   << fd << " kind " 
-	   << kind << "\n";
+  CURLMcode mrc;
+  CURLcode rc;
+  CURLM* multi;
+  CURLMsg *msgPtr;
+  CURL *easy;
+  Retriever* cRetriever;
+  char *effectiveUri;
+  int running, msgsRemaining;
+
+  multi = ((Eventer*) oEventer ) -> getMultiHandle();
+
+  mrc = curl_multi_socket_action(
+      multi,
+      CURL_SOCKET_TIMEOUT, 
+      0, 
+      &running);
+
+  Eventer::curlVerify("timerCallback: curl_multi_socket_action", mrc);
+
+  std::cout << "debug: in timerCallback, called curl_multi_socket_action recvd "
+	    << running << " live sockets\n";
+
+  while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
+    if (msgPtr->msg == CURLMSG_DONE) {
+      easy = msgPtr->easy_handle;
+      rc = msgPtr -> data.result;
+      curl_easy_getinfo(easy, CURLINFO_PRIVATE, &cRetriever);
+      curl_easy_getinfo(easy, CURLINFO_EFFECTIVE_URL, &effectiveUri);
+
+      std::cout << "debug: " << effectiveUri 
+	        << " complete, rc = " << rc 
+		<< " error buffer: " << cRetriever->getErrorBuffer() 
+		<< "\n";
+
+      curl_multi_remove_handle(multi, easy);
+      delete cRetriever;
+    }
+  }
 }
 
 int Eventer::multiTimerCallback(
         CURLM * multi_handle, 
 	long timeout_ms,
-	Eventer *oEventer)
+	void *oEventer)
 {
     struct timeval timeout;
 
@@ -122,7 +157,7 @@ int Eventer::multiTimerCallback(
     std::cout << "debug: in multi timer callback setting timeout to "
 	      << timeout_ms << "ms\n";
 
-    if( evtimer_add( oEventer->getTimerEvent(), &timeout) ) {
+    if( evtimer_add( ((Eventer*)oEventer) -> getTimerEvent(), &timeout) ) {
         std::cerr << "evtimer_add(..) failed!\n";
     }
 

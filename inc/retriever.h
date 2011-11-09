@@ -39,6 +39,10 @@ namespace slurp {
      ~Retriever();
      void run();
      bool isValid() const;
+
+     inline const char* getErrorBuffer() const {
+        return errorBuffer;
+     }
   };
 }
 #endif 
