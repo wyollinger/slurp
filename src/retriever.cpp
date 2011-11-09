@@ -48,8 +48,8 @@ Retriever::~Retriever() {
 
 void Retriever::run() {
     CURLMcode rc;
-
-    if( conn ) {
+    
+    if( conn ) {  
       curl_easy_setopt(
           conn, 
           CURLOPT_URL, 
@@ -90,7 +90,8 @@ void Retriever::run() {
       rc = curl_multi_add_handle(owner -> getMultiHandle(), conn);
       Eventer::curlVerify("curl_multi_add_handle from Retriever()", rc);
 
-      std::cout << "debug: added retriever to multi handle owned by eventer @"
+      std::cout << "debug: added retriever with easy @"
+	        << conn << " to multi handle owned by eventer @"
 	        << owner << "\n";
   } else {
       std::cerr << "error: could not initialize retriever curl handle\n";

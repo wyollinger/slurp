@@ -50,7 +50,8 @@ Eventer::Eventer(
       std::cout << "debug: constructed eventer instance with multi @" 
 	        << multi << " and timerEvent @"
 		<< timerEventPtr << " and eventBase @"
-		<< eventBasePtr << "\n";
+		<< eventBasePtr << " with location @"
+		<< this << "\n";
 }
 
 Eventer::~Eventer() {
