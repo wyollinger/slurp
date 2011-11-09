@@ -84,6 +84,7 @@ void Eventer::curlVerify(const char *where, CURLMcode code)
 
 int Eventer::run() {
   int ret;
+  struct event* kbEvent;
 
   /* create or schedule thread creation for every pending inital request. */
   while (!pendingURIs.isEmpty()) {
@@ -95,6 +96,16 @@ int Eventer::run() {
    * can begin.
    *
    */
+
+  kbEvent = event_new(
+     eventBasePtr, 
+     0, 
+     EV_READ | EV_PERSIST, 
+     Eventer::keyboardCallback, this);
+
+  if( event_add(kbEvent, NULL) == -1 ) {
+    std::cerr << "error: could not add keyboard event\n";
+  } 
 
   std::cout << "debug: calling event_base_dispatch\n";
   ret = event_base_dispatch( eventBasePtr );
@@ -187,11 +198,6 @@ int Eventer::multiTimerCallback(
 
     if( evtimer_add( timerEvent, &timeout) == -1 ) {
         std::cerr << "error: evtimer_add(..) failed!\n";
-    } else {
-	if( event_base_set( eventBase, timerEvent ) == -1 ) {
-           std::cerr << "error: could not set event base to data @" 
-		     << eventBase << "\n";
-	}
     }
 
     return 0;
@@ -261,6 +267,20 @@ int Eventer::progressCallback(
 
  return 0;
 }
+
+void Eventer::keyboardCallback(
+        evutil_socket_t s,
+	short type, 
+	void *data)
+{
+  std::cout << "debug: in keyboard callback with socket s "
+	    << s << " type "
+	    << type << " and data @"
+	    << data << "\n";
+
+  while( std::cin.get() != '\n' );
+}
+
 
 void Eventer::scanMultiInfo( Eventer* eventer)
 {

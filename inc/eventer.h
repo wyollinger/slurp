@@ -99,6 +99,11 @@ namespace slurp {
 	double dlnow, 
 	double ult,
         double uln);
+     static void keyboardCallback(
+        evutil_socket_t s,
+	short type, 
+	void *data);
+
      static void scanMultiInfo( Eventer* eventer );
 
      int run();
