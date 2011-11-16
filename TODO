@@ -1,3 +1,3 @@
 update the flex ruleset, it is largely unwritten
 use QT to add GUI support
-add an event which fires whenever a new URI is queued and add it before calling event_base_dispatch
+fix the windoze builds ( maybe using cygwin? )
