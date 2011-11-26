@@ -19,7 +19,7 @@
 #define GLOBALS_H
 
 const static char* USAGE_MESSAGE = "slurp [options] urls ...";
-const static int VERSION_ID[3] = {0,0,3};
+const static int VERSION_ID[3] = {0,0,4};
 const static int FLAGS_VALID    = 1;
 const static int FLAGS_VERBOSE  = 2;
 const static int FLAGS_HEADLESS = 4;

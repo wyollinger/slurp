@@ -162,7 +162,7 @@ static int validateArgs( int argc, char** argv, char** env,
 	 }
       } else {
          seedURIs.enqueue( argv[i] );
-       }
+      }
     }
 
     for( i = 0; env[i]; i++ ) {
