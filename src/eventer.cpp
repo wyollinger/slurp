@@ -42,10 +42,14 @@ Eventer::Eventer(
 
       timerEventPtr = event_new( eventBasePtr, -1, 0, timerCallback, this );
 
-      curl_multi_setopt(multi, CURLMOPT_SOCKETFUNCTION, socketCallback);
-      curl_multi_setopt(multi, CURLMOPT_SOCKETDATA, this);
-      curl_multi_setopt(multi, CURLMOPT_TIMERFUNCTION, multiTimerCallback);
-      curl_multi_setopt(multi, CURLMOPT_TIMERDATA, this);
+      curlVerify( "error: multi_setopt: socket callback", 
+          curl_multi_setopt(multi, CURLMOPT_SOCKETFUNCTION, socketCallback));
+      curlVerify( "error: multi_setopt: socket data",
+	  curl_multi_setopt(multi, CURLMOPT_SOCKETDATA, this));
+      curlVerify( "error: multi_setopt: timer callback", 
+	  curl_multi_setopt(multi, CURLMOPT_TIMERFUNCTION, multiTimerCallback));
+      curlVerify( "error: multi_setopt: timer data",
+          curl_multi_setopt(multi, CURLMOPT_TIMERDATA, this));
 
       std::cout << "debug: constructed eventer instance with multi @" 
 	        << multi << " and timerEvent @"
@@ -89,14 +93,8 @@ int Eventer::run() {
 
   /* create or schedule thread creation for every pending inital request. */
   while (!pendingURIs.isEmpty()) {
-      threadPool.start( new Retriever( this, pendingURIs.dequeue(), flags ) );
+      queueURI( pendingURIs.dequeue() ); 
   }
-
-  /* 
-   * need to add some kind of event here so that the event loop
-   * can begin.
-   *
-   */
 
   kbEvent = event_new(
      eventBasePtr, 
@@ -118,7 +116,7 @@ int Eventer::run() {
 }
 
 void Eventer::queueURI( const QString& uri ) {
-  pendingURIs.enqueue( uri );
+  threadPool.start( new Retriever( this, uri, flags ) );
 }
 
 void Eventer::eventCallback(int fd, short kind, void *userp)
@@ -151,6 +149,8 @@ void Eventer::eventCallback(int fd, short kind, void *userp)
     if (evtimer_pending( eventer -> getTimerEvent(), NULL)) {
       evtimer_del( eventer -> getTimerEvent() );
     }
+  } else {
+    std::cout << "debug: " << eventer -> getRunning() << " live connections\n";
   }
 }
  
@@ -163,6 +163,8 @@ void Eventer::timerCallback(int fd, short kind, void* oEventer)
   /* to remove unused warnings */
   (void)fd;
   (void)kind;
+
+  std::cout << "debug: calling curl_multi_socket_action on fd " << fd << "\n";
 
   mrc = curl_multi_socket_action(
       eventer -> getMultiHandle(),
@@ -276,12 +278,28 @@ void Eventer::keyboardCallback(
 	short type, 
 	void *data)
 {
+  Eventer* eventer = (Eventer*) data;
+  QString userInput = "";
+  char cchar;
   std::cout << "debug: in keyboard callback with socket s "
 	    << s << " type "
 	    << type << " and data @"
 	    << data << "\n";
 
-  while( std::cin.get() != '\n' );
+  do {
+    cchar = std::cin.get();
+
+    if( cchar != '\n' ) {
+        userInput += cchar;
+    } 
+  } while( cchar != '\n' );
+
+  std::cout << "debug: in kbcallback with " << userInput.toAscii().data() << "\n";
+
+  if( userInput.size() > 0 ) {
+     eventer -> queueURI( userInput );
+  }
+
 }
 
 
@@ -300,7 +318,7 @@ void Eventer::scanMultiInfo( Eventer* eventer)
   std::cout << "debug: remaining " << eventer -> getRunning() << "\n";
 
   while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
-    if (msgPtr->msg == CURLMSG_DONE) {
+   // if (msgPtr->msg == CURLMSG_DONE) {
       easy = msgPtr->easy_handle;
       rc = msgPtr -> data.result;
       curl_easy_getinfo(easy, CURLINFO_PRIVATE, &cRetriever);
@@ -313,7 +331,7 @@ void Eventer::scanMultiInfo( Eventer* eventer)
 
       curl_multi_remove_handle(multi, easy);
       delete cRetriever;
-    }
+    //}
   }
 }
 

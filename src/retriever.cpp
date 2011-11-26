@@ -30,17 +30,13 @@ Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
   owner = eventer;
 
   errorBuffer[0] = '\0';
-
-  conn = curl_easy_init();
-  if( conn ) {
-    std::cout << "debug: constructed retriever with owner @" 
+  setAutoDelete(false);
+  std::cout << "debug: constructed retriever with owner @" 
 	      << owner << "\n";
-  } else {
-    die("error: could not create handle for retriever", EXIT_FAILURE);
-  }
 }
 
 Retriever::~Retriever() {
+  std::cout << "debug: deleting retriever instance\n";
   if( conn ) {
      curl_easy_cleanup( conn );
   }
@@ -48,12 +44,13 @@ Retriever::~Retriever() {
 
 void Retriever::run() {
     CURLMcode rc;
-    
+    conn = curl_easy_init();
+
     if( conn ) {  
       curl_easy_setopt(
           conn, 
           CURLOPT_URL, 
-	  uri.data());
+	  uri.toAscii().data());
       curl_easy_setopt(
           conn, 
           CURLOPT_WRITEFUNCTION, 
@@ -65,11 +62,11 @@ void Retriever::run() {
       curl_easy_setopt(
           conn, 
           CURLOPT_VERBOSE, 
-	  flags & FLAGS_VERBOSE );
+	  1L ); /* for debug */
       curl_easy_setopt(
           conn, 
           CURLOPT_NOPROGRESS, 
-	  !(flags & FLAGS_VERBOSE ));
+	  0L); /* for debug */
       curl_easy_setopt( 
           conn, 
           CURLOPT_PROGRESSFUNCTION, 
@@ -92,7 +89,8 @@ void Retriever::run() {
 
       std::cout << "debug: added retriever with easy @"
 	        << conn << " to multi handle owned by eventer @"
-	        << owner << "\n";
+	        << owner << " with multi @" << owner->getMultiHandle() 
+		<< "and target of: " << uri.toAscii().data() << "\n";
   } else {
       std::cerr << "error: could not initialize retriever curl handle\n";
   }
