@@ -15,6 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * note: the example hiperfifo.c by Jeff Pohlmeyer was referenced extensively
+ * while implementing this class.
+ */
+
 #include <iostream>
 
 /* #include "globals.h" */
