@@ -1,3 +1,4 @@
 update the flex ruleset, it is largely unwritten
+implement socket callbacks
 use QT to add GUI support
 fix the windoze builds ( maybe using cygwin? )
