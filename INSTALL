@@ -1,12 +1,9 @@
-Before attempting to compile make sure you have libevent, libcurl, and qt configured.
-Additionally, you will need a version of flex installed which supports generation of reentrant scanners.
-Not only do the libraries need to be installed, but their development headers.
-Pkg-config needs to know about libevent and libcurl, and qt needs to be in a searchable path.
-
-You will likely need to go to libevent.org and curl.haxx.se and compile/install those packages
-if you haven't done that recently. Make sure to delete or otherwise make inaccessible any 
-development libraries from these packages that may already exist on your system prior to compiling 
-them, as they may cause all kinds of trouble at various stages of the process.
+Dependencies:
+ libevent
+ libcurl 
+ pkg-config 
+ qt
+ flex
 
 Once the dependencies are satisfied, you should be able to simply type:
 
@@ -14,4 +11,7 @@ $ qmake
 $ make
 
 Linux is directly supported. 
-This code *SHOULD* compile on any current versions of Windows, Mac OS, and probably a few others.
+
+This code *SHOULD* compile on any current versions of Windows, Mac OS, 
+and probably a few others, but it'll probably take some hacking.
+
