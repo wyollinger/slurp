@@ -212,13 +212,19 @@ size_t slurp::writeCallback(
 	size_t nmemb, 
 	void *data)
 {
- qDebug() << "debug: in write callback with ptr @" 
+
+  size_t realsize = size * nmemb;
+
+  qDebug() << "debug: in write callback with ptr @" 
 	   << ptr << " and size "
 	   << size << " and nmemb " 
 	   << nmemb << " and data @"
            << data << "\n"; 
 
- return 0;
+
+  (void)ptr;
+  (void)data;
+  return realsize;
 }
  
 int slurp::progressCallback(
