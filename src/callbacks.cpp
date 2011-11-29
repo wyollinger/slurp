@@ -131,17 +131,19 @@ void slurp::addSocket(
     int action, 
     Eventer* eventer)
 {
+    Retriever* retriever = NULL;
+    curl_easy_getinfo( easy, CURLINFO_PRIVATE, &retriever );
+
     qDebug() << "debug: in addSocket with socket " << s 
              << " easy handle@" << easy
              << " action " << action
-             << " eventer@ " << eventer << "\n";
-
-    /* todo: find handle to the relevant retriever, store it in 'retriever' */
-    /* todo: port the following
-              
-  
-      curl_multi_assign( eventer->getMultiHandle(), s, retriever);
-    */
+             << " eventer@ " << eventer 
+             << " retriever@ " << retriever
+             <<"\n";
+   
+    curl_multi_assign( eventer->getMultiHandle(), s, retriever);
+     
+    setSocket( retriever, s, easy, action, eventer );
 
     /* note: this will cause the retriever pointer to be valid in
        future calls to socketCallback */
@@ -191,8 +193,8 @@ int slurp::socketCallback(
             << "retriever @" << retriever << "\n";
 
   if (what == CURL_POLL_REMOVE) {
-      qDebug() << "debug: deleting retriever now that transfer is complete\n";
-      delete (Retriever*) retriever;
+      qDebug() << "debug: remove stub \n";
+      /* delete (Retriever*) retriever; */
   } else {
     if (!retriever) {
       addSocket(s, e, what, (Eventer*) eventer); 

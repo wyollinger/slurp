@@ -34,8 +34,7 @@ namespace slurp {
      CURL* conn;
      char errorBuffer[CURL_ERROR_SIZE];
      int flags;
-     event ev;
-     bool evset;
+     event* socketEvent;
      Eventer* owner;
      curl_socket_t sockfd;
      int action;   
@@ -50,10 +49,6 @@ namespace slurp {
 
      inline const char* getErrorBuffer() const {
         return errorBuffer;
-     }
-
-     inline const bool isEventSet() const {
-        return evset;
      }
   };
 }

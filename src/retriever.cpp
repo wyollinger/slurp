@@ -29,10 +29,11 @@ using namespace slurp;
 Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
   this -> uri = uri;
   this -> flags = flags;
+ 
   owner = eventer;
-
+  socketEvent = NULL;
   errorBuffer[0] = '\0';
-  evset = false;
+
   setAutoDelete(false);
 
   conn = curl_easy_init();
@@ -48,8 +49,8 @@ Retriever::~Retriever() {
      curl_easy_cleanup( conn );
   }
 
-  if( evset ) {
-     event_del( & ev );
+  if( socketEvent ) {
+     event_del( socketEvent ); 
   }
 }
 
@@ -60,17 +61,20 @@ void Retriever::setSocketData( curl_socket_t sockfd, int action, int kind, CURL*
            << " and handle@ " << curlHandle << "\n";
   qDebug() << "debug: the handle of this retriever is at " << conn << "\n";
 
+  /* curlHandle should already be stored in the retriever */
   
-  //f->sockfd = s;
-  //f->action = act;
-  //f->easy = e; should already have this
+  this -> sockfd = sockfd;
+  this -> action = action;
 
-  //if (f->evset)
-  //  event_del(&f->ev);
+  if( socketEvent ) { 
+     event_del( socketEvent );
+     /* delete socketEvent;  this may  be needed */
+     socketEvent = NULL;
+  }
 
-  //event_set(&f->ev, f->sockfd, kind, event_cb, g);
-  //f->evset=1;
-  //event_add(&f->ev, NULL);
+  /* todo: add error checking */
+  socketEvent = event_new( owner -> getEventBase(), sockfd, kind, eventCallback, owner);
+  event_add( socketEvent, NULL );
 }
 
 
@@ -121,7 +125,9 @@ void Retriever::run() {
       qDebug() << "debug: added retriever with easy @"
 	        << conn << " to multi handle owned by eventer @"
 	        << owner << " with multi @" << owner->getMultiHandle() 
-		<< "and target of: " << uri.toAscii().data() << "\n";
+		<< "and target of: " << uri.toAscii().data() 
+                << " with address @" << this 
+                <<"\n";
   } else {
       qDebug() << "error: could not initialize retriever curl handle\n";
   }
