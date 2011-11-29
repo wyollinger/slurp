@@ -61,3 +61,7 @@ ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
 %%
 
 /* define the flex routines here */
+void scanString() {
+  (void)yyunput;
+  (void)yy_top_state;
+}

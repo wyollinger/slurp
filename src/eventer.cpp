@@ -17,7 +17,7 @@
 
 #include <iostream>
 
-/* #include "globals.h" */
+#include "globals.h" 
 #include "retriever.h"
 #include "scanner.h"
 
@@ -90,6 +90,8 @@ void Eventer::curlVerify(const char *where, CURLMcode code)
 int Eventer::run() {
   int ret;
   struct event* kbEvent;
+
+  
 
   /* create or schedule thread creation for every pending inital request. */
   while (!pendingURIs.isEmpty()) {
@@ -222,7 +224,7 @@ int Eventer::socketCallback(
   std::cout << "debug: socket callback: socket " << s
 	    << "easy handle: " << e 
 	    << "event: " << whatLut[what] 
-	    << "and eventer @" << eventer;
+	    << "and eventer @" << eventer << "\n";
 
   if (what == CURL_POLL_REMOVE) {
       std::cout << "debug: stub: remove socket\n";

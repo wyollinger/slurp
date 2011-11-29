@@ -17,7 +17,7 @@ FLEXSOURCES = flex/scanner.fl
 
 # Link in the required libraries
 CONFIG += qt link_pkgconfig 
-QT = core gui network thread
+QT = core gui network 
 PKGCONFIG = libevent libevent_pthreads libcurl
 
 # Input
