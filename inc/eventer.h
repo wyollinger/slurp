@@ -74,11 +74,14 @@ namespace slurp {
      }
 
      int run();
+
      void queueURI( const QString& uri );
-     int getRunning() const {
+
+     inline int getRunning() const {
          return running;
      }
-     void setRunning(int running) {
+
+     inline void setRunning(int running) {
          this -> running = running; 
      }
   };

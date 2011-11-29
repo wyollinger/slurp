@@ -146,7 +146,6 @@ void slurp::addSocket(
              << " action " << action
              << " eventer@ " << eventer 
              << " retriever@ " << retriever;
-   
 
     setSocket( retriever, s, easy, action, eventer );
 }
@@ -214,7 +213,6 @@ size_t slurp::writeCallback(
 	size_t nmemb, 
 	void *data)
 {
-
   size_t realsize = size * nmemb;
 
   qDebug() << "debug: in write callback with ptr @" 
@@ -279,7 +277,6 @@ void slurp::keyboardCallback(
   if( userInput.size() > 0 ) {
      eventer -> queueURI( userInput );
   }
-
 }
 
 
