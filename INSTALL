@@ -1,9 +1,9 @@
 Dependencies:
- libevent
- libcurl 
- pkg-config 
- qt
- flex
+ libevent 2.0.16
+ libcurl 7.23.1
+ pkg-config 0.21
+ qt 4.7.3
+ flex 2.5.4
 
 Once the dependencies are satisfied, you should be able to simply type:
 
