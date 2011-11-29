@@ -1,5 +1,5 @@
 Abstract:
-  A cross platform web crawler written in C++.
+  A high performance cross platform web crawler written in C++.
 
 Acknowledgements/Dependencies:
   This program uses:
