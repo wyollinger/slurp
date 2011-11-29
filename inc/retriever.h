@@ -34,16 +34,19 @@ namespace slurp {
      CURL* conn;
      char errorBuffer[CURL_ERROR_SIZE];
      int flags;
-     struct event ev;
+     event ev;
      bool evset;
      Eventer* owner;
-
+     curl_socket_t sockfd;
+     int action;   
+  
      public:
 
      Retriever( Eventer* eventer, QString uri, int flags );
      ~Retriever();
      void run();
      bool isValid() const;
+     void setSocketData( curl_socket_t sockfd, int action, int kind, CURL* curlHandle );  
 
      inline const char* getErrorBuffer() const {
         return errorBuffer;

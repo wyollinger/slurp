@@ -53,6 +53,27 @@ Retriever::~Retriever() {
   }
 }
 
+void Retriever::setSocketData( curl_socket_t sockfd, int action, int kind, CURL* curlHandle ) {
+  qDebug() << "debug: setting socket data with sock " << sockfd 
+           << " action " << action
+           << " kind " << kind 
+           << " and handle@ " << curlHandle << "\n";
+  qDebug() << "debug: the handle of this retriever is at " << conn << "\n";
+
+  
+  //f->sockfd = s;
+  //f->action = act;
+  //f->easy = e; should already have this
+
+  //if (f->evset)
+  //  event_del(&f->ev);
+
+  //event_set(&f->ev, f->sockfd, kind, event_cb, g);
+  //f->evset=1;
+  //event_add(&f->ev, NULL);
+}
+
+
 void Retriever::run() {
     CURLMcode rc;
 

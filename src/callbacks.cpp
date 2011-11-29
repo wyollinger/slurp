@@ -110,26 +110,39 @@ void slurp::timerCallback(int fd, short kind, void* oEventer)
 }
 
 void slurp::setSocket(
-    Retriever& retriever, 
+    Retriever* retriever, 
     curl_socket_t s, 
     CURL*e, 
     int act,  
-    Eventer& eventer)
+    Eventer* eventer)
 {
   int kind = ( act & CURL_POLL_IN ? EV_READ : false )
             | ( act & CURL_POLL_OUT ? EV_WRITE : false ) 
             | EV_PERSIST;
 
+  (void) eventer;  
 
+  retriever -> setSocketData( s, act, kind, e );
 }
 
 void slurp::addSocket(
     curl_socket_t s, 
     CURL *easy, 
     int action, 
-    Eventer& eventer)
+    Eventer* eventer)
 {
-    /* todo: stub */
+    qDebug() << "debug: in addSocket with socket " << s 
+             << " easy handle@" << easy
+             << " action " << action
+             << " eventer@ " << eventer << "\n";
+
+    /* todo: find handle to the relevant retriever, store it in 'retriever' */
+    /* todo: port the following
+              
+  
+      curl_multi_assign( eventer->getMultiHandle(), s, sockInfo pointer );
+    */
+   
 }
 
 
@@ -164,29 +177,26 @@ int slurp::socketCallback(
         CURL *e, 
 	curl_socket_t s, 
 	int what, 
-	void *cbp, 
-	void *sockp)
+	void *eventer, 
+	void *retriever)
 {
-  Eventer* eventer = (Eventer*) cbp;
-  /* SockInfo *fdp = (SockInfo*) sockp; */
   const char *whatLut[] = { "none", "IN", "OUT", "INOUT", "REMOVE" };
 
   qDebug() << "debug: socket callback: socket " << s
 	    << "easy handle: " << e 
 	    << "event: " << whatLut[what] 
-	    << "and eventer @" << eventer << "\n";
+	    << "eventer @" << eventer
+            << "retriever @" << retriever << "\n";
 
   if (what == CURL_POLL_REMOVE) {
       qDebug() << "debug: stub: remove socket\n";
-       /* remsock(fdp); */
+       /* todo: acquire a pointer to the current retriever object and delete it */
   } else {
-    if (!sockp) {
-      qDebug() << "debug: stub: add socket\n";
-      /* addsock(s, e, what, g); */
+    if (!retriever) {
+      addSocket(s, e, what, (Eventer*) eventer); 
     }
     else {
-      qDebug() << "debug: stub: changing actions\n";	    
-      /* setsock(fdp, s, e, what, g); */
+      setSocket( (Retriever*) retriever, s, e, what, (Eventer*) eventer); 
     }
   }
 

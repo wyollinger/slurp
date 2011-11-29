@@ -33,22 +33,22 @@ namespace slurp {
 	long timeout_ms, 
 	void* oEventer);
      void setSocket(
-        Retriever& retriever, 
+        Retriever* retriever, 
         curl_socket_t s, 
         CURL* e, 
         int act,  
-        Eventer& eventer);
+        Eventer* eventer);
      void addSocket(
         curl_socket_t s, 
         CURL *easy, 
         int action, 
-        Eventer& eventer);
+        Eventer* eventer);
      int socketCallback(
         CURL *e, 
 	curl_socket_t s, 
 	int what, 
-	void *cbp, 
-	void *sockp);
+	void *eventer, 
+	void *retriever);
      size_t writeCallback(
         void *ptr, 
 	size_t size, 
