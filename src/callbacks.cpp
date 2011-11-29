@@ -97,8 +97,8 @@ void slurp::timerCallback(int fd, short kind, void* oEventer)
       CURL_SOCKET_TIMEOUT, 
       0, 
       &running );
-
   curlVerify("timerCallback: curl_multi_socket_action", mrc);
+
   eventer -> setRunning( running );
 
   qDebug() << "debug: in timerCallback, called curl_multi_socket_action recvd "
@@ -114,7 +114,7 @@ void slurp::setSocket(
     int act,  
     Eventer* eventer)
 {
-  int kind = ( act & CURL_POLL_IN ? EV_READ : false )
+  int kind =  ( act & CURL_POLL_IN ? EV_READ : false )
             | ( act & CURL_POLL_OUT ? EV_WRITE : false ) 
             | EV_PERSIST;
 
@@ -126,7 +126,6 @@ void slurp::setSocket(
            << " retriever@ " << retriever;
 
   curl_multi_assign( eventer->getMultiHandle(), s, retriever);
-
   retriever -> setSocketData( s, act, kind, e );
 }
 
@@ -138,19 +137,12 @@ void slurp::addSocket(
 {
     Retriever* retriever = NULL;
     curl_easy_getinfo( easy, CURLINFO_PRIVATE, &retriever );
-
-    qDebug() << "debug: in addSocket with socket " << s 
-             << " easy handle@" << easy
-             << " action " << action
-             << " eventer@ " << eventer 
-             << " retriever@ " << retriever;
-
     setSocket( retriever, s, easy, action, eventer );
 }
 
 
 int slurp::multiTimerCallback(
-        CURLM * multi_handle, 
+        CURLM *multi_handle, 
 	long timeout_ms,
 	void *oEventer)
 {
@@ -292,8 +284,8 @@ void slurp::scanMultiInfo( Eventer* eventer)
   qDebug() << "debug: remaining " << eventer -> getRunning();
 
   while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
-    if (msgPtr->msg == CURLMSG_DONE) {
-      easy = msgPtr->easy_handle;
+    if (msgPtr -> msg == CURLMSG_DONE) {
+      easy = msgPtr -> easy_handle;
       rc = msgPtr -> data.result;
       curl_easy_getinfo(easy, CURLINFO_PRIVATE, &cRetriever);
       curl_easy_getinfo(easy, CURLINFO_EFFECTIVE_URL, &effectiveUri);

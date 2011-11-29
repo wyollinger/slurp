@@ -118,6 +118,10 @@ void Retriever::run() {
           conn, 
           CURLOPT_PRIVATE, 
           this);
+      curl_easy_setopt(
+          conn, 
+          CURLOPT_NOSIGNAL,
+          1);
 
       rc = curl_multi_add_handle(owner -> getMultiHandle(), conn);
       curlVerify("curl_multi_add_handle from Retriever()", rc);

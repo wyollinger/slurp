@@ -3,3 +3,4 @@ implement socket callbacks
 use QT to add GUI support
 fix the windoze builds ( maybe using cygwin? )
 implement a set of run-time management commands
+add read callbacks to retriever as a potential fix for server-side hangs
