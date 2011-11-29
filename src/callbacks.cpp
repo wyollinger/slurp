@@ -256,7 +256,7 @@ void slurp::keyboardCallback(
     } 
   } while( cchar != '\n' );
 
-  qDebug() << "debug: in kbcallback with " << userInput.toAscii().data() << "\n";
+  qDebug() << "debug: in kbcallback with <" << userInput.toAscii().data() << ">\n";
 
   if( userInput.size() > 0 ) {
      eventer -> queueURI( userInput );
