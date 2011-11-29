@@ -32,7 +32,6 @@ namespace slurp {
         CURLM * multi_handle, 
 	long timeout_ms, 
 	void* oEventer);
-     void remSocket(Retriever& retriever);
      void setSocket(
         Retriever& retriever, 
         curl_socket_t s, 

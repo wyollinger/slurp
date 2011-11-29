@@ -34,6 +34,8 @@ namespace slurp {
      CURL* conn;
      char errorBuffer[CURL_ERROR_SIZE];
      int flags;
+     struct event ev;
+     bool evset;
      Eventer* owner;
 
      public:
@@ -45,6 +47,10 @@ namespace slurp {
 
      inline const char* getErrorBuffer() const {
         return errorBuffer;
+     }
+
+     inline const bool isEventSet() const {
+        return evset;
      }
   };
 }

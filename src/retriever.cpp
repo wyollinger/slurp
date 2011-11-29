@@ -32,21 +32,29 @@ Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
   owner = eventer;
 
   errorBuffer[0] = '\0';
+  evset = false;
   setAutoDelete(false);
+
+  conn = curl_easy_init();
+
   qDebug() << "debug: constructed retriever with owner @" 
 	      << owner << "\n";
 }
 
 Retriever::~Retriever() {
   qDebug() << "debug: deleting retriever instance\n";
+  
   if( conn ) {
      curl_easy_cleanup( conn );
+  }
+
+  if( evset ) {
+     event_del( & ev );
   }
 }
 
 void Retriever::run() {
     CURLMcode rc;
-    conn = curl_easy_init();
 
     if( conn ) {  
       curl_easy_setopt(
@@ -64,11 +72,11 @@ void Retriever::run() {
       curl_easy_setopt(
           conn, 
           CURLOPT_VERBOSE, 
-	  1L ); /* for debug */
+	  flags & FLAGS_VERBOSE ); 
       curl_easy_setopt(
           conn, 
           CURLOPT_NOPROGRESS, 
-	  0L); /* for debug */
+	  ~(flags & FLAGS_VERBOSE) );
       curl_easy_setopt( 
           conn, 
           CURLOPT_PROGRESSFUNCTION, 

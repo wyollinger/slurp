@@ -109,12 +109,6 @@ void slurp::timerCallback(int fd, short kind, void* oEventer)
   scanMultiInfo( eventer );
 }
 
-void slurp::remSocket(Retriever& retriever)
-{
-
-
-}
-
 void slurp::setSocket(
     Retriever& retriever, 
     curl_socket_t s, 
@@ -122,7 +116,11 @@ void slurp::setSocket(
     int act,  
     Eventer& eventer)
 {
-    /* todo: stub */
+  int kind = ( act & CURL_POLL_IN ? EV_READ : false )
+            | ( act & CURL_POLL_OUT ? EV_WRITE : false ) 
+            | EV_PERSIST;
+
+
 }
 
 void slurp::addSocket(
