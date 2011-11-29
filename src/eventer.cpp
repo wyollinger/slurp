@@ -53,7 +53,7 @@ Eventer::Eventer(
 	        << multi << " and timerEvent @"
 		<< timerEventPtr << " and eventBase @"
 		<< eventBasePtr << " with location @"
-		<< this << "\n";
+		<< this;
 }
 
 Eventer::~Eventer() {
@@ -83,9 +83,9 @@ int Eventer::run() {
     exit(1);
   } 
 
-  qDebug() << "debug: calling event_base_dispatch\n";
+  qDebug() << "debug: calling event_base_dispatch";
   ret = event_base_dispatch( eventBasePtr );
-  qDebug() << "debug: event dispatch returned " << ret << "\n";
+  qDebug() << "debug: event dispatch returned " << ret;
 
   event_free( kbEvent );
 

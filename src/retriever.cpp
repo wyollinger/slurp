@@ -39,11 +39,11 @@ Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
   conn = curl_easy_init();
 
   qDebug() << "debug: constructed retriever with owner @" 
-	      << owner << "\n";
+	      << owner;
 }
 
 Retriever::~Retriever() {
-  qDebug() << "debug: deleting retriever instance\n";
+  qDebug() << "debug: deleting retriever instance";
   
   if( conn ) {
      curl_easy_cleanup( conn );
@@ -58,8 +58,8 @@ void Retriever::setSocketData( curl_socket_t sockfd, int action, int kind, CURL*
   qDebug() << "debug: setting socket data with sock " << sockfd 
            << " action " << action
            << " kind " << kind 
-           << " and handle@ " << curlHandle << "\n";
-  qDebug() << "debug: the handle of this retriever is at " << conn << "\n";
+           << " and handle@ " << curlHandle;
+  qDebug() << "debug: the handle of this retriever is at " << conn;
 
   /* curlHandle should already be stored in the retriever */
   
@@ -126,10 +126,9 @@ void Retriever::run() {
 	        << conn << " to multi handle owned by eventer @"
 	        << owner << " with multi @" << owner->getMultiHandle() 
 		<< "and target of: " << uri.toAscii().data() 
-                << " with address @" << this 
-                <<"\n";
+                << " with address @" << this;
   } else {
-      qDebug() << "error: could not initialize retriever curl handle\n";
+      qDebug() << "error: could not initialize retriever curl handle";
   }
 
 }

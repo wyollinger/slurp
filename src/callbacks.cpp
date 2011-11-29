@@ -37,12 +37,12 @@ void slurp::curlVerify(const char *where, CURLMcode code)
       default: s="CURLM_unknown";
         break;
     case     CURLM_BAD_SOCKET:         s="CURLM_BAD_SOCKET";
-      qDebug() << "ERROR: " << where << " returns " << s << "\n";
+      qDebug() << "debug: " << where << " returns " << s;
       /* ignore this error */ 
       return;
     }
 
-    qDebug() << "ERROR: " << where << " returns " << s << "\n";
+    qDebug() << "debug: " << where << " returns " << s;
     exit(code);
   }
 }
@@ -55,7 +55,7 @@ void slurp::eventCallback(int fd, short kind, void *userp)
 
   qDebug() << "debug: in event callback with fd " 
 	   << fd << " kind " 
-	   << kind << "\n";
+	   << kind;
 
   action =
     (kind & EV_READ ? CURL_CSELECT_IN : 0) |
@@ -73,12 +73,12 @@ void slurp::eventCallback(int fd, short kind, void *userp)
   scanMultiInfo( eventer );
 
   if ( eventer -> getRunning() <= 0 ) {
-    qDebug() << "debug: last transfer complete\n";
+    qDebug() << "debug: last transfer complete";
     if (evtimer_pending( eventer -> getTimerEvent(), NULL)) {
       evtimer_del( eventer -> getTimerEvent() );
     }
   } else {
-    qDebug() << "debug: " << eventer -> getRunning() << " live connections\n";
+    qDebug() << "debug: " << eventer -> getRunning() << " live connections";
   }
 }
  
@@ -92,7 +92,7 @@ void slurp::timerCallback(int fd, short kind, void* oEventer)
   (void)fd;
   (void)kind;
 
-  qDebug() << "debug: calling curl_multi_socket_action on fd " << fd << "\n";
+  qDebug() << "debug: calling curl_multi_socket_action on fd " << fd;
 
   mrc = curl_multi_socket_action(
       eventer -> getMultiHandle(),
@@ -104,7 +104,7 @@ void slurp::timerCallback(int fd, short kind, void* oEventer)
   eventer -> setRunning( running );
 
   qDebug() << "debug: in timerCallback, called curl_multi_socket_action recvd "
-	    << ( eventer -> getRunning() ) << " live sockets\n";
+	    << ( eventer -> getRunning() ) << " live sockets";
 
   scanMultiInfo( eventer );
 }
@@ -138,8 +138,7 @@ void slurp::addSocket(
              << " easy handle@" << easy
              << " action " << action
              << " eventer@ " << eventer 
-             << " retriever@ " << retriever
-             <<"\n";
+             << " retriever@ " << retriever;
    
     curl_multi_assign( eventer->getMultiHandle(), s, retriever);
      
@@ -168,7 +167,7 @@ int slurp::multiTimerCallback(
     qDebug() << "debug: in multi timer callback setting timeout to "
 	      << timeout_ms << "ms with timerEvent @" 
 	      << timerEvent << " and eventBase @"
-	      << eventBase << "\n";
+	      << eventBase;
 
     if( evtimer_add( timerEvent, &timeout) == -1 ) {
         qFatal("error: evtimer_add(..) failed!\n");
@@ -190,10 +189,10 @@ int slurp::socketCallback(
 	    << "easy handle: " << e 
 	    << "event: " << whatLut[what] 
 	    << "eventer @" << eventer
-            << "retriever @" << retriever << "\n";
+            << "retriever @" << retriever;
 
   if (what == CURL_POLL_REMOVE) {
-      qDebug() << "debug: remove stub \n";
+      qDebug() << "debug: remove stub";
       /* delete (Retriever*) retriever; */
   } else {
     if (!retriever) {
@@ -219,7 +218,7 @@ size_t slurp::writeCallback(
 	   << ptr << " and size "
 	   << size << " and nmemb " 
 	   << nmemb << " and data @"
-           << data << "\n"; 
+           << data; 
 
 
   (void)ptr;
@@ -239,7 +238,7 @@ int slurp::progressCallback(
 	   << dltotal << " and dlnow " 
 	   << dlnow << " and ult " 
 	   << ult << " and uln" 
-	   << uln << "\n";
+	   << uln;
 
  return 0;
 }
@@ -255,7 +254,7 @@ void slurp::keyboardCallback(
   qDebug() << "debug: in keyboard callback with socket s "
 	    << s << " type "
 	    << type << " and data @"
-	    << data << "\n";
+	    << data;
 
   do {
     cchar = std::cin.get();
@@ -265,7 +264,7 @@ void slurp::keyboardCallback(
     } 
   } while( cchar != '\n' );
 
-  qDebug() << "debug: in kbcallback with <" << userInput.toAscii().data() << ">\n";
+  qDebug() << "debug: in kbcallback with <" << userInput.toAscii().data();
 
   if( userInput.size() > 0 ) {
      eventer -> queueURI( userInput );
@@ -286,7 +285,7 @@ void slurp::scanMultiInfo( Eventer* eventer)
 
   multi = eventer -> getMultiHandle();
 
-  qDebug() << "debug: remaining " << eventer -> getRunning() << "\n";
+  qDebug() << "debug: remaining " << eventer -> getRunning();
 
   while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
    // if (msgPtr->msg == CURLMSG_DONE) {
@@ -297,8 +296,7 @@ void slurp::scanMultiInfo( Eventer* eventer)
 
       qDebug() << "debug: " << effectiveUri 
 	        << " complete, rc = " << rc 
-		<< " error buffer: " << cRetriever->getErrorBuffer() 
-		<< "\n";
+		<< " error buffer: " << cRetriever->getErrorBuffer();
 
       curl_multi_remove_handle(multi, easy);
       delete cRetriever;
