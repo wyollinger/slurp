@@ -140,9 +140,11 @@ void slurp::addSocket(
     /* todo: port the following
               
   
-      curl_multi_assign( eventer->getMultiHandle(), s, sockInfo pointer );
+      curl_multi_assign( eventer->getMultiHandle(), s, retriever);
     */
-   
+
+    /* note: this will cause the retriever pointer to be valid in
+       future calls to socketCallback */
 }
 
 
@@ -194,8 +196,7 @@ int slurp::socketCallback(
   } else {
     if (!retriever) {
       addSocket(s, e, what, (Eventer*) eventer); 
-    }
-    else {
+    } else {
       setSocket( (Retriever*) retriever, s, e, what, (Eventer*) eventer); 
     }
   }
