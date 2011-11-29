@@ -124,7 +124,10 @@ void slurp::setSocket(
            << "kind " << kind 
            << " easy@ " << e 
            << " act " << act
-           << " eventer@ " << eventer;
+           << " eventer@ " << eventer
+           << " retriever@ " << retriever;
+
+  curl_multi_assign( eventer->getMultiHandle(), s, retriever);
 
   retriever -> setSocketData( s, act, kind, e );
 }
@@ -144,12 +147,8 @@ void slurp::addSocket(
              << " eventer@ " << eventer 
              << " retriever@ " << retriever;
    
-    curl_multi_assign( eventer->getMultiHandle(), s, retriever);
-     
-    setSocket( retriever, s, easy, action, eventer );
 
-    /* note: this will cause the retriever pointer to be valid in
-       future calls to socketCallback */
+    setSocket( retriever, s, easy, action, eventer );
 }
 
 
