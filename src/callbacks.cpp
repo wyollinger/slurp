@@ -189,8 +189,8 @@ int slurp::socketCallback(
             << "retriever @" << retriever << "\n";
 
   if (what == CURL_POLL_REMOVE) {
-      qDebug() << "debug: stub: remove socket\n";
-       /* todo: acquire a pointer to the current retriever object and delete it */
+      qDebug() << "debug: deleting retriever now that transfer is complete\n";
+      delete (Retriever*) retriever;
   } else {
     if (!retriever) {
       addSocket(s, e, what, (Eventer*) eventer); 
