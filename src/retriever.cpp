@@ -36,12 +36,12 @@ Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
 
   errorBuffer[0] = '\0';
   setAutoDelete(false);
-  std::cout << "debug: constructed retriever with owner @" 
+  qDebug() << "debug: constructed retriever with owner @" 
 	      << owner << "\n";
 }
 
 Retriever::~Retriever() {
-  std::cout << "debug: deleting retriever instance\n";
+  qDebug() << "debug: deleting retriever instance\n";
   if( conn ) {
      curl_easy_cleanup( conn );
   }
@@ -92,12 +92,12 @@ void Retriever::run() {
       rc = curl_multi_add_handle(owner -> getMultiHandle(), conn);
       Eventer::curlVerify("curl_multi_add_handle from Retriever()", rc);
 
-      std::cout << "debug: added retriever with easy @"
+      qDebug() << "debug: added retriever with easy @"
 	        << conn << " to multi handle owned by eventer @"
 	        << owner << " with multi @" << owner->getMultiHandle() 
 		<< "and target of: " << uri.toAscii().data() << "\n";
   } else {
-      std::cerr << "error: could not initialize retriever curl handle\n";
+      qDebug() << "error: could not initialize retriever curl handle\n";
   }
 
 }

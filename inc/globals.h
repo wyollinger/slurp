@@ -18,6 +18,9 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#include <iostream>
+#include <QtGlobal>
+#include <QtDebug>
 
 const static int VERSION_ID[3] = {0,0,4};
 const static int FLAGS_VALID    = 1;
@@ -26,6 +29,7 @@ const static int FLAGS_HEADLESS = 4;
 const static int FLAGS_CONTD    = 8;
 const static int FLAGS_INVALID  = 0;
 
+/* these are currently implemented in slurper.cpp */
 void die( const char* errmsg, int errcode );
 
 #endif

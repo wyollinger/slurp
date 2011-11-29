@@ -86,7 +86,7 @@ int main(int argc, char** argv, char** env) {
   }
 
   if( flags & FLAGS_VERBOSE ) {
-    std::cout << "information: creating eventer instance with "
+    qDebug() << "information: creating eventer instance with "
 	      << seedURIs.size() << " seed URI(s) and a quota of " 
 	      << quota << " with the contraint of " 
 	      << maxThreads << " maximum threads\n";
@@ -126,7 +126,7 @@ static int validateArgs( int argc, char** argv, char** env,
             case 'V':
               flags = 0;      
               
-	      std::cout << "slurp v" 
+	      qDebug() << "slurp v" 
 		        << VERSION_ID[0] << "."
 		        << VERSION_ID[1] << "."
 		        << VERSION_ID[2] 
@@ -180,9 +180,9 @@ static int validateArgs( int argc, char** argv, char** env,
 	      break;
 
 	    default:
-              std::cout << "warning: unrecognized option: " 
+              qDebug() << "warning: unrecognized option: " 
 		   << argv[i] 
-		   << std::endl;
+		   << "\n";
 
 	    break;
 	 }
@@ -200,6 +200,6 @@ static int validateArgs( int argc, char** argv, char** env,
 
 void die( const char* errmsg, int errcode )
 {
-    std::cerr << errmsg << std::endl;
+    qFatal( errmsg );
     exit( errcode );
 }
