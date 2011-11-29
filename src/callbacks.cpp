@@ -120,7 +120,11 @@ void slurp::setSocket(
             | ( act & CURL_POLL_OUT ? EV_WRITE : false ) 
             | EV_PERSIST;
 
-  (void) eventer;  
+  qDebug() << "debug: in setSocket with socket " << s
+           << "kind " << kind 
+           << " easy@ " << e 
+           << " act@ " << act
+           << " eventer@ " << eventer;
 
   retriever -> setSocketData( s, act, kind, e );
 }
@@ -219,7 +223,6 @@ size_t slurp::writeCallback(
 	   << size << " and nmemb " 
 	   << nmemb << " and data @"
            << data; 
-
 
   (void)ptr;
   (void)data;
