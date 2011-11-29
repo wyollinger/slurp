@@ -23,9 +23,6 @@
 #include <iostream>
 
 #include "globals.h" 
-#include "retriever.h"
-#include "eventer.h"
-#include "scanner.h"
 
 using namespace slurp;
 
@@ -59,7 +56,7 @@ void Retriever::run() {
       curl_easy_setopt(
           conn, 
           CURLOPT_WRITEFUNCTION, 
-	  Eventer::writeCallback);
+	  writeCallback);
       curl_easy_setopt(
           conn,
           CURLOPT_WRITEDATA,
@@ -75,7 +72,7 @@ void Retriever::run() {
       curl_easy_setopt( 
           conn, 
           CURLOPT_PROGRESSFUNCTION, 
-          Eventer::progressCallback);
+          progressCallback);
       curl_easy_setopt( 
           conn, 
           CURLOPT_PROGRESSDATA, 
@@ -90,7 +87,7 @@ void Retriever::run() {
           this);
 
       rc = curl_multi_add_handle(owner -> getMultiHandle(), conn);
-      Eventer::curlVerify("curl_multi_add_handle from Retriever()", rc);
+      curlVerify("curl_multi_add_handle from Retriever()", rc);
 
       qDebug() << "debug: added retriever with easy @"
 	        << conn << " to multi handle owned by eventer @"

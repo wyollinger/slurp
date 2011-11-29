@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RETRIEVER_H
-#define RETRIEVER_H
+#ifndef SLURP_RETRIEVER_H
+#define SLURP_RETRIEVER_H
 
 #include <QString>
 #include <QRunnable>
@@ -27,7 +27,6 @@
 
 #include "globals.h"
 #include "eventer.h"
-#include "scanner.h"
 
 namespace slurp {
   class Retriever : public QRunnable {
@@ -49,5 +48,6 @@ namespace slurp {
      }
   };
 }
-#endif 
+
+#endif /* SLURP_RETREIVER_H */
 

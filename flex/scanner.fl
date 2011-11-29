@@ -19,7 +19,7 @@
  
 #include <iostream>
 
-#include "scanner.h"
+#include "globals.h"
 
 using namespace slurp;
 inline void yyerror(const char *msg) { std::cerr << "ERROR! [" << msg << "]\n"; }

@@ -15,12 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef SLURP_GLOBALS_H
+#define SLURP_GLOBALS_H
 
-#include <iostream>
 #include <QtGlobal>
 #include <QtDebug>
+
+#include "callbacks.h"
+#include "eventer.h"
+#include "retriever.h"
+#include "scanner.h"
 
 const static int VERSION_ID[3] = {0,0,5};
 const static int FLAGS_VALID    = 1;
@@ -32,4 +36,4 @@ const static int FLAGS_INVALID  = 0;
 /* these are currently implemented in slurper.cpp */
 void die( const char* errmsg, int errcode );
 
-#endif
+#endif /* SLURP_GLOBALS_H */

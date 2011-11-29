@@ -21,5 +21,5 @@ QT = core gui network
 PKGCONFIG = libevent libevent_pthreads libcurl
 
 # Input
-HEADERS += inc/eventer.h inc/retriever.h inc/scanner.h
-SOURCES += src/slurper.cpp src/eventer.cpp src/retriever.cpp 
+HEADERS += inc/eventer.h inc/retriever.h inc/scanner.h inc/callbacks.h
+SOURCES += src/slurper.cpp src/eventer.cpp src/retriever.cpp  src/callbacks.cpp

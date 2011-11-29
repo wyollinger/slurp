@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SCANNER_H
-#define SCANNER_H
+#ifndef SLURP_SCANNER_H
+#define SLURP_SCANNER_H
 
 namespace slurp {
 
@@ -24,4 +24,4 @@ namespace slurp {
 
 }
 
-#endif
+#endif /* SLURP_SCANNER_H */

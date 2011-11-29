@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EVENTER_H
-#define EVENTER_H
+#ifndef SLURP_EVENTER_H
+#define SLURP_EVENTER_H
 
 #include <QString>
 #include <QSet>
@@ -39,9 +39,7 @@
 #include <cstdlib>
 #include <cassert>
 
-/* #include "globals.h" */
-#include "retriever.h"
-#include "scanner.h"
+#include "globals.h" 
 
 namespace slurp {
   class Eventer {
@@ -75,37 +73,6 @@ namespace slurp {
           return eventBasePtr;
      }
 
-     static void curlVerify(const char *where, CURLMcode code);
-     static void eventCallback(int fd, short kind, void *userp);
-     static void timerCallback(int fd, short kind, void* oEventer);
-     static int multiTimerCallback(
-        CURLM * multi_handle, 
-	long timeout_ms, 
-	void* oEventer);
-     static int socketCallback(
-        CURL *e, 
-	curl_socket_t s, 
-	int what, 
-	void *cbp, 
-	void *sockp);
-     static size_t writeCallback(
-        void *ptr, 
-	size_t size, 
-	size_t nmemb, 
-	void *data);
-     static int progressCallback(
-	void *p, 
-	double dltotal, 
-	double dlnow, 
-	double ult,
-        double uln);
-     static void keyboardCallback(
-        evutil_socket_t s,
-	short type, 
-	void *data);
-
-     static void scanMultiInfo( Eventer* eventer );
-
      int run();
      void queueURI( const QString& uri );
      int getRunning() const {
@@ -117,8 +84,7 @@ namespace slurp {
   };
 }
 
-
-#endif 
+#endif /* SLURP_EVENTER_H */
 
 
 
