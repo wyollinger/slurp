@@ -123,7 +123,7 @@ void slurp::setSocket(
   qDebug() << "debug: in setSocket with socket " << s
            << "kind " << kind 
            << " easy@ " << e 
-           << " act@ " << act
+           << " act " << act
            << " eventer@ " << eventer;
 
   retriever -> setSocketData( s, act, kind, e );
