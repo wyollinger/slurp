@@ -67,7 +67,6 @@ int Eventer::run() {
   int ret;
   struct event* kbEvent;
 
-  /* create or schedule thread creation for every pending inital request. */
   while (!pendingURIs.isEmpty()) {
       queueURI( pendingURIs.dequeue() ); 
   }

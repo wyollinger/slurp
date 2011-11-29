@@ -101,7 +101,7 @@ void Retriever::run() {
       curl_easy_setopt(
           conn, 
           CURLOPT_NOPROGRESS, 
-	  ~(flags & FLAGS_VERBOSE) );
+	  !(flags & FLAGS_VERBOSE) );
       curl_easy_setopt( 
           conn, 
           CURLOPT_PROGRESSFUNCTION, 

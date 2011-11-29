@@ -38,7 +38,6 @@ void slurp::curlVerify(const char *where, CURLMcode code)
         break;
     case     CURLM_BAD_SOCKET:         s="CURLM_BAD_SOCKET";
       qDebug() << "debug: " << where << " returns " << s;
-      /* ignore this error */ 
       return;
     }
 
@@ -88,7 +87,6 @@ void slurp::timerCallback(int fd, short kind, void* oEventer)
   Eventer* eventer = (Eventer*) oEventer;
   int running;
 
-  /* to remove unused warnings */
   (void)fd;
   (void)kind;
 
@@ -195,7 +193,6 @@ int slurp::socketCallback(
 
   if (what == CURL_POLL_REMOVE) {
       qDebug() << "debug: remove stub";
-      /* delete (Retriever*) retriever; */
   } else {
     if (!retriever) {
       addSocket(s, e, what, (Eventer*) eventer); 
