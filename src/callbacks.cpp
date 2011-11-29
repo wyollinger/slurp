@@ -268,6 +268,12 @@ void slurp::keyboardCallback(
            << userInput.toAscii().data() 
            << ">";
 
+  /* 
+     TODO: parse and process commands? 
+     
+     ..otherwise, treat string as URI and attempt to retrieve it
+  */
+
   if( userInput.size() > 0 ) {
      eventer -> queueURI( userInput );
   }
