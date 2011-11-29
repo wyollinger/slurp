@@ -264,7 +264,9 @@ void slurp::keyboardCallback(
     } 
   } while( cchar != '\n' );
 
-  qDebug() << "debug: in kbcallback with <" << userInput.toAscii().data();
+  qDebug() << "debug: in kbcallback with <" 
+           << userInput.toAscii().data() 
+           << ">";
 
   if( userInput.size() > 0 ) {
      eventer -> queueURI( userInput );
@@ -288,7 +290,7 @@ void slurp::scanMultiInfo( Eventer* eventer)
   qDebug() << "debug: remaining " << eventer -> getRunning();
 
   while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
-   // if (msgPtr->msg == CURLMSG_DONE) {
+    if (msgPtr->msg == CURLMSG_DONE) {
       easy = msgPtr->easy_handle;
       rc = msgPtr -> data.result;
       curl_easy_getinfo(easy, CURLINFO_PRIVATE, &cRetriever);
@@ -300,7 +302,7 @@ void slurp::scanMultiInfo( Eventer* eventer)
 
       curl_multi_remove_handle(multi, easy);
       delete cRetriever;
-    //}
+    }
   }
 }
 
