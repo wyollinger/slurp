@@ -1,3 +1,6 @@
+rewrite the debugging info handling system to include timing and thread information,
+write it to a file by default
+
 add read callbacks to retriever as a potential fix for server-side hangs
 update the flex ruleset, it is largely unwritten
 implement a set of run-time management commands
