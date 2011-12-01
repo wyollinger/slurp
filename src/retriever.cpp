@@ -58,11 +58,13 @@ void Retriever::setSocketData( curl_socket_t sockfd, int action, int kind, CURL*
   qDebug() << "debug: setting socket data with sock " << sockfd 
            << " action " << action
            << " kind " << kind 
-           << " and handle@ " << curlHandle;
-  qDebug() << "debug: the handle of this retriever is at " << conn;
+           << " new handle@ " << curlHandle
+           << " old handle@ " << conn 
+	   << " new sockfd " << sockfd
+	   << " old sockfd " << this -> sockfd
+	   << " new action " << action 
+	   << " old action " << this -> action;
 
-  /* curlHandle should already be stored in the retriever */
-  
   this -> sockfd = sockfd;
   this -> action = action;
 
@@ -123,7 +125,8 @@ void Retriever::run() {
           CURLOPT_NOSIGNAL,
           1);
 
-      rc = curl_multi_add_handle(owner -> getMultiHandle(), conn);
+      multiHandle = owner -> getMultiHandle();
+      rc = curl_multi_add_handle(multiHandle, conn);
       curlVerify("curl_multi_add_handle from Retriever()", rc);
 
       qDebug() << "debug: added retriever with easy @"
