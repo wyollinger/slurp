@@ -34,6 +34,7 @@ Eventer::Eventer(
       this -> flags = flags;
 
       threadPool.setMaxThreadCount( maxThreads );
+
       eventBasePtr = event_base_new();
 
       multi = curl_multi_init();

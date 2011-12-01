@@ -20,6 +20,7 @@
 
 #include <QtGlobal>
 #include <QtDebug>
+#include <cassert>
 
 #include "callbacks.h"
 #include "eventer.h"

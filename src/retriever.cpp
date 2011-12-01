@@ -68,7 +68,6 @@ void Retriever::setSocketData( curl_socket_t sockfd, int action, int kind, CURL*
 
   if( socketEvent ) { 
      event_del( socketEvent );
-     /* delete socketEvent;  this may  be needed */
      socketEvent = NULL;
   }
 
@@ -80,6 +79,7 @@ void Retriever::setSocketData( curl_socket_t sockfd, int action, int kind, CURL*
 
 void Retriever::run() {
     CURLMcode rc;
+    CURLM* multiHandle;
 
     if( conn ) {  
       curl_easy_setopt(
@@ -128,9 +128,10 @@ void Retriever::run() {
 
       qDebug() << "debug: added retriever with easy @"
 	        << conn << " to multi handle owned by eventer @"
-	        << owner << " with multi @" << owner->getMultiHandle() 
+	        << owner << " with multi @" << multiHandle 
 		<< "and target of: " << uri.toAscii().data() 
                 << " with address @" << this;
+
   } else {
       qDebug() << "error: could not initialize retriever curl handle";
   }

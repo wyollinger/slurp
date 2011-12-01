@@ -46,7 +46,6 @@ namespace slurp {
      QQueue<QString> pendingURIs;
      QSet<QString> processedURIs;
      QThreadPool threadPool;
-     QMutex uriQueueMutex;
      CURLM *multi;
      int quota, flags, running;
      struct event_base* eventBasePtr;
@@ -59,23 +58,20 @@ namespace slurp {
 	 int quota, 
 	 int maxThreads, 
 	 int flags );
+
      ~Eventer();
 
      inline CURLM* getMultiHandle() const {
-          return multi;
+         return multi;
      }
 
      inline struct event* getTimerEvent() const {
-          return timerEventPtr;
+         return timerEventPtr;
      }
 
      inline struct event_base* getEventBase() const {
-          return eventBasePtr;
+         return eventBasePtr;
      }
-
-     int run();
-
-     void queueURI( const QString& uri );
 
      inline int getRunning() const {
          return running;
@@ -84,6 +80,10 @@ namespace slurp {
      inline void setRunning(int running) {
          this -> running = running; 
      }
+
+     int run();
+
+     void queueURI( const QString& uri );
   };
 }
 

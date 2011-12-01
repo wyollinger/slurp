@@ -22,6 +22,7 @@
 
 using namespace slurp;
 
+/* TODO: find a better place to put this function */
 void slurp::curlVerify(const char *where, CURLMcode code)
 {
   if ( CURLM_OK != code ) {
@@ -50,35 +51,42 @@ void slurp::eventCallback(int fd, short kind, void *userp)
 {
   Eventer *eventer = (Eventer*) userp;
   CURLMcode rc;
+  CURLM* multiHandle;
   int action, running;
+
+  action =
+    ( kind & EV_READ ? CURL_CSELECT_IN : 0 ) |
+    ( kind & EV_WRITE ? CURL_CSELECT_OUT : 0 );
 
   qDebug() << "debug: in event callback with fd " 
 	   << fd << " kind " 
-	   << kind;
+	   << kind << " action "
+	   << action;
 
-  action =
-    (kind & EV_READ ? CURL_CSELECT_IN : 0) |
-    (kind & EV_WRITE ? CURL_CSELECT_OUT : 0);
+  multiHandle = eventer -> getMultiHandle();
 
   rc = curl_multi_socket_action(
-      eventer -> getMultiHandle(), 
+      multiHandle, 
       fd, 
       action, 
       &running );
 
-  curlVerify("eventCallback: curl_multi_socket_action", rc);
+  curlVerify("curl_multi_socket_action from eventCallback", rc);
+
   eventer -> setRunning( running );
 
   scanMultiInfo( eventer );
 
   if ( eventer -> getRunning() <= 0 ) {
     qDebug() << "debug: last transfer complete";
+
     if (evtimer_pending( eventer -> getTimerEvent(), NULL)) {
       evtimer_del( eventer -> getTimerEvent() );
     }
   } else {
     qDebug() << "debug: " << eventer -> getRunning() << " live connections";
   }
+
 }
  
 void slurp::timerCallback(int fd, short kind, void* oEventer) 
@@ -86,18 +94,22 @@ void slurp::timerCallback(int fd, short kind, void* oEventer)
   CURLMcode mrc;
   Eventer* eventer = (Eventer*) oEventer;
   int running;
+  CURLM* multiHandle;
 
   (void)fd;
   (void)kind;
 
   qDebug() << "debug: calling curl_multi_socket_action on fd " << fd;
 
+  multiHandle = eventer -> getMultiHandle();
+
   mrc = curl_multi_socket_action(
-      eventer -> getMultiHandle(),
+      multiHandle,
       CURL_SOCKET_TIMEOUT, 
       0, 
       &running );
-  curlVerify("timerCallback: curl_multi_socket_action", mrc);
+
+  curlVerify("curl_multi_socket_action from timerCallback", mrc);
 
   eventer -> setRunning( running );
 
@@ -114,6 +126,7 @@ void slurp::setSocket(
     int act,  
     Eventer* eventer)
 {
+  CURLM* multiHandle;
   int kind =  ( act & CURL_POLL_IN ? EV_READ : false )
             | ( act & CURL_POLL_OUT ? EV_WRITE : false ) 
             | EV_PERSIST;
@@ -125,7 +138,8 @@ void slurp::setSocket(
            << " eventer@ " << eventer
            << " retriever@ " << retriever;
 
-  curl_multi_assign( eventer->getMultiHandle(), s, retriever);
+  multiHandle = eventer -> getMultiHandle();
+  curl_multi_assign( multiHandle, s, retriever );
   retriever -> setSocketData( s, act, kind, e );
 }
 
@@ -268,34 +282,37 @@ void slurp::keyboardCallback(
   }
 }
 
-
-void slurp::scanMultiInfo( Eventer* eventer)
+/* TODO: move into the eventer class */
+void slurp::scanMultiInfo( Eventer* eventer )
 {
   CURLMsg *msgPtr;
-  CURL *easy;
   CURLM *multi;
+  CURL *easy;
   CURLcode rc;
-  Retriever* cRetriever;
-  char *effectiveUri;
+  Retriever* retriever;
+  char *URI;
   int msgsRemaining;
-
-  multi = eventer -> getMultiHandle();
 
   qDebug() << "debug: remaining " << eventer -> getRunning();
 
+  multi = eventer -> getMultiHandle();
+
   while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
     if (msgPtr -> msg == CURLMSG_DONE) {
+
       easy = msgPtr -> easy_handle;
       rc = msgPtr -> data.result;
-      curl_easy_getinfo(easy, CURLINFO_PRIVATE, &cRetriever);
-      curl_easy_getinfo(easy, CURLINFO_EFFECTIVE_URL, &effectiveUri);
 
-      qDebug() << "debug: " << effectiveUri 
+      curl_easy_getinfo(easy, CURLINFO_PRIVATE, &retriever);
+      curl_easy_getinfo(easy, CURLINFO_EFFECTIVE_URL, &URI);
+
+      qDebug() << "debug: " << URI
 	        << " complete, rc = " << rc 
-		<< " error buffer: " << cRetriever->getErrorBuffer();
+		<< " error buffer: " << 
+		( retriever -> getErrorBuffer() );
 
       curl_multi_remove_handle(multi, easy);
-      delete cRetriever;
+      delete retriever;
     }
   }
 }
