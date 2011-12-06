@@ -17,6 +17,7 @@
 
 %{
  
+#include <cstring>
 #include <QList>
 #include <QString>
 #include <QDebug>
@@ -33,7 +34,7 @@ void yyerror(const char *msg) { qDebug() << "ERROR! [" << msg << "]\n"; }
 %option noyywrap 
 %option yylineno 
 %option reentrant
-%option extra-type="void*"
+%option extra-type="QList<QString>*"
  
 SPACE     [ \t]
 ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
@@ -44,12 +45,12 @@ ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
 
 <INITIAL,X_COMMENT>"<!--"       {
   yy_push_state(X_COMMENT, yyscanner);
-  qDebug() << "pushing COMMENT state\n";
+  qDebug() << "debug: flex: pushing COMMENT state";
 }
 
 <X_COMMENT>"-->"                {
   yy_pop_state(yyscanner);
-  qDebug() << "popping COMMENT state\n";
+  qDebug() << "debug: flex: popping COMMENT state";
 }
 
 <X_COMMENT>.|\n                 {
@@ -57,7 +58,7 @@ ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
 }
  
 .|\n                            {
-  /* ignore whitespace */
+  qDebug() << "debug: flex: ignoring whitespace";
 }
 
 %%
@@ -66,8 +67,13 @@ namespace slurp {
 
 QList<QString> scanHTML( const QString& data ) {
      QList<QString> links;
+     yyscan_t scanner;
+     const char* buffer = reinterpret_cast < const char* > ( data.data() );
+     int bufferLen = strlen( buffer );
 
-     /* TODO: fix stub */
+     yylex_init_extra ( &links, &scanner  );
+     yy_scan_bytes( buffer, bufferLen, scanner );
+     yylex_destroy( scanner );
 
      return links;
 }
