@@ -12,5 +12,8 @@ Acknowledgements/Dependencies:
      QT, A cross-platform application and UI framework developed by Nokia Corporation
      flex, which was developed by a great many people over a long period of time
 
+Bugs:
+  Please report any bugs to: https://github.com/maxdeliso/slurp/issues
+
 Programmer:
   Max DeLiso
