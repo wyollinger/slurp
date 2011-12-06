@@ -23,6 +23,7 @@
 #include <QDebug>
 
 #include "globals.h"
+#include "scanner.h"
 
 using namespace slurp;
 void yyerror(const char *msg) { qDebug() << "ERROR! [" << msg << "]\n"; }
@@ -67,18 +68,20 @@ ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
 
 namespace slurp {
 
-QList<QString> scanHTML( const QString& data ) {
-     QList<QString> links;
-     yyscan_t scanner;
+Scanner::Scanner( Eventer* owner, const QString& data ) {
+     this -> owner = owner;
+     this -> data = data;
+}
+
+void Scanner::scan() {
+     yyscan_t flexScanner;
      const char* buffer = reinterpret_cast < const char* > ( data.data() );
-     int bufferLen = strlen( buffer );
+     int bufferLen = data.size();
 
-     yylex_init_extra ( &links, &scanner  );
-     yy_scan_bytes( buffer, bufferLen, scanner );
-     yylex( scanner );
-     yylex_destroy( scanner );
-
-     return links;
+     yylex_init_extra ( &links, &flexScanner  );
+     yy_scan_bytes( buffer, bufferLen, flexScanner );
+     yylex( flexScanner );
+     yylex_destroy( flexScanner );
 }
 
 } /* namespace slurp */

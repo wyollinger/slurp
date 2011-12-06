@@ -22,8 +22,23 @@
 #include <QString>
 #include <QRunnable>
 
+#include "eventer.h"
+
 namespace slurp {
-   QList<QString> scanHTML( const QString& data );
-}
+   class Scanner : public QRunnable {
+       QList<QString> links;
+       Eventer* owner;
+       QString data;
+
+       public:
+  
+       Scanner( Eventer* owner, const QString& data );
+       void scan();
+       inline QList<QString>* getLinksList() {
+            return &links;
+       }
+   };
+
+} /* namespace slurp */
 
 #endif /* SLURP_SCANNER_H */
