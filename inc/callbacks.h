@@ -41,12 +41,6 @@ namespace slurp {
 	size_t size, 
 	size_t nmemb, 
 	void *userp);
-     int progressCallback(
-	void *p, 
-	double dltotal, 
-	double dlnow, 
-	double ult,
-        double uln);
      void keyboardCallback(
         evutil_socket_t s,
 	short type, 

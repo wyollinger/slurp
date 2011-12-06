@@ -65,14 +65,6 @@ Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
           conn, 
           CURLOPT_NOPROGRESS, 
 	  !(flags & FLAGS_VERBOSE) );
-      curl_easy_setopt( 
-          conn, 
-          CURLOPT_PROGRESSFUNCTION, 
-          progressCallback);
-      curl_easy_setopt( 
-          conn, 
-          CURLOPT_PROGRESSDATA, 
-          this);
       curl_easy_setopt(
           conn, 
           CURLOPT_ERRORBUFFER, 

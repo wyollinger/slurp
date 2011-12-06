@@ -85,34 +85,15 @@ size_t writeCallback(
 	size_t nmemb, 
 	void *userp)
 {
-  size_t realSize = size * nmemb, bufferedSize;
+  size_t realSize = size * nmemb;
   Retriever* retriever = reinterpret_cast< Retriever* > ( userp );
   char* buffer = reinterpret_cast< char* > ( curlBuffer );
 
-  bufferedSize = retriever -> bufferData( buffer );
-
-  qDebug() << "in write callback with realSize " << realSize 
-	   << " and bufferedSize " << bufferedSize;
+  retriever -> bufferData( buffer );
 
   return realSize;
 }
  
-int progressCallback(
-	void *p, 
-	double dltotal, 
-	double dlnow, 
-	double ult,
-        double uln)
-{
-  (void)p;
-  (void)dltotal;
-  (void)dlnow;
-  (void)ult;
-  (void)uln;
-
- return 0;
-}
-
 void keyboardCallback(
         evutil_socket_t s,
 	short type, 
