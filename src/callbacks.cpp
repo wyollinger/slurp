@@ -29,10 +29,6 @@ void eventCallback(int fd, short kind, void *userp)
 {
   Eventer* eventer = reinterpret_cast< Eventer* > ( userp );
  
-  qDebug() << "debug: in event callback with fd " 
-	   << fd << " kind " 
-	   << kind;
-
   eventer -> processSocketEvent(fd, kind);
   eventer -> scanMultiInfo();
   eventer -> checkTimer();
@@ -73,12 +69,6 @@ int socketCallback(
   const static char *whatLut[] = { "none", "IN", "OUT", "INOUT", "REMOVE" };
   Eventer* eventer = reinterpret_cast< Eventer* > ( userp_a );
   Retriever* retriever = reinterpret_cast< Retriever* > ( userp_b );
-
-  qDebug() << "debug: socket callback: socket " << s
-	    << "easy handle: " << e 
-	    << "event: " << whatLut[what] 
-	    << "eventer @" << eventer
-            << "retriever @" << retriever;
 
   if (what == CURL_POLL_REMOVE) {
       qDebug() << "debug: remove stub";
@@ -132,10 +122,7 @@ void keyboardCallback(
   QString userInput = "";
   char cchar;
 
-  qDebug() << "debug: in keyboard callback with socket s "
-	    << s << " type "
-	    << type;
-
+  /* TODO: maybe move this to util */
   do {
     cchar = std::cin.get();
 
@@ -144,15 +131,13 @@ void keyboardCallback(
     } 
   } while( cchar != '\n' );
 
-  qDebug() << "debug: in kbcallback with <" 
-           << userInput.toAscii().data() 
-           << ">";
-
-  /* 
-     TODO: parse and process commands? 
-     
-     ..otherwise, treat string as URI and attempt to retrieve it
-  */
+  if( userInput == "exit" ) {
+      qDebug() << "debug: caught exit";  
+      delete eventer;
+      die("user exited", EXIT_SUCCESS);
+  } else {
+      qDebug() << "debug: command unrecognized. treating as URI...";
+  }
 
   if( userInput.size() > 0 ) {
      eventer -> queueURI( userInput );

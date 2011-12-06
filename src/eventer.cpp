@@ -59,10 +59,28 @@ Eventer::Eventer(
 }
 
 Eventer::~Eventer() {
+  timeval timeout;
+  int ret;
+
+  timeout.tv_sec = 1;
+  timeout.tv_usec = 0;
+
+  qDebug() << "debug: waiting for threadpool...";
   threadPool.waitForDone();
+
+  qDebug() << "debug: breaking out of event loop";
+  ret = event_base_loopexit( eventBasePtr, &timeout );
+
+  qDebug() << "debug: freeing timer event after loopexit returned" << ret;
   event_free( timerEventPtr );
+
+  qDebug() << "debug: freeing event base";
   event_base_free( eventBasePtr );
+
+  qDebug() << "debug: freeing curl multi handle";
   curl_multi_cleanup(multi);
+
+  /* FIXME: figure out why this causes heap corruption */
 }
 
 event* Eventer::registerSocket( curl_socket_t sockfd, int kind )
@@ -108,7 +126,7 @@ void Eventer::checkTimer() {
       evtimer_del( timerEventPtr );
     }
   } else {
-    qDebug() << "debug: " << running << " live connections";
+    //qDebug() << "debug: " << running << " live connections";
   }
 }
 
@@ -208,8 +226,6 @@ void Eventer::scanMultiInfo()
   Retriever* retriever;
   char *URI;
   int msgsRemaining;
-
-  qDebug() << "debug: remaining " << running;
 
   while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
     if (msgPtr -> msg == CURLMSG_DONE) {
