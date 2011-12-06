@@ -39,21 +39,12 @@ void initLibraries() {
 int validateArgs( int argc, char** argv, char** env, 
     QQueue<QString>& seedURIs, int& quota, int& maxThreads ) {
     int i;
-    int flags = FLAGS_INVALID;
-
-    if( argc == 1 ) { 
-      /* no urls were passed, so return failure */
-      return flags;
-    }
-
-    flags = FLAGS_VALID;
+    int flags = 0;
 
     for( i = 1; i < argc; i++ ) {
        if( argv[i][0] == '-' ) {
 	 switch( argv[i][1] ) {
             case 'V':
-              flags = 0;      
-              
 	      qDebug() << "slurp v" 
 		        << VERSION_ID[0] << "."
 		        << VERSION_ID[1] << "."

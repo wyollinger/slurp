@@ -60,14 +60,6 @@ int main(int argc, char** argv, char** env) {
 
   flags = validateArgs( argc, argv, env, seedURIs, quota, maxThreads );
 
-  if( !flags ) {
-     die(USAGE_MESSAGE, 1);
-  } else if( seedURIs.size() == 0 ) {
-     die(
-        "error: you must specify the initial URI to begin crawling from", 
-	EXIT_FAILURE );
-  }
-
   if( flags & FLAGS_VERBOSE ) {
     qDebug() << "debug: creating eventer instance with "
 	      << seedURIs.size() << " seed URI(s) and a quota of " 

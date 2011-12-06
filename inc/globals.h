@@ -30,7 +30,7 @@ const static int FLAGS_VALID    = 1;
 const static int FLAGS_VERBOSE  = 2;
 const static int FLAGS_HEADLESS = 4;
 const static int FLAGS_CONTD    = 8;
-const static int FLAGS_INVALID  = 0;
+const static int FLAGS_INVALID  = -1;
 
 /* these are defined in slurper.cpp */
 extern const char* USAGE_MESSAGE;
