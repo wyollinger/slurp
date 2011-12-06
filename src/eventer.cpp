@@ -78,6 +78,7 @@ void Eventer::addHandle( CURL* handle ) {
   CURLMcode rc;
 
   rc = curl_multi_add_handle(multi, handle);
+
   curlVerify("curl_multi_add_handle from Retriever()", rc);
 }
 
@@ -95,6 +96,7 @@ void Eventer::processSocketEvent( int fd, short kind ) {
       &running );
 
   curlVerify("curl_multi_socket_action from Eventer::processSocketEvent", rc);
+
 }
 
 void Eventer::checkTimer() {
@@ -113,7 +115,7 @@ void Eventer::checkTimer() {
 
 void Eventer::updateTimer() {
   CURLMcode mrc;
-  
+
   mrc = curl_multi_socket_action(
       multi,
       CURL_SOCKET_TIMEOUT, 
@@ -136,7 +138,7 @@ void Eventer::addTimer( long timeout_ms ) {
 
 int Eventer::run() {
   int ret;
-  struct event* kbEvent;
+  event* kbEvent;
 
   while (!pendingURIs.isEmpty()) {
       queueURI( pendingURIs.dequeue() ); 
@@ -184,6 +186,7 @@ void Eventer::setSocket(
            << " retriever@ " << retriever;
 
   curl_multi_assign( multi, s, retriever );
+
   retriever -> setSocketData( s, act, kind, e );
 }
 
@@ -225,7 +228,8 @@ void Eventer::scanMultiInfo()
       curl_multi_remove_handle(multi, easy);
       delete retriever;
     }
-  }
+  } /* while */
+
 }
 
 } /* namespace slurp */

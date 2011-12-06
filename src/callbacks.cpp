@@ -86,7 +86,7 @@ int socketCallback(
     if (!retriever) {
       eventer -> addSocket(s, e, what); 
     } else {
-      eventer -> setSocket( (Retriever*) retriever, s, e, what ); 
+      eventer -> setSocket( retriever, s, e, what ); 
     }
   }
 
@@ -100,15 +100,10 @@ size_t writeCallback(
 	void *data)
 {
   size_t realsize = size * nmemb;
-
-  qDebug() << "debug: in write callback with ptr @" 
-	   << ptr << " and size "
-	   << size << " and nmemb " 
-	   << nmemb << " and data @"
-           << data; 
-
+ 
   (void)ptr;
   (void)data;
+
   return realsize;
 }
  
@@ -119,12 +114,6 @@ int progressCallback(
 	double ult,
         double uln)
 {
- qDebug() << "debug: in progress callback with ptr @" 
-	   << p << " and dltotal " 
-	   << dltotal << " and dlnow " 
-	   << dlnow << " and ult " 
-	   << ult << " and uln" 
-	   << uln;
 
  return 0;
 }
