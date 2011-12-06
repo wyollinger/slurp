@@ -45,6 +45,8 @@ ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
 
 <INITIAL,X_COMMENT>"<!--"       {
   yy_push_state(X_COMMENT, yyscanner);
+  QList<QString>* resultList = yyget_extra( yyscanner );
+
   qDebug() << "debug: flex: pushing COMMENT state";
 }
 
