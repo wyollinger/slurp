@@ -20,6 +20,8 @@
 
 #include <QQueue>
 #include <curl/curl.h>
+#include <QDebug>
+#include <iostream>
 
 namespace slurp {
     void initLibraries();

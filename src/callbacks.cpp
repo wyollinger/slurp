@@ -114,6 +114,11 @@ int progressCallback(
 	double ult,
         double uln)
 {
+  (void)p;
+  (void)dltotal;
+  (void)dlnow;
+  (void)ult;
+  (void)uln;
 
  return 0;
 }
