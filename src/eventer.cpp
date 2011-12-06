@@ -219,8 +219,8 @@ void Eventer::scanMultiInfo()
 
       qDebug() << "debug: " << URI
 	        << " complete, rc = " << rc 
-		<< " error buffer: " << 
-		( retriever -> getErrorBuffer() );
+		<< " error buffer: " << ( retriever -> getErrorBuffer() )
+		<< " content buffer: " << retriever -> getData();
 
       curl_multi_remove_handle(multi, easy);
       delete retriever;

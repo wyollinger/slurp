@@ -85,19 +85,16 @@ size_t writeCallback(
 	size_t nmemb, 
 	void *userp)
 {
-  size_t realsize = size * nmemb, bufferedSize;
+  size_t realSize = size * nmemb, bufferedSize;
   Retriever* retriever = reinterpret_cast< Retriever* > ( userp );
   char* buffer = reinterpret_cast< char* > ( curlBuffer );
 
-  qDebug() << "debug: received " << realsize << " bytes in "
-	   << size << " packets of " << nmemb << " bytes from remote"; 
-
   bufferedSize = retriever -> bufferData( buffer );
 
-  qDebug() << "debug: retriever@ " << retriever 
-	   << " now has " << bufferedSize << " bytes buffered";
+  qDebug() << "in write callback with realSize " << realSize 
+	   << " and bufferedSize " << bufferedSize;
 
-  return realsize;
+  return realSize;
 }
  
 int progressCallback(

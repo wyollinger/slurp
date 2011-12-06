@@ -37,10 +37,10 @@ namespace slurp {
 	void *eventer, 
 	void *retriever);
      size_t writeCallback(
-        void *ptr, 
+        void *curlBuffer, 
 	size_t size, 
 	size_t nmemb, 
-	void *data);
+	void *userp);
      int progressCallback(
 	void *p, 
 	double dltotal, 

@@ -45,6 +45,10 @@ namespace slurp {
      inline const char* getErrorBuffer() const {
         return errorBuffer;
      }
+
+     inline const QString getData() {
+        return dataBuffer;
+     }
   };
 }
 
