@@ -56,25 +56,10 @@ Eventer::Eventer(
 }
 
 Eventer::~Eventer() {
-  timeval timeout;
-  int ret;
-
-  timeout.tv_sec = 1;
-  timeout.tv_usec = 0;
-
-  qDebug() << "debug: breaking out of event loop";
-  ret = event_base_loopexit( eventBasePtr, &timeout );
-
-  qDebug() << "debug: freeing timer event after loopexit returned" << ret;
-  event_free( timerEventPtr );
-
-  qDebug() << "debug: freeing event base";
-  event_base_free( eventBasePtr );
-
-  qDebug() << "debug: freeing curl multi handle";
-  curl_multi_cleanup(multi);
-
-  /* FIXME: figure out why this causes heap corruption */
+  if( eventBasePtr ) {
+    qDebug() << "debug: breaking out of event loop";
+    event_base_loopbreak( eventBasePtr );
+  }
 }
 
 event* Eventer::registerSocket( curl_socket_t sockfd, int kind )
@@ -112,15 +97,12 @@ void Eventer::processSocketEvent( int fd, short kind ) {
 }
 
 void Eventer::checkTimer() {
-
   if ( running <= 0 ) {
     qDebug() << "debug: last transfer complete";
 
     if ( evtimer_pending( timerEventPtr, NULL)) {
       evtimer_del( timerEventPtr );
     }
-  } else {
-    //qDebug() << "debug: " << running << " live connections";
   }
 }
 
@@ -173,7 +155,21 @@ int Eventer::run() {
 
   qDebug() << "debug: event dispatch returned " << ret;
 
+  qDebug() << "debug: freeing keyboard event";
   event_free( kbEvent );
+
+  qDebug() << "debug: freeing event base";
+  event_base_free( eventBasePtr );
+  eventBasePtr = NULL;
+
+  qDebug() << "debug: freeing timer event after loopexit returned" << ret;
+  checkTimer();
+  event_free( timerEventPtr );
+  timerEventPtr = NULL;
+
+  qDebug() << "debug: freeing curl multi handle";
+  curl_multi_cleanup(multi);
+  multi = NULL;
 
   return ret;
 }

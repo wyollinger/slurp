@@ -132,8 +132,7 @@ void keyboardCallback(
 
   if( userInput == "exit" ) {
       qDebug() << "debug: caught exit";  
-      delete eventer;
-      die("user exited", EXIT_SUCCESS);
+      eventer -> ~Eventer();
   } else if( userInput.size() > 0 ) {
       qDebug() << "debug: command unrecognized. treating as URI...";
       eventer -> addURI( userInput );
