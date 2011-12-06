@@ -17,12 +17,14 @@
 
 %{
  
-#include <iostream>
+#include <QList>
+#include <QString>
+#include <QDebug>
 
 #include "globals.h"
 
 using namespace slurp;
-inline void yyerror(const char *msg) { std::cerr << "ERROR! [" << msg << "]\n"; }
+void yyerror(const char *msg) { qDebug() << "ERROR! [" << msg << "]\n"; }
 
 %}
 
@@ -42,12 +44,12 @@ ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
 
 <INITIAL,X_COMMENT>"<!--"       {
   yy_push_state(X_COMMENT, yyscanner);
-  std::cout << "pushing COMMENT state\n";
+  qDebug() << "pushing COMMENT state\n";
 }
 
 <X_COMMENT>"-->"                {
   yy_pop_state(yyscanner);
-  std::cout << "popping COMMENT state\n";
+  qDebug() << "popping COMMENT state\n";
 }
 
 <X_COMMENT>.|\n                 {
@@ -60,8 +62,14 @@ ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
 
 %%
 
-/* define the flex routines here */
-void scanString() {
-  (void)yyunput;
-  (void)yy_top_state;
+namespace slurp {
+
+QList<QString> scanHTML( const QString& data ) {
+     QList<QString> links;
+
+     /* TODO: fix stub */
+
+     return links;
 }
+
+} /* namespace slurp */

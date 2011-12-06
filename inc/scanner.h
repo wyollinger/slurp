@@ -18,10 +18,12 @@
 #ifndef SLURP_SCANNER_H
 #define SLURP_SCANNER_H
 
+#include <QList>
+#include <QString>
+#include <QRunnable>
+
 namespace slurp {
-
-
-
+   QList<QString> scanHTML( const QString& data );
 }
 
 #endif /* SLURP_SCANNER_H */
