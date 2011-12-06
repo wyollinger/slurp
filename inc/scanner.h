@@ -33,6 +33,7 @@ namespace slurp {
        public:
   
        Scanner( Eventer* owner, const QString& data );
+       ~Scanner();
        void run();
        inline QList<QString>* getLinksList() {
             return &links;

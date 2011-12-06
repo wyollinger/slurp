@@ -61,7 +61,6 @@ ID        [[:alpha:]]([[:alnum:]]|:|-|_)*
 }
  
 .|\n                            {
-  qDebug() << "debug: flex: ignoring whitespace";
 }
 
 %%
@@ -71,6 +70,10 @@ namespace slurp {
 Scanner::Scanner( Eventer* owner, const QString& data ) {
      this -> owner = owner;
      this -> data = data;
+}
+
+Scanner::~Scanner() {
+     qDebug() << "debug: scan complete";
 }
 
 void Scanner::run() {
