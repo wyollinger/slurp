@@ -75,6 +75,7 @@ QList<QString> scanHTML( const QString& data ) {
 
      yylex_init_extra ( &links, &scanner  );
      yy_scan_bytes( buffer, bufferLen, scanner );
+     yylex( scanner );
      yylex_destroy( scanner );
 
      return links;
