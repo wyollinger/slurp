@@ -20,7 +20,7 @@
 
 namespace slurp {
 
-const static int VERSION_ID[3] = {0,0,6};
+const static int VERSION_ID[3] = {0,0,8};
 const static int FLAGS_VALID    = 1;
 const static int FLAGS_VERBOSE  = 2;
 const static int FLAGS_HEADLESS = 4;

@@ -1,6 +1,5 @@
 # QT Variables
 TEMPLATE = app
-VERSION = 0.0.3
 TARGET = slurp
 DEPENDPATH += . inc src
 INCLUDEPATH += . inc
