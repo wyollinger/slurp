@@ -20,18 +20,18 @@
 
 namespace slurp {
 
-const static int VERSION_ID[3] = {0,0,8};
-const static int FLAGS_VALID    = 1;
-const static int FLAGS_VERBOSE  = 2;
-const static int FLAGS_HEADLESS = 4;
-const static int FLAGS_CONTD    = 8;
-const static int FLAGS_INVALID  = -1;
+    const static int VERSION_ID[3] = { 0, 0, 8 };
+    const static int FLAGS_VALID = 1;
+    const static int FLAGS_VERBOSE = 2;
+    const static int FLAGS_HEADLESS = 4;
+    const static int FLAGS_CONTD = 8;
+    const static int FLAGS_INVALID = -1;
 
 /* these are defined in slurper.cpp */
-extern const char* USAGE_MESSAGE;
-extern const char* HELP_MENU;
-extern const char* LICENSE_INFO;
+    extern const char *USAGE_MESSAGE;
+    extern const char *HELP_MENU;
+    extern const char *LICENSE_INFO;
 
-}
+} 
 
-#endif /* SLURP_GLOBALS_H */
+#endif				/* SLURP_GLOBALS_H */

@@ -20,12 +20,11 @@
  * while implementing this class.
  */
 
-
 #include <QDebug>
 #include <QString>
 #include <QThread>
 
-#include "retriever.h" 
+#include "retriever.h"
 #include "eventer.h"
 #include "callbacks.h"
 #include "globals.h"
@@ -33,99 +32,72 @@
 
 namespace slurp {
 
-Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
-  this -> uri = uri;
-  this -> flags = flags;
- 
-  owner = eventer;
-  socketEvent = NULL;
-  errorBuffer[0] = '\0';
-  dataBuffer = "";
+    Retriever::Retriever(Eventer * eventer, QString uri, int flags) {
+	this->uri = uri;
+	this->flags = flags;
 
-  conn = curl_easy_init();
-    
-  if( conn ) {  
-      curl_easy_setopt(
-          conn, 
-          CURLOPT_URL, 
-	  uri.toAscii().data());
-      curl_easy_setopt(
-          conn, 
-          CURLOPT_WRITEFUNCTION, 
-	  writeCallback);
-      curl_easy_setopt(
-          conn,
-          CURLOPT_WRITEDATA,
-	  this);
-      curl_easy_setopt(
-          conn, 
-          CURLOPT_VERBOSE, 
-	  flags & FLAGS_VERBOSE ); 
-      curl_easy_setopt(
-          conn, 
-          CURLOPT_NOPROGRESS, 
-	  !(flags & FLAGS_VERBOSE) );
-      curl_easy_setopt(
-          conn, 
-          CURLOPT_ERRORBUFFER, 
-	  errorBuffer);
-      curl_easy_setopt( 
-          conn, 
-          CURLOPT_PRIVATE, 
-          this);
-      curl_easy_setopt(
-          conn, 
-          CURLOPT_NOSIGNAL,
-          1);
+	owner = eventer;
+	socketEvent = NULL;
+	errorBuffer[0] = '\0';
+	dataBuffer = "";
 
-      owner -> addHandle( conn );
-  } else {
-      qDebug() << "error: could not initialize retriever curl handle";
-  }
+	conn = curl_easy_init();
 
-  qDebug() << "debug: retriever constructed";
-}
+	if (conn) {
+	    curl_easy_setopt(conn, CURLOPT_URL, uri.toAscii().data());
+	    curl_easy_setopt(conn, CURLOPT_WRITEFUNCTION, writeCallback);
+	    curl_easy_setopt(conn, CURLOPT_WRITEDATA, this);
+	    curl_easy_setopt(conn, CURLOPT_VERBOSE, flags & FLAGS_VERBOSE);
+	    curl_easy_setopt(conn,
+			     CURLOPT_NOPROGRESS, !(flags & FLAGS_VERBOSE));
+	    curl_easy_setopt(conn, CURLOPT_ERRORBUFFER, errorBuffer);
+	    curl_easy_setopt(conn, CURLOPT_PRIVATE, this);
+	    curl_easy_setopt(conn, CURLOPT_NOSIGNAL, 1);
 
-Retriever::~Retriever() {
-  qDebug() << "debug: deleting retriever instance";
-  
-  if( conn ) {
-     curl_easy_cleanup( conn );
-  }
+	    owner->addHandle(conn);
+	} else {
+	    qDebug() << "error: could not initialize retriever curl handle";
+	}
 
-  if( socketEvent ) {
-     event_del( socketEvent ); 
-  }
-}
+	qDebug() << "debug: retriever constructed";
+    }
 
-void Retriever::setSocketData( curl_socket_t sockfd, int action, int kind, CURL* curlHandle ) {
-  qDebug() << "debug: setting socket data with sock " << sockfd 
-           << " action " << action
-           << " kind " << kind 
-           << " new handle@ " << curlHandle
-           << " old handle@ " << conn 
-	   << " new sockfd " << sockfd
-	   << " old sockfd " << this -> sockfd
-	   << " new action " << action 
-	   << " old action " << this -> action;
+    Retriever::~Retriever() {
+	qDebug() << "debug: deleting retriever instance";
 
-  this -> sockfd = sockfd;
-  this -> action = action;
+	if (conn) {
+	    curl_easy_cleanup(conn);
+	}
 
-  if( socketEvent ) { 
-     event_del( socketEvent );
-     socketEvent = NULL;
-  }
+	if (socketEvent) {
+	    event_del(socketEvent);
+	}
+    }
 
-  socketEvent = owner -> registerSocket( sockfd, kind );
-  event_add( socketEvent, NULL );
-}
+    void Retriever::setSocketData(curl_socket_t sockfd, int action, int kind,
+				  CURL * curlHandle) {
+	qDebug() << "debug: setting socket data with sock " << sockfd <<
+	    " action " << action << " kind " << kind << " new handle@ " <<
+	    curlHandle << " old handle@ " << conn << " new sockfd " << sockfd <<
+	    " old sockfd " << this->
+	    sockfd << " new action " << action << " old action " << this->
+	    action;
 
-size_t Retriever::bufferData( const char* data ) {
-    dataBuffer += data;
-    return dataBuffer.size();
-}
+	this->sockfd = sockfd;
+	this->action = action;
 
+	if (socketEvent) {
+	    event_del(socketEvent);
+	    socketEvent = NULL;
+	}
 
-} /* namespace slurp */
+	socketEvent = owner->registerSocket(sockfd, kind);
+	event_add(socketEvent, NULL);
+    }
 
+    size_t Retriever::bufferData(const char *data) {
+	dataBuffer += data;
+	return dataBuffer.size();
+    }
+
+}				/* namespace slurp */

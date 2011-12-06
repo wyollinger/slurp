@@ -27,55 +27,33 @@
 #include "retriever.h"
 
 namespace slurp {
-  class Retriever; /* A promise to the compiler that this class will be implemented */	
-  class Eventer {
-     CURLM *multi;
-     int quota, flags, running;
-     event_base* eventBasePtr;
-     event* timerEventPtr;
-     QQueue<QString> initialURIs;
-     QThreadPool scannerPool;
+    class Retriever;	    
+    class Eventer {
+	CURLM *multi;
+	int quota, flags, running;
+	event_base *eventBasePtr;
+	event *timerEventPtr;
+	QQueue < QString > initialURIs;
+	QThreadPool scannerPool;
 
-     public:
+    public:
 
-     Eventer( 
-         const QQueue<QString>& initialURIs, 
-	 int quota, 
-	 int flags );
+	Eventer(const QQueue < QString > &initialURIs, int quota, int flags);
+	event *registerSocket(curl_socket_t sockfd, int kind);
+	void addHandle(CURL * handle);
+	void processSocketEvent(int fd, short kind);
+	void checkTimer();
+	void updateTimer();
+	void addTimer(long timeout_ms);
+	void setSocket(Retriever * retriever,
+		       curl_socket_t s, CURL * e, int act);
 
-     event* registerSocket( curl_socket_t sockfd, int kind );
-     void addHandle( CURL* handle );
-     void processSocketEvent( int fd, short kind );
-     void checkTimer();
-     void updateTimer();
-     void addTimer( long timeout_ms );
-
-     void setSocket(
-        Retriever* retriever, 
-        curl_socket_t s, 
-        CURL* e, 
-        int act);
-
-     void addSocket(
-        curl_socket_t s, 
-        CURL *easy, 
-        int action );
-
-     void scanMultiInfo();
-
-     void processEvent( int fd, short kind );
-
-     inline int getRunning() const {
-         return running;
-     }
-
-     int run();
-     void addURI( const QString& uri );
-     void stop();
-  };
+	void addSocket(curl_socket_t s, CURL * easy, int action);
+	void scanMultiInfo();
+	void processEvent(int fd, short kind);
+	int run();
+	void addURI(const QString & uri);
+	void stop();
+    };
 }
-
-#endif /* SLURP_EVENTER_H */
-
-
-
+#endif				/* SLURP_EVENTER_H */

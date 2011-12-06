@@ -26,94 +26,77 @@
 
 namespace slurp {
 
-void eventCallback(int fd, short kind, void *userp)
-{
-  Eventer* eventer = reinterpret_cast< Eventer* > ( userp );
- 
-  eventer -> processSocketEvent(fd, kind);
-  eventer -> scanMultiInfo();
-  eventer -> checkTimer();
-}
- 
-void timerCallback(int fd, short kind, void* userp) 
-{
-  Eventer* eventer = reinterpret_cast< Eventer* > ( userp );
+    void eventCallback(int fd, short kind, void *userp) {
+	Eventer *eventer = reinterpret_cast < Eventer * >(userp);
 
-  (void)fd;
-  (void)kind;
+	 eventer->processSocketEvent(fd, kind);
+	 eventer->scanMultiInfo();
+	 eventer->checkTimer();
+    } 
+    
+    void timerCallback(int fd, short kind, void *userp) {
+	Eventer *eventer = reinterpret_cast < Eventer * >(userp);
 
-  eventer -> updateTimer();
-  eventer -> scanMultiInfo();
-}
+	(void)fd;
+	(void)kind;
 
-int multiTimerCallback(
-        CURLM *multi_handle, 
-	long timeout_ms,
-	void *userp)
-{
-       Eventer* eventer = reinterpret_cast< Eventer* > ( userp );
+	eventer->updateTimer();
+	eventer->scanMultiInfo();
+    }
 
-    (void)multi_handle;
+    int multiTimerCallback(CURLM * multi_handle, long timeout_ms, void *userp) {
+	Eventer *eventer = reinterpret_cast < Eventer * >(userp);
 
-    eventer -> addTimer( timeout_ms );
+	(void)multi_handle;
 
-    return 0;
-}
+	eventer->addTimer(timeout_ms);
 
-int socketCallback(
-        CURL *e, 
-	curl_socket_t s, 
-	int what, 
-	void *userp_a, 
-	void *userp_b)
-{
-  Eventer* eventer = reinterpret_cast< Eventer* > ( userp_a );
-  Retriever* retriever = reinterpret_cast< Retriever* > ( userp_b );
+	return 0;
+    }
 
-  if (!retriever) {
-    eventer -> addSocket(s, e, what); 
-  } else {
-    eventer -> setSocket( retriever, s, e, what ); 
-  }
+    int socketCallback(CURL * e,
+		       curl_socket_t s,
+		       int what, void *userp_a, void *userp_b) {
+	Eventer *eventer = reinterpret_cast < Eventer * >(userp_a);
+	Retriever *retriever = reinterpret_cast < Retriever * >(userp_b);
 
-  return 0;
-}
- 
-size_t writeCallback(
-        void *curlBuffer, 
-	size_t size, 
-	size_t nmemb, 
-	void *userp)
-{
-  size_t realSize = size * nmemb;
-  Retriever* retriever = reinterpret_cast< Retriever* > ( userp );
-  char* buffer = reinterpret_cast< char* > ( curlBuffer );
+	if (!retriever) {
+	    eventer->addSocket(s, e, what);
+	} else {
+	    eventer->setSocket(retriever, s, e, what);
+	}
 
-  retriever -> bufferData( buffer );
+	return 0;
+    }
 
-  return realSize;
-}
- 
-void keyboardCallback(
-        evutil_socket_t s,
-	short type, 
-	void *userp)
-{
-  Eventer* eventer = reinterpret_cast< Eventer* > ( userp );
-  std::string userInput = "";
+    size_t writeCallback(void *curlBuffer,
+			 size_t size, size_t nmemb, void *userp) {
+	size_t realSize = size * nmemb;
+	Retriever *retriever = reinterpret_cast < Retriever * >(userp);
+	char *buffer = reinterpret_cast < char *>(curlBuffer);
 
-  (void)s;
-  (void)type;
+	retriever->bufferData(buffer);
 
-  std::getline(std::cin, userInput);
+	return realSize;
+    }
 
-  if( userInput == "exit" ) {
-      qDebug() << "debug: caught exit";  
-      eventer -> stop();
-  } else if( userInput.size() > 0 ) {
-      qDebug() << "debug: command unrecognized. treating as URI...";
-      eventer -> addURI( QString( userInput.c_str() ) );
-  }
-}
+    void keyboardCallback(evutil_socket_t s, short type, void *userp) {
+	Eventer *eventer = reinterpret_cast < Eventer * >(userp);
 
-} /* namespace slurp */
+	std::string userInput = "";
+
+	(void)s;
+	(void)type;
+
+	std::getline(std::cin, userInput);
+
+	if (userInput == "exit") {
+	    qDebug() << "debug: caught exit";
+	    eventer->stop();
+	} else if (userInput.size() > 0) {
+	    qDebug() << "debug: command unrecognized. treating as URI...";
+	    eventer->addURI(QString(userInput.c_str()));
+	}
+    }
+
+}				/* namespace slurp */

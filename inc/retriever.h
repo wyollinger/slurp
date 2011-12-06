@@ -24,33 +24,33 @@
 #include "eventer.h"
 
 namespace slurp {
-  class Eventer; /* a promise to the compiler that this class will be implemented */
-  class Retriever {
-     QString uri, dataBuffer;
-     CURL* conn;
-     char errorBuffer[CURL_ERROR_SIZE];
-     int flags;
-     event* socketEvent;
-     Eventer* owner;
-     curl_socket_t sockfd;
-     int action;   
-  
-     public:
+    class Eventer;
+    class Retriever {
+	QString uri, dataBuffer;
+	CURL *conn;
+	char errorBuffer[CURL_ERROR_SIZE];
+	int flags;
+	event *socketEvent;
+	Eventer *owner;
+	curl_socket_t sockfd;
+	int action;
 
-     Retriever( Eventer* eventer, QString uri, int flags );
-     ~Retriever();
-     void setSocketData( curl_socket_t sockfd, int action, int kind, CURL* curlHandle );  
-     size_t bufferData( const char* data );
+        public:
 
-     inline const char* getErrorBuffer() const {
-        return errorBuffer;
-     }
+	 Retriever(Eventer * eventer, QString uri, int flags);
+	~Retriever();
+	void setSocketData(curl_socket_t sockfd, int action, int kind,
+			   CURL * curlHandle);
+	size_t bufferData(const char *data);
 
-     inline const QString getData() {
-        return dataBuffer;
-     }
-  };
-}
+	inline const char *getErrorBuffer() const {
+	    return errorBuffer;
+	} 
+	
+	inline const QString getData() {
+	    return dataBuffer;
+        }
+    };
+}				/* namespace slurp */
 
-#endif /* SLURP_RETREIVER_H */
-
+#endif				/* SLURP_RETREIVER_H */

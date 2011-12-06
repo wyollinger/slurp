@@ -25,21 +25,20 @@
 #include "eventer.h"
 
 namespace slurp {
-   class Scanner : public QRunnable {
-       QList<QString> links;
-       Eventer* owner;
-       QString data;
+    class Scanner:public QRunnable {
+	QList < QString > links;
+	Eventer *owner;
+	QString data;
 
-       public:
-  
-       Scanner( Eventer* owner, const QString& data );
-       ~Scanner();
-       void run();
-       inline QList<QString>* getLinksList() {
-            return &links;
-       }
-   };
+ public:
 
-} /* namespace slurp */
+	 Scanner(Eventer * owner, const QString & data);
+	~Scanner();
+	void run();
+	inline QList < QString > *getLinksList() {
+	    return &links;
+        }
+    };
+}				/* namespace slurp */
 
-#endif /* SLURP_SCANNER_H */
+#endif				/* SLURP_SCANNER_H */

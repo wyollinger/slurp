@@ -24,26 +24,15 @@
 #include "eventer.h"
 
 namespace slurp {
-     void eventCallback(int fd, short kind, void *userp);
-     void timerCallback(int fd, short kind, void* Eventer);
-     int multiTimerCallback( 
-        CURLM * multi_handle, 
-	long timeout_ms, 
-	void* Eventer);
-     int socketCallback(
-        CURL *e, 
-	curl_socket_t s, 
-	int what, 
-	void *eventer, 
-	void *retriever);
-     size_t writeCallback(
-        void *curlBuffer, 
-	size_t size, 
-	size_t nmemb, 
-	void *userp);
-     void keyboardCallback(
-        evutil_socket_t s,
-	short type, 
-	void *userp);
-   }
-#endif /* SLURP_CALLBACKS_H */
+    void eventCallback(int fd, short kind, void *userp);
+    void timerCallback(int fd, short kind, void *Eventer);
+    int multiTimerCallback(CURLM * multi_handle,
+			   long timeout_ms, void *Eventer);
+    int socketCallback(CURL * e,
+		       curl_socket_t s,
+		       int what, void *eventer, void *retriever);
+    size_t writeCallback(void *curlBuffer,
+			 size_t size, size_t nmemb, void *userp);
+    void keyboardCallback(evutil_socket_t s, short type, void *userp);
+}
+#endif				/* SLURP_CALLBACKS_H */
