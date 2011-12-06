@@ -117,7 +117,10 @@ void keyboardCallback(
   QString userInput = "";
   char cchar;
 
-  /* TODO: maybe move this to util */
+  (void)s;
+  (void)type;
+
+  /* TODO: maybe move this to util... */
   do {
     cchar = std::cin.get();
 
@@ -125,6 +128,7 @@ void keyboardCallback(
         userInput += cchar;
     } 
   } while( cchar != '\n' );
+  /* ... in some kind of getline function. */
 
   if( userInput == "exit" ) {
       qDebug() << "debug: caught exit";  
