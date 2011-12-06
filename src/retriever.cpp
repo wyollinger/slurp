@@ -144,4 +144,6 @@ void Retriever::run() {
 bool Retriever::isValid() const {
   return (uri.length() > 0) && ( conn != NULL );
 }
-}
+
+} /* namespace slurp */
+

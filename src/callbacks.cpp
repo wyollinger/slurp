@@ -299,4 +299,5 @@ void scanMultiInfo( Eventer* eventer )
     }
   }
 }
-}
+
+} /* namespace slurp */

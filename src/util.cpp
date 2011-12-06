@@ -149,4 +149,5 @@ void curlVerify(const char *where, CURLMcode code)
     exit(code);
   }
 }
-}
+
+} /* namespace slurp */

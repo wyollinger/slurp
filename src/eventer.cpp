@@ -95,4 +95,5 @@ int Eventer::run() {
 void Eventer::queueURI( const QString& uri ) {
   threadPool.start( new Retriever( this, uri, flags ) );
 }
-}
+
+} /* namespace slurp */

@@ -90,7 +90,7 @@ int main(int argc, char** argv, char** env) {
   return ev.run(); 
 }
 
-}
+} /* namespace slurp */
 
 int main( int argc, char** argv, char ** env ) {
     return slurp::main( argc, argv, env );
