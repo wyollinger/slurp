@@ -147,22 +147,19 @@ int Eventer::run() {
 
   qDebug() << "debug: event dispatch returned " << ret;
 
-  qDebug() << "debug: freeing keyboard event";
   event_free( kbEvent );
 
-  qDebug() << "debug: freeing timer event after loopexit returned" << ret;
   checkTimer();
   event_free( timerEventPtr );
   timerEventPtr = NULL;
 
-  qDebug() << "debug: freeing event base";
   event_base_free( eventBasePtr );
   eventBasePtr = NULL;
 
-  qDebug() << "debug: freeing curl multi handle";
   curl_multi_cleanup(multi);
   multi = NULL;
 
+  qDebug() << "debug: Eventer::run() returning";
   return ret;
 }
 

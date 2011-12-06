@@ -51,29 +51,17 @@ const char* LICENSE_INFO =
 "You should have received a copy of the GNU General Public License\n"\
 "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n";
 
+} /* namespace slurp */
+
+using namespace slurp;
+
 int main(int argc, char** argv, char** env) {
-  int ret, flags, quota = -1, maxThreads = QThread::idealThreadCount();
+  int flags, quota = -1, maxThreads = QThread::idealThreadCount();
   QQueue<QString> seedURIs;
 
   initLibraries();
-
   flags = validateArgs( argc, argv, env, seedURIs, quota, maxThreads );
-
-  if( flags & FLAGS_VERBOSE ) {
-    qDebug() << "debug: creating eventer instance with "
-	      << seedURIs.size() << " seed URI(s) and a quota of " 
-	      << quota;
-  }
-
   Eventer ev(seedURIs, quota, flags);
 
-  ret = ev.run(); 
-
-  return ret;
-}
-
-} /* namespace slurp */
-
-int main( int argc, char** argv, char ** env ) {
-    return slurp::main( argc, argv, env );
+  return ev.run(); 
 }
