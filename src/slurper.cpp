@@ -51,9 +51,7 @@ const char* LICENSE_INFO =
 "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n";
 
 int main(int argc, char** argv, char** env) {
-  int flags;
-  int quota = -1; /* no quota */
-  int maxThreads = QThread::idealThreadCount();
+  int ret, flags, quota = -1, maxThreads = QThread::idealThreadCount();
   QQueue<QString> seedURIs;
 
   initLibraries();
@@ -68,7 +66,9 @@ int main(int argc, char** argv, char** env) {
 
   Eventer ev(seedURIs, quota, flags);
 
-  return ev.run(); 
+  ret = ev.run(); 
+
+  return ret;
 }
 
 } /* namespace slurp */

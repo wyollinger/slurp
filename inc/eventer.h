@@ -57,7 +57,6 @@ namespace slurp {
 	 int quota, 
 	 int flags );
 
-     ~Eventer();
      event* registerSocket( curl_socket_t sockfd, int kind );
      void addHandle( CURL* handle );
      void processSocketEvent( int fd, short kind );
@@ -85,8 +84,8 @@ namespace slurp {
      }
 
      int run();
-
      void addURI( const QString& uri );
+     void stop();
   };
 }
 

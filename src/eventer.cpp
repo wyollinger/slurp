@@ -55,13 +55,7 @@ Eventer::Eventer(
 		<< this;
 }
 
-Eventer::~Eventer() {
-  if( eventBasePtr ) {
-    qDebug() << "debug: breaking out of event loop";
-    event_base_loopbreak( eventBasePtr );
-  }
-}
-
+  
 event* Eventer::registerSocket( curl_socket_t sockfd, int kind )
 {
    event* newEvent;
@@ -78,7 +72,6 @@ void Eventer::addHandle( CURL* handle ) {
 
   curlVerify("curl_multi_add_handle from Retriever()", rc);
 }
-
 
 void Eventer::processSocketEvent( int fd, short kind ) {
   CURLMcode rc;
@@ -105,7 +98,6 @@ void Eventer::checkTimer() {
     }
   }
 }
-
 
 void Eventer::updateTimer() {
   CURLMcode mrc;
@@ -158,14 +150,14 @@ int Eventer::run() {
   qDebug() << "debug: freeing keyboard event";
   event_free( kbEvent );
 
-  qDebug() << "debug: freeing event base";
-  event_base_free( eventBasePtr );
-  eventBasePtr = NULL;
-
   qDebug() << "debug: freeing timer event after loopexit returned" << ret;
   checkTimer();
   event_free( timerEventPtr );
   timerEventPtr = NULL;
+
+  qDebug() << "debug: freeing event base";
+  event_base_free( eventBasePtr );
+  eventBasePtr = NULL;
 
   qDebug() << "debug: freeing curl multi handle";
   curl_multi_cleanup(multi);
@@ -238,6 +230,10 @@ void Eventer::scanMultiInfo()
     }
   } /* while */
 
+}
+
+void Eventer::stop() {
+  event_base_loopbreak( eventBasePtr );
 }
 
 } /* namespace slurp */
