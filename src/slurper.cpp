@@ -63,11 +63,10 @@ int main(int argc, char** argv, char** env) {
   if( flags & FLAGS_VERBOSE ) {
     qDebug() << "debug: creating eventer instance with "
 	      << seedURIs.size() << " seed URI(s) and a quota of " 
-	      << quota << " with the constraint of " 
-	      << maxThreads << " maximum threads\n";
+	      << quota;
   }
 
-  Eventer ev(seedURIs, quota, maxThreads, flags);
+  Eventer ev(seedURIs, quota, flags);
 
   return ev.run(); 
 }

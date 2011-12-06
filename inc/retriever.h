@@ -29,7 +29,7 @@
 
 namespace slurp {
   class Eventer; /* a promise to the compiler that this class will be implemented */
-  class Retriever : public QRunnable {
+  class Retriever {
      QString uri;
      CURL* conn;
      char errorBuffer[CURL_ERROR_SIZE];
@@ -43,7 +43,6 @@ namespace slurp {
 
      Retriever( Eventer* eventer, QString uri, int flags );
      ~Retriever();
-     void run();
      bool isValid() const;
      void setSocketData( curl_socket_t sockfd, int action, int kind, CURL* curlHandle );  
 

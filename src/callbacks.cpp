@@ -66,18 +66,13 @@ int socketCallback(
 	void *userp_a, 
 	void *userp_b)
 {
-  const static char *whatLut[] = { "none", "IN", "OUT", "INOUT", "REMOVE" };
   Eventer* eventer = reinterpret_cast< Eventer* > ( userp_a );
   Retriever* retriever = reinterpret_cast< Retriever* > ( userp_b );
 
-  if (what == CURL_POLL_REMOVE) {
-      qDebug() << "debug: remove stub";
+  if (!retriever) {
+    eventer -> addSocket(s, e, what); 
   } else {
-    if (!retriever) {
-      eventer -> addSocket(s, e, what); 
-    } else {
-      eventer -> setSocket( retriever, s, e, what ); 
-    }
+    eventer -> setSocket( retriever, s, e, what ); 
   }
 
   return 0;
@@ -135,12 +130,9 @@ void keyboardCallback(
       qDebug() << "debug: caught exit";  
       delete eventer;
       die("user exited", EXIT_SUCCESS);
-  } else {
+  } else if( userInput.size() > 0 ) {
       qDebug() << "debug: command unrecognized. treating as URI...";
-  }
-
-  if( userInput.size() > 0 ) {
-     eventer -> queueURI( userInput );
+      eventer -> addURI( userInput );
   }
 }
 

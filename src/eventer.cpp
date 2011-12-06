@@ -26,15 +26,12 @@ namespace slurp {
 Eventer::Eventer( 
     const QQueue<QString>& initialURIs, 
     int quota, 
-    int maxThreads,
     int flags ) {
       running = 0;
 
-      pendingURIs = initialURIs;
       this -> quota = quota;
       this -> flags = flags;
-
-      threadPool.setMaxThreadCount( maxThreads );
+      this -> initialURIs = initialURIs;
 
       eventBasePtr = event_base_new();
 
@@ -64,9 +61,6 @@ Eventer::~Eventer() {
 
   timeout.tv_sec = 1;
   timeout.tv_usec = 0;
-
-  qDebug() << "debug: waiting for threadpool...";
-  threadPool.waitForDone();
 
   qDebug() << "debug: breaking out of event loop";
   ret = event_base_loopexit( eventBasePtr, &timeout );
@@ -158,8 +152,8 @@ int Eventer::run() {
   int ret;
   event* kbEvent;
 
-  while (!pendingURIs.isEmpty()) {
-      queueURI( pendingURIs.dequeue() ); 
+  while (!initialURIs.isEmpty()) {
+      addURI( initialURIs.dequeue() ); 
   }
 
   kbEvent = event_new(
@@ -174,7 +168,9 @@ int Eventer::run() {
   } 
 
   qDebug() << "debug: calling event_base_dispatch";
+
   ret = event_base_dispatch( eventBasePtr );
+
   qDebug() << "debug: event dispatch returned " << ret;
 
   event_free( kbEvent );
@@ -182,8 +178,8 @@ int Eventer::run() {
   return ret;
 }
 
-void Eventer::queueURI( const QString& uri ) {
-  threadPool.start( new Retriever( this, uri, flags ) );
+void Eventer::addURI( const QString& uri ) {
+  new Retriever( this, uri, flags );
 }
 
 void Eventer::setSocket(

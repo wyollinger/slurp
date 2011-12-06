@@ -22,6 +22,7 @@
 
 
 #include <QDebug>
+#include <QThread>
 
 #include "retriever.h" 
 #include "eventer.h"
@@ -39,53 +40,9 @@ Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
   socketEvent = NULL;
   errorBuffer[0] = '\0';
 
-  setAutoDelete(false);
-
   conn = curl_easy_init();
-
-  qDebug() << "debug: constructed retriever with owner @" 
-	      << owner;
-}
-
-Retriever::~Retriever() {
-  qDebug() << "debug: deleting retriever instance";
-  
-  if( conn ) {
-     curl_easy_cleanup( conn );
-  }
-
-  if( socketEvent ) {
-     event_del( socketEvent ); 
-  }
-}
-
-void Retriever::setSocketData( curl_socket_t sockfd, int action, int kind, CURL* curlHandle ) {
-  qDebug() << "debug: setting socket data with sock " << sockfd 
-           << " action " << action
-           << " kind " << kind 
-           << " new handle@ " << curlHandle
-           << " old handle@ " << conn 
-	   << " new sockfd " << sockfd
-	   << " old sockfd " << this -> sockfd
-	   << " new action " << action 
-	   << " old action " << this -> action;
-
-  this -> sockfd = sockfd;
-  this -> action = action;
-
-  if( socketEvent ) { 
-     event_del( socketEvent );
-     socketEvent = NULL;
-  }
-
-  socketEvent = owner -> registerSocket( sockfd, kind );
-  event_add( socketEvent, NULL );
-}
-
-
-void Retriever::run() {
     
-    if( conn ) {  
+  if( conn ) {  
       curl_easy_setopt(
           conn, 
           CURLOPT_URL, 
@@ -132,10 +89,42 @@ void Retriever::run() {
       qDebug() << "error: could not initialize retriever curl handle";
   }
 
+  qDebug() << "debug: retriever constructed";
 }
 
-bool Retriever::isValid() const {
-  return (uri.length() > 0) && ( conn != NULL );
+Retriever::~Retriever() {
+  qDebug() << "debug: deleting retriever instance";
+  
+  if( conn ) {
+     curl_easy_cleanup( conn );
+  }
+
+  if( socketEvent ) {
+     event_del( socketEvent ); 
+  }
+}
+
+void Retriever::setSocketData( curl_socket_t sockfd, int action, int kind, CURL* curlHandle ) {
+  qDebug() << "debug: setting socket data with sock " << sockfd 
+           << " action " << action
+           << " kind " << kind 
+           << " new handle@ " << curlHandle
+           << " old handle@ " << conn 
+	   << " new sockfd " << sockfd
+	   << " old sockfd " << this -> sockfd
+	   << " new action " << action 
+	   << " old action " << this -> action;
+
+  this -> sockfd = sockfd;
+  this -> action = action;
+
+  if( socketEvent ) { 
+     event_del( socketEvent );
+     socketEvent = NULL;
+  }
+
+  socketEvent = owner -> registerSocket( sockfd, kind );
+  event_add( socketEvent, NULL );
 }
 
 } /* namespace slurp */

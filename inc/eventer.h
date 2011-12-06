@@ -44,20 +44,17 @@
 namespace slurp {
   class Retriever; /* A promise to the compiler that this class will be implemented */	
   class Eventer {
-     QQueue<QString> pendingURIs;
-     QThreadPool threadPool;
      CURLM *multi;
-     QMutex multiMutex;
      int quota, flags, running;
      struct event_base* eventBasePtr;
      struct event* timerEventPtr;
+     QQueue<QString> initialURIs;
 
      public:
 
      Eventer( 
          const QQueue<QString>& initialURIs, 
 	 int quota, 
-	 int maxThreads, 
 	 int flags );
 
      ~Eventer();
@@ -89,7 +86,7 @@ namespace slurp {
 
      int run();
 
-     void queueURI( const QString& uri );
+     void addURI( const QString& uri );
   };
 }
 
