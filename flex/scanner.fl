@@ -73,7 +73,7 @@ Scanner::Scanner( Eventer* owner, const QString& data ) {
      this -> data = data;
 }
 
-void Scanner::scan() {
+void Scanner::run() {
      yyscan_t flexScanner;
      const char* buffer = reinterpret_cast < const char* > ( data.data() );
      int bufferLen = data.size();

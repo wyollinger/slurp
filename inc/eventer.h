@@ -20,6 +20,7 @@
 
 #include <QString>
 #include <QQueue>
+#include <QThreadPool>
 #include <event2/event.h>
 #include <curl/curl.h>
 
@@ -33,6 +34,7 @@ namespace slurp {
      event_base* eventBasePtr;
      event* timerEventPtr;
      QQueue<QString> initialURIs;
+     QThreadPool scannerPool;
 
      public:
 

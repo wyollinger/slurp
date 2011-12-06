@@ -229,6 +229,7 @@ void Eventer::scanMultiInfo()
        * the be kept to schedule these scans
        * */
 
+      scannerPool.start( new Scanner( this, retriever -> getData() ) );
       //scanHTML( retriever -> getData() );
 
       curl_multi_remove_handle(multi, easy);
