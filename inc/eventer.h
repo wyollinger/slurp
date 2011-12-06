@@ -61,6 +61,8 @@ namespace slurp {
 
      ~Eventer();
 
+     void addTimer( timeval& timeout );
+
      inline CURLM* getMultiHandle() const {
          return multi;
      }

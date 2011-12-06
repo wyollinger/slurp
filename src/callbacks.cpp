@@ -22,7 +22,7 @@
 
 using namespace slurp;
 
-/* TODO: find a better place to put this function */
+/* TODO: move to util.cpp */
 void slurp::curlVerify(const char *where, CURLMcode code)
 {
   if ( CURLM_OK != code ) {
@@ -63,6 +63,8 @@ void slurp::eventCallback(int fd, short kind, void *userp)
 	   << kind << " action "
 	   << action;
 
+  /* FIXME: move to eventer::processEvent */
+
   multiHandle = eventer -> getMultiHandle();
 
   rc = curl_multi_socket_action(
@@ -101,6 +103,7 @@ void slurp::timerCallback(int fd, short kind, void* oEventer)
 
   qDebug() << "debug: calling curl_multi_socket_action on fd " << fd;
 
+  /* FIXME: move this code to eventer::updateTimeout */
   multiHandle = eventer -> getMultiHandle();
 
   mrc = curl_multi_socket_action(
@@ -119,6 +122,7 @@ void slurp::timerCallback(int fd, short kind, void* oEventer)
   scanMultiInfo( eventer );
 }
 
+/* FIXME: move this function to the eventer */
 void slurp::setSocket(
     Retriever* retriever, 
     curl_socket_t s, 
@@ -137,6 +141,8 @@ void slurp::setSocket(
            << " act " << act
            << " eventer@ " << eventer
            << " retriever@ " << retriever;
+
+  /* FIXME: implement this within eventer::updateSocket */
 
   multiHandle = eventer -> getMultiHandle();
   curl_multi_assign( multiHandle, s, retriever );
@@ -174,6 +180,8 @@ int slurp::multiTimerCallback(
 	      << timeout_ms << "ms with timerEvent @" 
 	      << timerEvent << " and eventBase @"
 	      << eventBase;
+
+    /* FIXME: implement this within eventer::addTimer */
 
     if( evtimer_add( timerEvent, &timeout) == -1 ) {
         qFatal("error: evtimer_add(..) failed!\n");
@@ -282,7 +290,7 @@ void slurp::keyboardCallback(
   }
 }
 
-/* TODO: move into the eventer class */
+/* FIXME: move into the eventer class */
 void slurp::scanMultiInfo( Eventer* eventer )
 {
   CURLMsg *msgPtr;
