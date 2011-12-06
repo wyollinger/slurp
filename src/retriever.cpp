@@ -24,7 +24,7 @@
 
 #include "globals.h" 
 
-using namespace slurp;
+namespace slurp {
 
 Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
   this -> uri = uri;
@@ -143,4 +143,5 @@ void Retriever::run() {
 
 bool Retriever::isValid() const {
   return (uri.length() > 0) && ( conn != NULL );
+}
 }

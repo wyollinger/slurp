@@ -28,6 +28,7 @@
 #include "retriever.h"
 #include "scanner.h"
 
+namespace slurp {
 const static int VERSION_ID[3] = {0,0,6};
 const static int FLAGS_VALID    = 1;
 const static int FLAGS_VERBOSE  = 2;
@@ -39,5 +40,7 @@ const static int FLAGS_INVALID  = 0;
 extern const char* USAGE_MESSAGE;
 extern const char* HELP_MENU;
 extern const char* LICENSE_INFO;
+
+}
 
 #endif /* SLURP_GLOBALS_H */

@@ -17,6 +17,7 @@
 
 #include "util.h"
 
+namespace slurp {
 
 void initLibraries() {
    /* insert some macro magic here for a windows compile */	
@@ -148,4 +149,4 @@ void curlVerify(const char *where, CURLMcode code)
     exit(code);
   }
 }
-
+}

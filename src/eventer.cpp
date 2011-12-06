@@ -20,7 +20,7 @@
 #include "globals.h" 
 #include "callbacks.h"
 
-using namespace slurp;
+namespace slurp {
 
 Eventer::Eventer( 
     const QQueue<QString>& initialURIs, 
@@ -94,4 +94,5 @@ int Eventer::run() {
 
 void Eventer::queueURI( const QString& uri ) {
   threadPool.start( new Retriever( this, uri, flags ) );
+}
 }

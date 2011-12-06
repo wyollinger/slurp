@@ -20,11 +20,9 @@
 
 #include "callbacks.h"
 
-using namespace slurp;
+namespace slurp {
 
-/* TODO: move to util.cpp */
-
-void slurp::eventCallback(int fd, short kind, void *userp)
+void eventCallback(int fd, short kind, void *userp)
 {
   Eventer *eventer = (Eventer*) userp;
   CURLMcode rc;
@@ -68,7 +66,7 @@ void slurp::eventCallback(int fd, short kind, void *userp)
 
 }
  
-void slurp::timerCallback(int fd, short kind, void* oEventer) 
+void timerCallback(int fd, short kind, void* oEventer) 
 {
   CURLMcode mrc;
   Eventer* eventer = (Eventer*) oEventer;
@@ -100,7 +98,7 @@ void slurp::timerCallback(int fd, short kind, void* oEventer)
 }
 
 /* FIXME: move this function to the eventer */
-void slurp::setSocket(
+void setSocket(
     Retriever* retriever, 
     curl_socket_t s, 
     CURL*e, 
@@ -126,7 +124,7 @@ void slurp::setSocket(
   retriever -> setSocketData( s, act, kind, e );
 }
 
-void slurp::addSocket(
+void addSocket(
     curl_socket_t s, 
     CURL *easy, 
     int action, 
@@ -138,7 +136,7 @@ void slurp::addSocket(
 }
 
 
-int slurp::multiTimerCallback(
+int multiTimerCallback(
         CURLM *multi_handle, 
 	long timeout_ms,
 	void *oEventer)
@@ -167,7 +165,7 @@ int slurp::multiTimerCallback(
     return 0;
 }
 
-int slurp::socketCallback(
+int socketCallback(
         CURL *e, 
 	curl_socket_t s, 
 	int what, 
@@ -195,7 +193,7 @@ int slurp::socketCallback(
   return 0;
 }
  
-size_t slurp::writeCallback(
+size_t writeCallback(
         void *ptr, 
 	size_t size, 
 	size_t nmemb, 
@@ -214,7 +212,7 @@ size_t slurp::writeCallback(
   return realsize;
 }
  
-int slurp::progressCallback(
+int progressCallback(
 	void *p, 
 	double dltotal, 
 	double dlnow, 
@@ -231,7 +229,7 @@ int slurp::progressCallback(
  return 0;
 }
 
-void slurp::keyboardCallback(
+void keyboardCallback(
         evutil_socket_t s,
 	short type, 
 	void *data)
@@ -268,7 +266,7 @@ void slurp::keyboardCallback(
 }
 
 /* FIXME: move into the eventer class */
-void slurp::scanMultiInfo( Eventer* eventer )
+void scanMultiInfo( Eventer* eventer )
 {
   CURLMsg *msgPtr;
   CURLM *multi;
@@ -301,4 +299,4 @@ void slurp::scanMultiInfo( Eventer* eventer )
     }
   }
 }
-
+}

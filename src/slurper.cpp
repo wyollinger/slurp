@@ -32,7 +32,7 @@
 
 #include "globals.h"
 
-using namespace slurp;
+namespace slurp{
 
 const char* USAGE_MESSAGE = "slurp [options] urls ...";
 
@@ -90,4 +90,8 @@ int main(int argc, char** argv, char** env) {
   return ev.run(); 
 }
 
+}
 
+int main( int argc, char** argv, char ** env ) {
+    return slurp::main( argc, argv, env );
+}
