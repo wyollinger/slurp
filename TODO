@@ -1,16 +1,9 @@
 rewrite the debugging info handling system to include timing and thread information,
 write it to a file by default
 
-add a scanner class which inherits from qrunnable
-add a querier class which inherits from qrunnable
 link in libdb
 
-add read callbacks to retriever as a potential fix for server-side hangs
 update the flex ruleset, it is largely unwritten
 implement a set of run-time management commands
-
-run the code through a few static analyzers (clint)
-run the code using a few fuzzers
-run the code using a profiler
 
 use QT to add GUI support
