@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include <string>
 #include <QDebug>
 #include <curl/curl.h>
 
@@ -114,28 +115,19 @@ void keyboardCallback(
 	void *userp)
 {
   Eventer* eventer = reinterpret_cast< Eventer* > ( userp );
-  QString userInput = "";
-  char cchar;
+  std::string userInput = "";
 
   (void)s;
   (void)type;
 
-  /* TODO: maybe move this to util... */
-  do {
-    cchar = std::cin.get();
-
-    if( cchar != '\n' ) {
-        userInput += cchar;
-    } 
-  } while( cchar != '\n' );
-  /* ... in some kind of getline function. */
+  std::getline(std::cin, userInput);
 
   if( userInput == "exit" ) {
       qDebug() << "debug: caught exit";  
       eventer -> stop();
   } else if( userInput.size() > 0 ) {
       qDebug() << "debug: command unrecognized. treating as URI...";
-      eventer -> addURI( userInput );
+      eventer -> addURI( QString( userInput.c_str() ) );
   }
 }
 
