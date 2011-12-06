@@ -39,9 +39,10 @@
 #include <cstdlib>
 #include <cassert>
 
-#include "globals.h" 
+#include "retriever.h"
 
 namespace slurp {
+  class Retriever; /* A promise to the compiler that this class will be implemented */	
   class Eventer {
      QQueue<QString> pendingURIs;
      QSet<QString> processedURIs;
@@ -60,27 +61,30 @@ namespace slurp {
 	 int flags );
 
      ~Eventer();
+     event* registerSocket( curl_socket_t sockfd, int kind );
+     void addHandle( CURL* handle );
+     void processSocketEvent( int fd, short kind );
+     void checkTimer();
+     void updateTimer();
+     void addTimer( long timeout_ms );
 
-     void addTimer( timeval& timeout );
+     void setSocket(
+        Retriever* retriever, 
+        curl_socket_t s, 
+        CURL* e, 
+        int act);
 
-     inline CURLM* getMultiHandle() const {
-         return multi;
-     }
+     void addSocket(
+        curl_socket_t s, 
+        CURL *easy, 
+        int action );
 
-     inline struct event* getTimerEvent() const {
-         return timerEventPtr;
-     }
+     void scanMultiInfo();
 
-     inline struct event_base* getEventBase() const {
-         return eventBasePtr;
-     }
+     void processEvent( int fd, short kind );
 
      inline int getRunning() const {
          return running;
-     }
-
-     inline void setRunning(int running) {
-         this -> running = running; 
      }
 
      int run();

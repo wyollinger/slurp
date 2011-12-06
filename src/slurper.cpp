@@ -15,22 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
-
-#include <QQueue>
 #include <QString>
-#include <QtGlobal>
-#include <QThread>
-
-#include <cstdlib>
-#include <cstring>
-
-#include <curl/curl.h>
-
-#include <event2/event-config.h>
-#include <event2/util.h>
+#include <QDebug>
 
 #include "globals.h"
+#include "util.h"
+#include "eventer.h"
 
 namespace slurp{
 

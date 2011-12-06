@@ -19,10 +19,7 @@
 #define SLURP_UTIL_H
 
 #include <QQueue>
-
 #include <curl/curl.h>
-
-#include "globals.h"
 
 namespace slurp {
     void initLibraries();
@@ -32,4 +29,4 @@ namespace slurp {
     void curlVerify(const char *where, CURLMcode code);
 }
 
-#endif
+#endif /* SLURP_UTIL_H */

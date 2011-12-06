@@ -25,10 +25,10 @@
 
 #include <cassert>
 
-#include "globals.h"
 #include "eventer.h"
 
 namespace slurp {
+  class Eventer; /* a promise to the compiler that this class will be implemented */
   class Retriever : public QRunnable {
      QString uri;
      CURL* conn;

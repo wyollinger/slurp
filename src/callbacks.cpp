@@ -16,151 +16,49 @@
  */
 
 #include <iostream>
+#include <QDebug>
 #include <curl/curl.h>
 
 #include "callbacks.h"
+#include "eventer.h"
+#include "util.h"
 
 namespace slurp {
 
 void eventCallback(int fd, short kind, void *userp)
 {
-  Eventer *eventer = (Eventer*) userp;
-  CURLMcode rc;
-  CURLM* multiHandle;
-  int action, running;
-
-  action =
-    ( kind & EV_READ ? CURL_CSELECT_IN : 0 ) |
-    ( kind & EV_WRITE ? CURL_CSELECT_OUT : 0 );
-
+  Eventer* eventer = reinterpret_cast< Eventer* > ( userp );
+ 
   qDebug() << "debug: in event callback with fd " 
 	   << fd << " kind " 
-	   << kind << " action "
-	   << action;
+	   << kind;
 
-  /* FIXME: move to eventer::processEvent */
-
-  multiHandle = eventer -> getMultiHandle();
-
-  rc = curl_multi_socket_action(
-      multiHandle, 
-      fd, 
-      action, 
-      &running );
-
-  curlVerify("curl_multi_socket_action from eventCallback", rc);
-
-  eventer -> setRunning( running );
-
-  scanMultiInfo( eventer );
-
-  if ( eventer -> getRunning() <= 0 ) {
-    qDebug() << "debug: last transfer complete";
-
-    if (evtimer_pending( eventer -> getTimerEvent(), NULL)) {
-      evtimer_del( eventer -> getTimerEvent() );
-    }
-  } else {
-    qDebug() << "debug: " << eventer -> getRunning() << " live connections";
-  }
-
+  eventer -> processSocketEvent(fd, kind);
+  eventer -> scanMultiInfo();
+  eventer -> checkTimer();
 }
  
-void timerCallback(int fd, short kind, void* oEventer) 
+void timerCallback(int fd, short kind, void* userp) 
 {
-  CURLMcode mrc;
-  Eventer* eventer = (Eventer*) oEventer;
-  int running;
-  CURLM* multiHandle;
+  Eventer* eventer = reinterpret_cast< Eventer* > ( userp );
 
   (void)fd;
   (void)kind;
 
-  qDebug() << "debug: calling curl_multi_socket_action on fd " << fd;
-
-  /* FIXME: move this code to eventer::updateTimeout */
-  multiHandle = eventer -> getMultiHandle();
-
-  mrc = curl_multi_socket_action(
-      multiHandle,
-      CURL_SOCKET_TIMEOUT, 
-      0, 
-      &running );
-
-  curlVerify("curl_multi_socket_action from timerCallback", mrc);
-
-  eventer -> setRunning( running );
-
-  qDebug() << "debug: in timerCallback, called curl_multi_socket_action recvd "
-	    << ( eventer -> getRunning() ) << " live sockets";
-
-  scanMultiInfo( eventer );
+  eventer -> updateTimer();
+  eventer -> scanMultiInfo();
 }
-
-/* FIXME: move this function to the eventer */
-void setSocket(
-    Retriever* retriever, 
-    curl_socket_t s, 
-    CURL*e, 
-    int act,  
-    Eventer* eventer)
-{
-  CURLM* multiHandle;
-  int kind =  ( act & CURL_POLL_IN ? EV_READ : false )
-            | ( act & CURL_POLL_OUT ? EV_WRITE : false ) 
-            | EV_PERSIST;
-
-  qDebug() << "debug: in setSocket with socket " << s
-           << "kind " << kind 
-           << " easy@ " << e 
-           << " act " << act
-           << " eventer@ " << eventer
-           << " retriever@ " << retriever;
-
-  /* FIXME: implement this within eventer::updateSocket */
-
-  multiHandle = eventer -> getMultiHandle();
-  curl_multi_assign( multiHandle, s, retriever );
-  retriever -> setSocketData( s, act, kind, e );
-}
-
-void addSocket(
-    curl_socket_t s, 
-    CURL *easy, 
-    int action, 
-    Eventer* eventer)
-{
-    Retriever* retriever = NULL;
-    curl_easy_getinfo( easy, CURLINFO_PRIVATE, &retriever );
-    setSocket( retriever, s, easy, action, eventer );
-}
-
 
 int multiTimerCallback(
         CURLM *multi_handle, 
 	long timeout_ms,
-	void *oEventer)
+	void *userp)
 {
-    struct timeval timeout;
-    Eventer* eventer = ((Eventer*) oEventer );
-    struct event* timerEvent = eventer -> getTimerEvent();
-    struct event_base* eventBase = eventer -> getEventBase();
+       Eventer* eventer = reinterpret_cast< Eventer* > ( userp );
 
     (void)multi_handle;
 
-    timeout.tv_sec = timeout_ms/1000;
-    timeout.tv_usec = (timeout_ms%1000)*1000;
-
-    qDebug() << "debug: in multi timer callback setting timeout to "
-	      << timeout_ms << "ms with timerEvent @" 
-	      << timerEvent << " and eventBase @"
-	      << eventBase;
-
-    /* FIXME: implement this within eventer::addTimer */
-
-    if( evtimer_add( timerEvent, &timeout) == -1 ) {
-        qFatal("error: evtimer_add(..) failed!\n");
-    }
+    eventer -> addTimer( timeout_ms );
 
     return 0;
 }
@@ -169,10 +67,12 @@ int socketCallback(
         CURL *e, 
 	curl_socket_t s, 
 	int what, 
-	void *eventer, 
-	void *retriever)
+	void *userp_a, 
+	void *userp_b)
 {
-  const char *whatLut[] = { "none", "IN", "OUT", "INOUT", "REMOVE" };
+  const static char *whatLut[] = { "none", "IN", "OUT", "INOUT", "REMOVE" };
+  Eventer* eventer = reinterpret_cast< Eventer* > ( userp_a );
+  Retriever* retriever = reinterpret_cast< Retriever* > ( userp_b );
 
   qDebug() << "debug: socket callback: socket " << s
 	    << "easy handle: " << e 
@@ -184,9 +84,9 @@ int socketCallback(
       qDebug() << "debug: remove stub";
   } else {
     if (!retriever) {
-      addSocket(s, e, what, (Eventer*) eventer); 
+      eventer -> addSocket(s, e, what); 
     } else {
-      setSocket( (Retriever*) retriever, s, e, what, (Eventer*) eventer); 
+      eventer -> setSocket( (Retriever*) retriever, s, e, what ); 
     }
   }
 
@@ -232,15 +132,15 @@ int progressCallback(
 void keyboardCallback(
         evutil_socket_t s,
 	short type, 
-	void *data)
+	void *userp)
 {
-  Eventer* eventer = (Eventer*) data;
+  Eventer* eventer = reinterpret_cast< Eventer* > ( userp );
   QString userInput = "";
   char cchar;
+
   qDebug() << "debug: in keyboard callback with socket s "
 	    << s << " type "
-	    << type << " and data @"
-	    << data;
+	    << type;
 
   do {
     cchar = std::cin.get();
@@ -262,41 +162,6 @@ void keyboardCallback(
 
   if( userInput.size() > 0 ) {
      eventer -> queueURI( userInput );
-  }
-}
-
-/* FIXME: move into the eventer class */
-void scanMultiInfo( Eventer* eventer )
-{
-  CURLMsg *msgPtr;
-  CURLM *multi;
-  CURL *easy;
-  CURLcode rc;
-  Retriever* retriever;
-  char *URI;
-  int msgsRemaining;
-
-  qDebug() << "debug: remaining " << eventer -> getRunning();
-
-  multi = eventer -> getMultiHandle();
-
-  while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
-    if (msgPtr -> msg == CURLMSG_DONE) {
-
-      easy = msgPtr -> easy_handle;
-      rc = msgPtr -> data.result;
-
-      curl_easy_getinfo(easy, CURLINFO_PRIVATE, &retriever);
-      curl_easy_getinfo(easy, CURLINFO_EFFECTIVE_URL, &URI);
-
-      qDebug() << "debug: " << URI
-	        << " complete, rc = " << rc 
-		<< " error buffer: " << 
-		( retriever -> getErrorBuffer() );
-
-      curl_multi_remove_handle(multi, easy);
-      delete retriever;
-    }
   }
 }
 

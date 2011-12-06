@@ -20,28 +20,16 @@
 
 #include <curl/curl.h>
 
-#include "globals.h"
 #include "retriever.h"
 #include "eventer.h"
 
 namespace slurp {
      void eventCallback(int fd, short kind, void *userp);
-     void timerCallback(int fd, short kind, void* oEventer);
+     void timerCallback(int fd, short kind, void* Eventer);
      int multiTimerCallback( 
         CURLM * multi_handle, 
 	long timeout_ms, 
-	void* oEventer);
-     void setSocket(
-        Retriever* retriever, 
-        curl_socket_t s, 
-        CURL* e, 
-        int act,  
-        Eventer* eventer);
-     void addSocket(
-        curl_socket_t s, 
-        CURL *easy, 
-        int action, 
-        Eventer* eventer);
+	void* Eventer);
      int socketCallback(
         CURL *e, 
 	curl_socket_t s, 
@@ -62,8 +50,6 @@ namespace slurp {
      void keyboardCallback(
         evutil_socket_t s,
 	short type, 
-	void *data);
-
-     void scanMultiInfo( Eventer* eventer );
-}
+	void *userp);
+   }
 #endif /* SLURP_CALLBACKS_H */

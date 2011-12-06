@@ -20,15 +20,11 @@
 
 #include <QtGlobal>
 #include <QtDebug>
+
 #include <cassert>
 
-#include "util.h"
-#include "callbacks.h"
-#include "eventer.h"
-#include "retriever.h"
-#include "scanner.h"
-
 namespace slurp {
+
 const static int VERSION_ID[3] = {0,0,6};
 const static int FLAGS_VALID    = 1;
 const static int FLAGS_VERBOSE  = 2;

@@ -20,9 +20,14 @@
  * while implementing this class.
  */
 
-#include <iostream>
 
-#include "globals.h" 
+#include <QDebug>
+
+#include "retriever.h" 
+#include "eventer.h"
+#include "callbacks.h"
+#include "globals.h"
+#include "util.h"
 
 namespace slurp {
 
@@ -73,16 +78,13 @@ void Retriever::setSocketData( curl_socket_t sockfd, int action, int kind, CURL*
      socketEvent = NULL;
   }
 
-  /* todo: add error checking */
-  socketEvent = event_new( owner -> getEventBase(), sockfd, kind, eventCallback, owner);
+  socketEvent = owner -> registerSocket( sockfd, kind );
   event_add( socketEvent, NULL );
 }
 
 
 void Retriever::run() {
-    CURLMcode rc;
-    CURLM* multiHandle;
-
+    
     if( conn ) {  
       curl_easy_setopt(
           conn, 
@@ -125,16 +127,7 @@ void Retriever::run() {
           CURLOPT_NOSIGNAL,
           1);
 
-      multiHandle = owner -> getMultiHandle();
-      rc = curl_multi_add_handle(multiHandle, conn);
-      curlVerify("curl_multi_add_handle from Retriever()", rc);
-
-      qDebug() << "debug: added retriever with easy @"
-	        << conn << " to multi handle owned by eventer @"
-	        << owner << " with multi @" << multiHandle 
-		<< "and target of: " << uri.toAscii().data() 
-                << " with address @" << this;
-
+      owner -> addHandle( conn );
   } else {
       qDebug() << "error: could not initialize retriever curl handle";
   }
