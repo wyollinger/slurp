@@ -225,6 +225,12 @@ void Eventer::scanMultiInfo()
 
       scannerPool.start( new Scanner( this, retriever -> getData() ) );
 
+      /* 
+       * NOTE: this thread won't exit when complete because it will get 
+       * re-used by a later call to start (this is the point of a thread
+       * pool).
+       */
+
       curl_multi_remove_handle(multi, easy);
       delete retriever;
     }
