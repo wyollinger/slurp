@@ -15,29 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SLURP_GLOBALS_H
-#define SLURP_GLOBALS_H
+#ifndef SLURP_UTIL_H
+#define SLURP_UTIL_H
 
-#include <QtGlobal>
-#include <QtDebug>
-#include <cassert>
+#include <QQueue>
 
-#include "util.h"
-#include "callbacks.h"
-#include "eventer.h"
-#include "retriever.h"
-#include "scanner.h"
+#include <curl/curl.h>
 
-const static int VERSION_ID[3] = {0,0,6};
-const static int FLAGS_VALID    = 1;
-const static int FLAGS_VERBOSE  = 2;
-const static int FLAGS_HEADLESS = 4;
-const static int FLAGS_CONTD    = 8;
-const static int FLAGS_INVALID  = 0;
+#include "globals.h"
 
-/* these are defined in slurper.cpp */
-extern const char* USAGE_MESSAGE;
-extern const char* HELP_MENU;
-extern const char* LICENSE_INFO;
+void initLibraries();
+int validateArgs( int argc, char** argv, char** env, 
+    QQueue<QString>& seedURIs, int& quota, int& maxThreads);
+void die( const char* errmsg, int errcode );
+void curlVerify(const char *where, CURLMcode code);
 
-#endif /* SLURP_GLOBALS_H */
+#endif

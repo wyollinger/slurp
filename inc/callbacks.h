@@ -25,7 +25,6 @@
 #include "eventer.h"
 
 namespace slurp {
-     void curlVerify(const char *where, CURLMcode code);
      void eventCallback(int fd, short kind, void *userp);
      void timerCallback(int fd, short kind, void* oEventer);
      int multiTimerCallback( 

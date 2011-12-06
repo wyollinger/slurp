@@ -34,9 +34,9 @@
 
 using namespace slurp;
 
-const static char* USAGE_MESSAGE = "slurp [options] urls ...";
+const char* USAGE_MESSAGE = "slurp [options] urls ...";
 
-const static char* HELP_MENU = 
+const char* HELP_MENU = 
 " slurp - a web crawler\n"\
 "   usage: slurp [options] urls ...\n"\
 "   where options are some combination of the following:\n"\
@@ -48,7 +48,7 @@ const static char* HELP_MENU =
 "   note: you cannot combine options, so -vn3 is not legal\n"\
 "   instead, use -v -n3 or -v -n 3\n";	
 
-const static char* LICENSE_INFO =
+const char* LICENSE_INFO =
 "Copyright (C) 2011 Joseph Max DeLiso\n\n"\
 "This program is free software: you can redistribute it and/or modify\n"\
 "it under the terms of the GNU General Public License as published by\n"\
@@ -59,10 +59,6 @@ const static char* LICENSE_INFO =
 "GNU General Public License for more details.\n\n"\
 "You should have received a copy of the GNU General Public License\n"\
 "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n";
-
-static void initLibraries();
-static int validateArgs( int argc, char** argv, char** env, 
-    QQueue<QString>& seedURIs, int& quota, int& maxThreads);
 
 int main(int argc, char** argv, char** env) {
   int flags;
@@ -94,109 +90,4 @@ int main(int argc, char** argv, char** env) {
   return ev.run(); 
 }
 
-static void initLibraries() {
-   /* insert some macro magic here for a windows compile */	
-   if( evthread_use_pthreads() ) {
-      die("error: could not initialize libevent with pthreads", EXIT_FAILURE );
-   }
 
-   if( curl_global_init( CURL_GLOBAL_ALL ) ) {
-      die("error: could not initialize libcurl", EXIT_FAILURE );
-   }
-}
-
-static int validateArgs( int argc, char** argv, char** env, 
-    QQueue<QString>& seedURIs, int& quota, int& maxThreads ) {
-    int i;
-    int flags = FLAGS_INVALID;
-
-    if( argc == 1 ) { 
-      /* no urls were passed, so return failure */
-      return flags;
-    }
-
-    flags = FLAGS_VALID;
-
-    for( i = 1; i < argc; i++ ) {
-       if( argv[i][0] == '-' ) {
-	 switch( argv[i][1] ) {
-            case 'V':
-              flags = 0;      
-              
-	      qDebug() << "slurp v" 
-		        << VERSION_ID[0] << "."
-		        << VERSION_ID[1] << "."
-		        << VERSION_ID[2] 
-                        << "\nusing libevent " 
-		        << event_get_version() 
-                        << "\nusing " << curl_version()
-			<< "\nusing QT " << qVersion() << "\n";
-
-	      die(LICENSE_INFO, 
-                  EXIT_SUCCESS);
-            break;
-
-	    case 'h':
-              die(HELP_MENU, EXIT_SUCCESS);
-	      break;
-
-	    case 'v':
-              flags |= FLAGS_VERBOSE;
-	      break;
-
-	    case 'n':
-	      if( strlen(argv[i]+2) ) {
-                quota = atoi((argv[i]+2));
-	      } else if( i+1 < argc ) {
-                quota = atoi (argv[i+1]);
-		i++;
-	      } else {
-	        die(
-	           "error: could not find numeric portion of -n option",
-		   EXIT_FAILURE);
-	      }
-
-	      break;
-
-	    case 't':
-              if( strlen(argv[i]+2) ) {
-                maxThreads = atoi((argv[i]+2));
-	      } else if( i+1 < argc ) {
-                maxThreads = atoi ( argv[i+1] );
-		i++;
-	      } else {
-	        die(
-                   "error: could not find numeric portion of -t option",
-		   EXIT_FAILURE);
-	      }
-
-	      if( maxThreads <= 0 ) {
-                die("error: t must be greater than zero", EXIT_FAILURE);
-	      }
-
-	      break;
-
-	    default:
-              qDebug() << "warning: unrecognized option: " 
-		   << argv[i] 
-		   << "\n";
-
-	    break;
-	 }
-      } else {
-         seedURIs.enqueue( argv[i] );
-      }
-    }
-
-    for( i = 0; env[i]; i++ ) {
-       /* search for relevant environment variables */
-    }
-
-    return flags;
-}
-
-void die( const char* errmsg, int errcode )
-{
-    qFatal( errmsg );
-    exit( errcode );
-}
