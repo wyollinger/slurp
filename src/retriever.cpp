@@ -22,6 +22,7 @@
 
 
 #include <QDebug>
+#include <QString>
 #include <QThread>
 
 #include "retriever.h" 
@@ -39,6 +40,7 @@ Retriever::Retriever( Eventer* eventer, QString uri, int flags ) {
   owner = eventer;
   socketEvent = NULL;
   errorBuffer[0] = '\0';
+  dataBuffer = "";
 
   conn = curl_easy_init();
     
@@ -126,6 +128,12 @@ void Retriever::setSocketData( curl_socket_t sockfd, int action, int kind, CURL*
   socketEvent = owner -> registerSocket( sockfd, kind );
   event_add( socketEvent, NULL );
 }
+
+size_t Retriever::bufferData( const char* data ) {
+    dataBuffer += data;
+    return dataBuffer.size();
+}
+
 
 } /* namespace slurp */
 

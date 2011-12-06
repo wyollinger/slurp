@@ -26,7 +26,7 @@
 namespace slurp {
   class Eventer; /* a promise to the compiler that this class will be implemented */
   class Retriever {
-     QString uri;
+     QString uri, dataBuffer;
      CURL* conn;
      char errorBuffer[CURL_ERROR_SIZE];
      int flags;
@@ -39,8 +39,8 @@ namespace slurp {
 
      Retriever( Eventer* eventer, QString uri, int flags );
      ~Retriever();
-     bool isValid() const;
      void setSocketData( curl_socket_t sockfd, int action, int kind, CURL* curlHandle );  
+     size_t bufferData( const char* data );
 
      inline const char* getErrorBuffer() const {
         return errorBuffer;

@@ -80,15 +80,22 @@ int socketCallback(
 }
  
 size_t writeCallback(
-        void *ptr, 
+        void *curlBuffer, 
 	size_t size, 
 	size_t nmemb, 
-	void *data)
+	void *userp)
 {
-  size_t realsize = size * nmemb;
- 
-  (void)ptr;
-  (void)data;
+  size_t realsize = size * nmemb, bufferedSize;
+  Retriever* retriever = reinterpret_cast< Retriever* > ( userp );
+  char* buffer = reinterpret_cast< char* > ( curlBuffer );
+
+  qDebug() << "debug: received " << realsize << " bytes in "
+	   << size << " packets of " << nmemb << " bytes from remote"; 
+
+  bufferedSize = retriever -> bufferData( buffer );
+
+  qDebug() << "debug: retriever@ " << retriever 
+	   << " now has " << bufferedSize << " bytes buffered";
 
   return realsize;
 }
