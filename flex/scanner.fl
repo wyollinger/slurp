@@ -81,6 +81,8 @@ void Scanner::run() {
      const char* buffer = reinterpret_cast < const char* > ( data.data() );
      int bufferLen = data.size();
 
+     qDebug() << "debug: beginning lexing of " << bufferLen << " bytes of html";
+
      yylex_init_extra ( &links, &flexScanner  );
      yy_scan_bytes( buffer, bufferLen, flexScanner );
      yylex( flexScanner );

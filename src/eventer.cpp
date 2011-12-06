@@ -221,16 +221,9 @@ void Eventer::scanMultiInfo()
       qDebug() << "debug: " << URI
 	        << " complete, rc = " << rc 
 		<< " error buffer: " << ( retriever -> getErrorBuffer() )
-		<< " content buffer: " << retriever -> getData();
-
-      /* TODO: put this scan in  it's own thread so it doesn't block 
-       * the network I/O by wrapping it in the scanner class which will 
-       * inherit from QRunnable. a threadpool of scanner instances will 
-       * the be kept to schedule these scans
-       * */
+		<< " content buffer size: " << retriever -> getData() . size();
 
       scannerPool.start( new Scanner( this, retriever -> getData() ) );
-      //scanHTML( retriever -> getData() );
 
       curl_multi_remove_handle(multi, easy);
       delete retriever;
