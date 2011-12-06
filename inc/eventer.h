@@ -19,25 +19,9 @@
 #define SLURP_EVENTER_H
 
 #include <QString>
-#include <QSet>
-#include <QThreadPool>
-#include <QThread>
-#include <QRunnable>
-#include <QMutex>
 #include <QQueue>
-#include <QListIterator>
-
 #include <event2/event.h>
-#include <event2/thread.h>
-#include <event2/buffer.h>
-#include <event2/util.h>
-#include <event2/event-config.h>
-#include <event2/event_struct.h>
-
 #include <curl/curl.h>
-
-#include <cstdlib>
-#include <cassert>
 
 #include "retriever.h"
 
@@ -46,8 +30,8 @@ namespace slurp {
   class Eventer {
      CURLM *multi;
      int quota, flags, running;
-     struct event_base* eventBasePtr;
-     struct event* timerEventPtr;
+     event_base* eventBasePtr;
+     event* timerEventPtr;
      QQueue<QString> initialURIs;
 
      public:

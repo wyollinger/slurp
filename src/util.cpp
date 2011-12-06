@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <event2/event-config.h>
-#include <event2/util.h>
+#include <QDebug>
+
 #include <event2/thread.h>
 #include <event2/event.h>
 
@@ -117,14 +117,12 @@ int validateArgs( int argc, char** argv, char** env,
     return flags;
 }
 
-void die( const char* errmsg, int errcode )
-{
+void die( const char* errmsg, int errcode ) {
     qFatal( errmsg );
     exit( errcode );
 }
 
-void curlVerify(const char *where, CURLMcode code)
-{
+void curlVerify(const char *where, CURLMcode code) {
   if ( CURLM_OK != code ) {
     const char *s;
     switch (code) {
@@ -143,6 +141,13 @@ void curlVerify(const char *where, CURLMcode code)
     }
 
     qDebug() << "debug: " << where << " returns " << s;
+    exit(code);
+  }
+}
+
+void libeventVerify(const char* where, int code ) {
+  if( code == -1 ) {
+    qFatal(where);
     exit(code);
   }
 }

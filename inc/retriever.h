@@ -19,11 +19,7 @@
 #define SLURP_RETRIEVER_H
 
 #include <QString>
-#include <QRunnable>
-
 #include <curl/curl.h>
-
-#include <cassert>
 
 #include "eventer.h"
 

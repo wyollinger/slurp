@@ -20,8 +20,6 @@
 
 #include <QQueue>
 #include <curl/curl.h>
-#include <QDebug>
-#include <iostream>
 
 namespace slurp {
     void initLibraries();
@@ -29,6 +27,7 @@ namespace slurp {
         QQueue<QString>& seedURIs, int& quota, int& maxThreads);
     void die( const char* errmsg, int errcode );
     void curlVerify(const char *where, CURLMcode code);
+    void libeventVerify(const char* where, int code );
 }
 
 #endif /* SLURP_UTIL_H */

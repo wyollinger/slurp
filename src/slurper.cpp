@@ -17,6 +17,7 @@
 
 #include <QString>
 #include <QDebug>
+#include <QThread>
 
 #include "globals.h"
 #include "util.h"

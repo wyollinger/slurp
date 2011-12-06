@@ -18,11 +18,6 @@
 #ifndef SLURP_GLOBALS_H
 #define SLURP_GLOBALS_H
 
-#include <QtGlobal>
-#include <QtDebug>
-
-#include <cassert>
-
 namespace slurp {
 
 const static int VERSION_ID[3] = {0,0,6};
