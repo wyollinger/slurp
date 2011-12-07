@@ -3,9 +3,7 @@ write it to a file by default
 
 link in libdb
 
-update the flex ruleset, it is largely unwritten
-implement a set of run-time management commands
+extend the set of run-time management commands
 
 use QT to add GUI support
-
-create a sane cross platform build system
+use boost to parse command line arugments and replace flex with spirit
