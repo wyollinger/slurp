@@ -20,7 +20,7 @@
 #include "eventer.h"
 #include "callbacks.h"
 #include "util.h"
-#include "scanner.h"
+#include "parser.h"
 
 namespace slurp {
 
@@ -196,7 +196,7 @@ namespace slurp {
 		    << " error buffer: " << (retriever->getErrorBuffer())
 		    << " content buffer size: " << retriever->getData().size();
 
-		scannerPool.start(new Scanner(this, retriever->getData()));
+	//	scannerPool.start(new Scanner(this, retriever->getData()));
 
 		curl_multi_remove_handle(multi, easy);
 		delete retriever;
