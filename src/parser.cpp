@@ -16,13 +16,14 @@
  */
 
 #include <QDebug>
+#include <QWebPage>
+#include <QWebFrame>
 
 #include "parser.h"
 #include "eventer.h"
 
 namespace slurp {
-
-	void Parser::run() {
-
-	}
+    void Parser::run() {
+	page.mainFrame()->setHtml(data, url);
+    }
 }				/* namespace slurp */
