@@ -68,7 +68,7 @@ namespace slurp {
 	lex::token_def <> word, eol, any;
     };
 
- class Scanner : public QRunnable {
+    class Scanner : public QRunnable {
 	Eventer *owner;
 	QString data;
 
