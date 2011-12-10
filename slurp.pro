@@ -9,11 +9,6 @@ MOC_DIR = obj/moc
 RCC_DIR = obj/rcc
 UI_DIR = obj/ui
 
-# Tell QT to use flex 
-include(flex.pri)
-QMAKE_LEX = flex
-FLEXSOURCES = flex/scanner.fl
-
 # Link in the required libraries
 CONFIG += qt link_pkgconfig 
 QT = core gui network 
@@ -21,4 +16,4 @@ PKGCONFIG = libevent libevent_pthreads libcurl
 
 # Input
 HEADERS += inc/eventer.h inc/retriever.h inc/scanner.h inc/callbacks.h inc/util.h inc/globals.h
-SOURCES += src/slurper.cpp src/eventer.cpp src/retriever.cpp  src/callbacks.cpp src/util.cpp
+SOURCES += src/slurper.cpp src/eventer.cpp src/retriever.cpp src/scanner.cpp src/callbacks.cpp src/util.cpp
