@@ -37,19 +37,19 @@ namespace slurp {
 		typedef lex::lexertl::actor_lexer < token_type > lexer_type;
 		char const *first = reinterpret_cast< const char*> ( data.data() );
 		char const *last = &first[data.size()];
-		word_count_tokens < lexer_type > word_count_lexer;
+		htmlTokens < lexer_type > simplePageLexer;
 
-		lexer_type::iterator_type iter = word_count_lexer.begin(first, last);
-		lexer_type::iterator_type end = word_count_lexer.end();
+		lexer_type::iterator_type iter = simplePageLexer.begin(first, last);
+		lexer_type::iterator_type end = simplePageLexer.end();
 
 		while (iter != end && token_is_valid(*iter))
 			++iter;
 		
 		if (iter == end) {
 		    qDebug() << "debug: parse completed successfully: c="
-			     << word_count_lexer.c << " w="
-			     << word_count_lexer.w << " l="
-			     << word_count_lexer.l;
+			     << simplePageLexer.char_count << " w="
+			     << simplePageLexer.word_count << " l="
+			     << simplePageLexer.line_count;
 		} else {
                     qDebug() << "debug: there was a parse error";
 		}

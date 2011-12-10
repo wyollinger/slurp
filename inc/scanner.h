@@ -50,21 +50,30 @@ namespace slurp {
     phoenix::function < distance_func > const distance = distance_func();
 
     template < typename Lexer > 
-        struct word_count_tokens: lex::lexer < Lexer > {
-	    word_count_tokens() : c(0),
-	    w(0), l(0), word("[^ \t\n]+"), eol("\n"), any(".") {
+        struct htmlTokens : lex::lexer < Lexer > {
+	    htmlTokens() : 
+		 char_count(0), 
+		 word_count(0), 
+		 line_count(0), 
+	         word("[^ \t\n]+"), 
+		 eol("\n"), 
+		 any(".") {
 
 	    this -> self = 
-	        word[++phoenix::ref(w), 
-	            phoenix::ref(c) += 
-		        distance(lex::_start, lex::_end)] | 
-			eol[++phoenix::ref(c), 
-                        ++phoenix::ref(l)] | 
-			any[++phoenix::ref(c)];
-
+	        word [ 
+		    ++phoenix::ref(word_count), 
+	            phoenix::ref(char_count) += distance(lex::_start, lex::_end)
+	             ] | 
+		eol  [
+		    ++phoenix::ref(char_count), 
+                    ++phoenix::ref(line_count)
+	             ] | 
+		any [ 
+		    ++phoenix::ref(char_count)
+		    ];
 	    } 
 
-	std::size_t c, w, l;
+	std::size_t char_count, word_count, line_count;
 	lex::token_def <> word, eol, any;
     };
 
