@@ -19,6 +19,7 @@
 #define SLURP_RETRIEVER_H
 
 #include <QString>
+#include <QUrl>
 #include <curl/curl.h>
 
 #include "eventer.h"
@@ -26,7 +27,8 @@
 namespace slurp {
     class Eventer;
     class Retriever {
-	QString uri, dataBuffer;
+	QString dataBuffer;
+	QUrl url;
 	CURL *conn;
 	char errorBuffer[CURL_ERROR_SIZE];
 	int flags;
@@ -37,7 +39,7 @@ namespace slurp {
 
         public:
 
-	 Retriever(Eventer * eventer, QString uri, int flags);
+	 Retriever(Eventer * eventer, QUrl url, int flags);
 	~Retriever();
 	void setSocketData(curl_socket_t sockfd, int action, int kind,
 			   CURL * curlHandle);

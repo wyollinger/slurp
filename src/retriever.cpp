@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QString>
 #include <QThread>
+#include <QUrl>
 
 #include "retriever.h"
 #include "eventer.h"
@@ -32,8 +33,8 @@
 
 namespace slurp {
 
-    Retriever::Retriever(Eventer * eventer, QString uri, int flags) {
-	this->uri = uri;
+    Retriever::Retriever(Eventer * eventer, QUrl url, int flags) {
+	this->url = url;
 	this->flags = flags;
 
 	owner = eventer;
@@ -44,7 +45,7 @@ namespace slurp {
 	conn = curl_easy_init();
 
 	if (conn) {
-	    curl_easy_setopt(conn, CURLOPT_URL, uri.toAscii().data());
+	    curl_easy_setopt(conn, CURLOPT_URL, url.toString().toAscii().data());
 	    curl_easy_setopt(conn, CURLOPT_WRITEFUNCTION, writeCallback);
 	    curl_easy_setopt(conn, CURLOPT_WRITEDATA, this);
 	    curl_easy_setopt(conn, CURLOPT_VERBOSE, flags & FLAGS_VERBOSE);

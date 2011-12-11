@@ -38,6 +38,7 @@ namespace slurp {
     void Parser::run() {
 	QWebElement document;
         QWebElementCollection allLinkTags;
+        QString currentUrl;
 
 	qDebug() << "debug: in parse thread " 
 	         << QThread::currentThreadId()
@@ -48,6 +49,10 @@ namespace slurp {
 	document = page->mainFrame()->documentElement();
 
 	allLinkTags = document.findAll("a");
+
+	foreach (QWebElement currentElement, allLinkTags) {
+             currentUrl = currentElement.attribute("href");
+        }
 
 	qDebug() << "debug: " 
 		 << data.size() << " bytes in data string and "
