@@ -23,6 +23,7 @@
 #include <QThread>
 #include <QThreadPool>
 #include <QRunnable>
+#include <QApplication>
 
 #include <event2/event.h>
 #include <curl/curl.h>
@@ -41,7 +42,10 @@ namespace slurp {
 
     public:
 
-	Eventer(const QQueue < QString > &initialURIs, int quota, int flags);
+	Eventer(
+	    QApplication* thisApp,
+	    const QQueue < QString > &initialURIs, 
+	    int quota, int flags);
 	struct event *registerSocket(curl_socket_t sockfd, int kind);
 	void addHandle(CURL * handle);
 	void processSocketEvent(int fd, short kind);

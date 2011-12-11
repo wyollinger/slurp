@@ -66,7 +66,7 @@ int main(int argc, char **argv, char **env)
 
     initLibraries();
     flags = validateArgs(argc, argv, env, seedURIs, quota, maxThreads);
-    Eventer ev(seedURIs, quota, flags);
+    Eventer ev(&application, seedURIs, quota, flags);
 
     qDebug() << "debug: launching eventer instance";
 

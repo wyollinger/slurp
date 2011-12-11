@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
+#include <QCoreApplication>
 #include <QDebug>
 
 #include "eventer.h"
@@ -24,7 +26,8 @@
 
 namespace slurp {
 
-    Eventer::Eventer(const QQueue < QString > &initialURIs,
+    Eventer::Eventer( QApplication* thisApp,
+		     const QQueue < QString > &initialURIs,
 		     int quota, int flags) {
 	running = 0;
 
@@ -49,7 +52,7 @@ namespace slurp {
 	curlVerify("error: multi_setopt: timer data",
 		   curl_multi_setopt(multi, CURLMOPT_TIMERDATA, this));
     } 
-    
+
     struct event* Eventer::registerSocket(curl_socket_t sockfd, int kind) {
 	struct event *newEvent;
 
@@ -146,6 +149,8 @@ namespace slurp {
 	multi = NULL;
 
 	qDebug() << "debug: Eventer::run() returning";
+
+	QCoreApplication::quit();
     }
 
     void Eventer::addURI(const QString & uri) {
