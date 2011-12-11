@@ -18,6 +18,7 @@
 #include <QString>
 #include <QDebug>
 #include <QThread>
+#include <QApplication>
 
 #include "globals.h"
 #include "util.h"
@@ -58,12 +59,20 @@ using namespace slurp;
 int main(int argc, char **argv, char **env)
 {
     int flags, quota = -1, maxThreads = QThread::idealThreadCount();
-
+    QApplication application(argc,argv);
     QQueue < QString > seedURIs;
+
+    qDebug() << "debug: main thread is " << QThread::currentThreadId();
 
     initLibraries();
     flags = validateArgs(argc, argv, env, seedURIs, quota, maxThreads);
     Eventer ev(seedURIs, quota, flags);
 
-    return ev.run();
+    qDebug() << "debug: launching eventer instance";
+
+    ev.start();
+
+    qDebug() << "debug: entering qt application loop";
+
+    return application.exec();
 }

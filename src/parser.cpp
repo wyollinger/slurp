@@ -16,14 +16,34 @@
  */
 
 #include <QDebug>
+#include <QObject>
 #include <QWebPage>
 #include <QWebFrame>
+#include <QWebElement>
 
 #include "parser.h"
 #include "eventer.h"
 
 namespace slurp {
-    void Parser::run() {
-	page.mainFrame()->setHtml(data, url);
+
+    Parser::Parser(
+        Eventer * owner, 
+	const QString & raw_url, 
+	const QString & raw_data) {
+  	    this->owner = owner;
+	    url = QUrl( raw_url );
+	    data = raw_data;
     }
-}				/* namespace slurp */
+
+	
+    void Parser::run() {
+	QWebElement webElement;
+
+	page = new QWebPage();
+
+	page->mainFrame()->setHtml(data, url);
+	webElement = page->mainFrame()->documentElement();
+
+
+    }
+  }				/* namespace slurp */

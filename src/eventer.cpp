@@ -50,8 +50,8 @@ namespace slurp {
 		   curl_multi_setopt(multi, CURLMOPT_TIMERDATA, this));
     } 
     
-    event *Eventer::registerSocket(curl_socket_t sockfd, int kind) {
-	event *newEvent;
+    struct event* Eventer::registerSocket(curl_socket_t sockfd, int kind) {
+	struct event *newEvent;
 
 	newEvent = event_new(eventBasePtr, sockfd, kind, eventCallback, this);
 
@@ -108,9 +108,12 @@ namespace slurp {
 	}
     }
 
-    int Eventer::run() {
-	int ret;
-	event *kbEvent;
+    void Eventer::run() {
+	struct event *kbEvent;
+        int ret;
+
+	qDebug() << "debug: running eventer on thread " 
+		 << QThread::currentThreadId();
 
 	while (!initialURIs.isEmpty()) {
 	    addURI(initialURIs.dequeue());
@@ -143,7 +146,6 @@ namespace slurp {
 	multi = NULL;
 
 	qDebug() << "debug: Eventer::run() returning";
-	return ret;
     }
 
     void Eventer::addURI(const QString & uri) {
@@ -179,7 +181,7 @@ namespace slurp {
 	CURL *easy;
 	CURLcode rc;
 	Retriever *retriever;
-	char *URI;
+	char *rawUrl;
 	int msgsRemaining;
 
 	while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
@@ -189,14 +191,14 @@ namespace slurp {
 		rc = msgPtr->data.result;
 
 		curl_easy_getinfo(easy, CURLINFO_PRIVATE, &retriever);
-		curl_easy_getinfo(easy, CURLINFO_EFFECTIVE_URL, &URI);
+		curl_easy_getinfo(easy, CURLINFO_EFFECTIVE_URL, &rawUrl);
 
-		qDebug() << "debug: " << URI
+		qDebug() << "debug: " << rawUrl
 		    << " complete, rc = " << rc
 		    << " error buffer: " << (retriever->getErrorBuffer())
 		    << " content buffer size: " << retriever->getData().size();
 
-	//	scannerPool.start(new Scanner(this, retriever->getData()));
+		parserPool.start(new Parser(this, retriever->getData(), QString( rawUrl ) ));
 
 		curl_multi_remove_handle(multi, easy);
 		delete retriever;

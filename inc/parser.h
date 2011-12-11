@@ -20,6 +20,7 @@
 
 #include <QList>
 #include <QString>
+#include <QObject>
 #include <QRunnable>
 #include <QWebPage>
 #include <QUrl>
@@ -29,23 +30,17 @@
 namespace slurp {
 
     class Parser : public QRunnable {
-	Q_OBJECT
 
 	Eventer *owner;
 	QUrl url;
-        QWebPage page;
+        QWebPage *page;
         QString data;
 
         public:
 
-	Parser(Eventer * owner, 
-	       const QString & raw_url, 
-	       const QString & raw_data) {
-  	           this->owner = owner;
-	           url = QUrl( raw_url );
-	           data = raw_data;
-	  	}
-
+	Parser( Eventer * owner, 
+		const QString & raw_url, 
+	        const QString & raw_data); 
 	void run();
     };
 }				/* namespace slurp */
