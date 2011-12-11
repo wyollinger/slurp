@@ -25,6 +25,7 @@
 #include "parser.h"
 #include "eventer.h"
 #include "retriever.h"
+#include "util.h"
 
 namespace slurp {
 
@@ -51,10 +52,20 @@ namespace slurp {
 
 	/* FIXME: debug this and determine why it causes segfaults */
 
+        qDebug() << "debug: constructing web page instance";
 	page = new QWebPage();
+
+	qDebug() << "debug: setting html with " << data.size() << " bytes of data..";
 	page->mainFrame()->setHtml(data, url);
+
+	/* 
+	 * FIXME: wait for this to complete by connecting to a signal
+	 */
+
+	qDebug() << "debug: retrieving document element...";
 	document = page->mainFrame()->documentElement();
 
+	qDebug() << "debug: finding all link tags";
 	allLinkTags = document.findAll("a");
 
 	foreach (QWebElement currentElement, allLinkTags) {
