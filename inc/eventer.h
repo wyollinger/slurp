@@ -22,6 +22,7 @@
 #include <QQueue>
 #include <QThread>
 #include <QThreadPool>
+#include <QMutex>
 #include <QRunnable>
 #include <QApplication>
 
@@ -34,17 +35,18 @@ namespace slurp {
     class Retriever;	    
     class Eventer : public QThread {
 	CURLM *multi;
-	int quota, flags, running;
+	int quota, flags, retrieving, parsing;
 	event_base *eventBasePtr;
 	struct event *timerEventPtr;
-	QQueue < QString > initialURIs;
+	QMutex urlQueueMutex, dispatchMutex;
+	QQueue < QUrl > urlQueue;
 	QThreadPool parserPool;
 
     public:
 
 	Eventer(
 	    QApplication* thisApp,
-	    const QQueue < QString > &initialURIs, 
+	    QQueue < QString > &initialUrls, 
 	    int quota, int flags);
 	struct event *registerSocket(curl_socket_t sockfd, int kind);
 	void addHandle(CURL * handle);
@@ -59,7 +61,8 @@ namespace slurp {
 	void scanMultiInfo();
 	void processEvent(int fd, short kind);
 	void run();
-	void addUrl(const QString & url);
+	void addUrl( QUrl url);
+	void dispatchRetrievers();
 	void stop();
     };
 }

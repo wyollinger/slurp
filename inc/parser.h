@@ -39,8 +39,9 @@ namespace slurp {
         public:
 
 	Parser( Eventer * owner, 
-		const QString & raw_url, 
-	        const QString & raw_data); 
+		QString raw_url, 
+	        QString raw_data); 
+	~Parser();
 	void run();
     };
 }				/* namespace slurp */

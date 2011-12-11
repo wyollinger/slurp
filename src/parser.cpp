@@ -20,6 +20,7 @@
 #include <QWebPage>
 #include <QWebFrame>
 #include <QWebElement>
+#include <QUrl>
 
 #include "parser.h"
 #include "eventer.h"
@@ -29,8 +30,8 @@ namespace slurp {
 
     Parser::Parser(
         Eventer * owner, 
-	const QString & raw_url, 
-	const QString & raw_data) {
+        QString raw_url, 
+        QString raw_data) {
   	    this->owner = owner;
 	    url = QUrl( raw_url );
 	    data = raw_data;
@@ -39,7 +40,8 @@ namespace slurp {
     void Parser::run() {
 	QWebElement document;
         QWebElementCollection allLinkTags;
-        QString currentUrl;
+        QString currentRawUrl;
+        QUrl currentUrl;
 
 	qDebug() << "debug: in parse thread " 
 	         << QThread::currentThreadId()
@@ -52,10 +54,10 @@ namespace slurp {
 	allLinkTags = document.findAll("a");
 
 	foreach (QWebElement currentElement, allLinkTags) {
-             currentUrl = currentElement.attribute("href");
+             currentRawUrl = currentElement.attribute("href");
 
-	     if( currentUrl != "" ) {
-                 owner -> addUrl( currentUrl );
+	     if( currentRawUrl != "" ) {
+                 owner -> addUrl( QUrl( currentRawUrl ) );
 	     }
         }
 
@@ -66,5 +68,10 @@ namespace slurp {
 
 	qDebug() << "debug: parse complete on thread " 
 		 << QThread::currentThreadId();
+    }
+
+    Parser::~Parser() {
+        delete page;
+	owner -> dispatchRetrievers();
     }
   }				/* namespace slurp */

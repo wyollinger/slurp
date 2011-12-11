@@ -17,23 +17,37 @@
 
 #include <QApplication>
 #include <QCoreApplication>
+#include <QMutex>
 #include <QDebug>
+#include <QUrl>
+#include <QQueue>
 
 #include "eventer.h"
 #include "callbacks.h"
+#include "retriever.h"
 #include "util.h"
 #include "parser.h"
 
 namespace slurp {
 
     Eventer::Eventer( QApplication* thisApp,
-		     const QQueue < QString > &initialURIs,
-		     int quota, int flags) {
-	running = 0;
+		      QQueue < QString > &initialUrls,
+		      int quota, int flags) {
+        QUrl currentUrl;
+        QString rawUrl;
+	retrieving = 0;
+        parsing = 0;
 
 	this->quota = quota;
 	this->flags = flags;
-	this->initialURIs = initialURIs;
+
+	while( !initialUrls.isEmpty() ) {
+	    currentUrl = QUrl( initialUrls.dequeue() );
+
+            if( currentUrl.isValid() ) {
+                urlQueue.enqueue( currentUrl );
+	    }
+	}
 
 	eventBasePtr = event_base_new();
 
@@ -75,7 +89,7 @@ namespace slurp {
 	    (kind & EV_READ ? CURL_CSELECT_IN : 0) |
 	    (kind & EV_WRITE ? CURL_CSELECT_OUT : 0);
 
-	rc = curl_multi_socket_action(multi, fd, action, &running);
+	rc = curl_multi_socket_action(multi, fd, action, &retrieving);
 
 	curlVerify("curl_multi_socket_action from Eventer::processSocketEvent",
 		   rc);
@@ -83,19 +97,21 @@ namespace slurp {
     }
 
     void Eventer::checkTimer() {
-	if (running <= 0) {
+	if (retrieving <= 0) {
 	    qDebug() << "debug: last transfer complete";
 
 	    if (evtimer_pending(timerEventPtr, NULL)) {
 		evtimer_del(timerEventPtr);
 	    }
+	} else {
+            dispatchRetrievers();
 	}
     }
 
     void Eventer::updateTimer() {
 	CURLMcode mrc;
 
-	mrc = curl_multi_socket_action(multi, CURL_SOCKET_TIMEOUT, 0, &running);
+	mrc = curl_multi_socket_action(multi, CURL_SOCKET_TIMEOUT, 0, &retrieving);
 
 	curlVerify("curl_multi_socket_action from timerCallback", mrc);
     }
@@ -118,9 +134,6 @@ namespace slurp {
 	qDebug() << "debug: running eventer on thread " 
 		 << QThread::currentThreadId();
 
-	while (!initialURIs.isEmpty()) {
-	    addUrl(initialURIs.dequeue());
-	}
 
 	kbEvent = event_new(eventBasePtr,
 			    0, EV_READ | EV_PERSIST, keyboardCallback, this);
@@ -131,6 +144,8 @@ namespace slurp {
 	}
 
 	qDebug() << "debug: calling event_base_dispatch";
+
+	dispatchRetrievers();
 
 	ret = event_base_dispatch(eventBasePtr);
 
@@ -153,8 +168,16 @@ namespace slurp {
 	QCoreApplication::quit();
     }
 
-    void Eventer::addUrl(const QString & url) {
-	new Retriever(this, url, flags);
+    void Eventer::addUrl(QUrl url) {
+        if( !url.isRelative() && url.isValid() ) {
+	    urlQueueMutex.lock();
+	    urlQueue.enqueue( url );
+	    urlQueueMutex.unlock();
+	}
+
+	if( QThread::currentThread() == this ) {
+           dispatchRetrievers();
+	}
     }
 
     void Eventer::setSocket(Retriever * retriever,
@@ -176,7 +199,6 @@ namespace slurp {
 
     void Eventer::addSocket(curl_socket_t s, CURL * easy, int action) {
 	Retriever *retriever = NULL;
-
 	curl_easy_getinfo(easy, CURLINFO_PRIVATE, &retriever);
 	setSocket(retriever, s, easy, action);
     }
@@ -214,6 +236,16 @@ namespace slurp {
 	    }
 	}			/* while */
 
+    }
+
+    void Eventer::dispatchRetrievers() {
+	dispatchMutex.lock();
+        if( retrieving < 64 ) {
+	     if( !urlQueue.isEmpty() ) {
+                 new Retriever( this, urlQueue.dequeue(), flags );
+             }
+	}
+	dispatchMutex.unlock();
     }
 
     void Eventer::stop() {
