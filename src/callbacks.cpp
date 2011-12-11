@@ -95,7 +95,7 @@ namespace slurp {
 	    eventer->stop();
 	} else if (userInput.size() > 0) {
 	    qDebug() << "debug: command unrecognized. treating as URI...";
-	    eventer->addURI(QString(userInput.c_str()));
+	    eventer->addUrl(QString(userInput.c_str()));
 	}
     }
 

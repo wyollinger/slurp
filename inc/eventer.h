@@ -59,7 +59,7 @@ namespace slurp {
 	void scanMultiInfo();
 	void processEvent(int fd, short kind);
 	void run();
-	void addURI(const QString & uri);
+	void addUrl(const QString & url);
 	void stop();
     };
 }

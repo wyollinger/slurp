@@ -23,6 +23,7 @@
 
 #include "parser.h"
 #include "eventer.h"
+#include "retriever.h"
 
 namespace slurp {
 
@@ -52,6 +53,10 @@ namespace slurp {
 
 	foreach (QWebElement currentElement, allLinkTags) {
              currentUrl = currentElement.attribute("href");
+
+	     if( currentUrl != "" ) {
+                 owner -> addUrl( currentUrl );
+	     }
         }
 
 	qDebug() << "debug: " 

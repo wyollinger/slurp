@@ -119,7 +119,7 @@ namespace slurp {
 		 << QThread::currentThreadId();
 
 	while (!initialURIs.isEmpty()) {
-	    addURI(initialURIs.dequeue());
+	    addUrl(initialURIs.dequeue());
 	}
 
 	kbEvent = event_new(eventBasePtr,
@@ -153,8 +153,8 @@ namespace slurp {
 	QCoreApplication::quit();
     }
 
-    void Eventer::addURI(const QString & uri) {
-	new Retriever(this, uri, flags);
+    void Eventer::addUrl(const QString & url) {
+	new Retriever(this, url, flags);
     }
 
     void Eventer::setSocket(Retriever * retriever,
