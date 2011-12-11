@@ -34,16 +34,27 @@ namespace slurp {
 	    url = QUrl( raw_url );
 	    data = raw_data;
     }
-
 	
     void Parser::run() {
-	QWebElement webElement;
+	QWebElement document;
+        QWebElementCollection allLinkTags;
+
+	qDebug() << "debug: in parse thread " 
+	         << QThread::currentThreadId()
+		 << " beginning...";
 
 	page = new QWebPage();
-
 	page->mainFrame()->setHtml(data, url);
-	webElement = page->mainFrame()->documentElement();
+	document = page->mainFrame()->documentElement();
 
+	allLinkTags = document.findAll("a");
 
+	qDebug() << "debug: " 
+		 << data.size() << " bytes in data string and "
+		 << page ->totalBytes() << " bytes in page, and found " 
+		 << allLinkTags.count() << " link tags";
+
+	qDebug() << "debug: parse complete on thread " 
+		 << QThread::currentThreadId();
     }
   }				/* namespace slurp */

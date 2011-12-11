@@ -203,7 +203,11 @@ namespace slurp {
 		    << " error buffer: " << (retriever->getErrorBuffer())
 		    << " content buffer size: " << retriever->getData().size();
 
-		parserPool.start(new Parser(this, retriever->getData(), QString( rawUrl ) ));
+		parserPool.start(
+		    new Parser(
+		        this, 
+			QString( rawUrl ), 
+			retriever->getData() ));
 
 		curl_multi_remove_handle(multi, easy);
 		delete retriever;
