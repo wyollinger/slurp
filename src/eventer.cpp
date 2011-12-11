@@ -43,6 +43,8 @@ namespace slurp {
 	this->quota = quota;
 	this->flags = flags;
 
+	parserPool.setExpiryTimeout(-1);
+
 	while( !initialUrls.isEmpty() ) {
 	    currentUrl = QUrl( initialUrls.dequeue() );
 
@@ -227,11 +229,16 @@ namespace slurp {
 		    << " error buffer: " << (retriever->getErrorBuffer())
 		    << " content buffer size: " << retriever->getData().size();
 
+		qDebug() << "debug: adding new parser to parserPool";
+
 		parserPool.start(
 		    new Parser(
 		        this, 
 			QString( rawUrl ), 
 			retriever->getData() ));
+
+		qDebug() << "debug: parser pool now has " 
+			<< parserPool.activeThreadCount() << " threads";
 
 		curl_multi_remove_handle(multi, easy);
 		delete retriever;
@@ -242,11 +249,11 @@ namespace slurp {
 
     void Eventer::dispatchRetrievers() {
 	dispatchMutex.lock();
-        if( retrieving < 64 ) {
-	     if( !urlQueue.isEmpty() ) {
+       
+	if( !urlQueue.isEmpty() && retrieving < 64 ) { /* FIXME: make this a member */
                  new Retriever( this, urlQueue.dequeue(), flags );
-             }
-	}
+        }
+	
 	dispatchMutex.unlock();
     }
 

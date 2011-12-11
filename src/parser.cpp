@@ -43,9 +43,13 @@ namespace slurp {
         QString currentRawUrl;
         QUrl currentUrl;
 
+	setAutoDelete(true);
+
 	qDebug() << "debug: in parse thread " 
 	         << QThread::currentThreadId()
 		 << " beginning...";
+
+	/* FIXME: debug this and determine why it causes segfaults */
 
 	page = new QWebPage();
 	page->mainFrame()->setHtml(data, url);
@@ -68,10 +72,11 @@ namespace slurp {
 
 	qDebug() << "debug: parse complete on thread " 
 		 << QThread::currentThreadId();
+
+	owner -> dispatchRetrievers();
     }
 
     Parser::~Parser() {
         delete page;
-	owner -> dispatchRetrievers();
     }
   }				/* namespace slurp */
