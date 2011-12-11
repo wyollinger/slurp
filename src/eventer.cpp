@@ -33,6 +33,8 @@ namespace slurp {
     Eventer::Eventer( QApplication* thisApp,
 		      QQueue < QString > &initialUrls,
 		      int quota, int flags) {
+        (void) thisApp;
+	    
         QUrl currentUrl;
         QString rawUrl;
 	retrieving = 0;
