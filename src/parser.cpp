@@ -50,7 +50,7 @@ namespace slurp {
 
         qDebug() << "debug: in parse thread " << QThread::currentThreadId();
 
-        if(sigaction(SIGSEGV, &action, NULL) < 0) {
+        if(sigaction(SIGSEGV, &action, NULL) < 0 || sigaction(SIGABRT, &action, NULL ) < 0 ) {
             qDebug() << "debug: cannot set signal";
             return;
         }
