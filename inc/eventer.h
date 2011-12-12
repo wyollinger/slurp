@@ -64,6 +64,11 @@ namespace slurp {
         void addUrl(QUrl url);
         void dispatchRetrievers();
         void stop();
+
+        inline Threader* getParserPool() {
+            return &parserPool;
+        }
+
     };
 }
 #endif                          /* SLURP_EVENTER_H */

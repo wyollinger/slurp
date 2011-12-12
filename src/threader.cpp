@@ -22,8 +22,16 @@
 
 namespace slurp {
 
-    Threader::Threader() {
-        qDebug() << "debug: creating threader at " << this
-                 << " in thread " << QThread::currentThreadId();
+    void Threader::loadStartedCallback() {
+        qDebug() << "debug: received load started callback";
     }
+
+    void Threader::loadProgressCallback(int n) {
+        qDebug() << "debug: received load progress callback: " << n;
+    }
+
+    void Threader::loadFinishedCallback(bool ok) {
+        qDebug() << "debug: received load complete callback: " << ok;
+    }
+
 }

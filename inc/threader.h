@@ -23,10 +23,15 @@
 namespace slurp {
 
     class Threader : public QThreadPool {
+        Q_OBJECT
 
         public:
 
-            Threader();
+        public slots:
+
+            void loadStartedCallback();
+            void loadProgressCallback(int n);
+            void loadFinishedCallback(bool ok);
     };
 
 }

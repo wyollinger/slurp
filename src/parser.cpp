@@ -44,6 +44,12 @@ namespace slurp {
         qDebug() << "debug: in parse thread " << QThread::currentThreadId()
             << " beginning...";
 
+        qDebug() << "debug: global threadpool instance at " 
+                 << QThreadPool::globalInstance();
+
+        qDebug() << "debug: eventer's parser pool insance at "
+                 << owner -> getParserPool();
+
         qDebug() << "debug: constructing web page instance";
         page = new QWebPage();
 
@@ -51,7 +57,23 @@ namespace slurp {
             << data.size() << " bytes of data..";
         page->mainFrame()->setHtml(data, url);
 
+        QObject::connect( 
+            page, 
+            SIGNAL(loadStarted()),
+            owner -> getParserPool(),
+            SLOT(loadStartedCallback()));
 
+         QObject::connect( 
+            page, 
+            SIGNAL(loadProgress(int)),
+            owner -> getParserPool(),
+            SLOT(loadProgressCallback(int)));
+         
+         QObject::connect(
+            page,
+            SIGNAL(loadFinished(bool)),
+            owner -> getParserPool(),
+            SLOT(loadFinishedCallback(bool)));
         /* 
          * FIXME: wait for this to complete by connecting to a signal
          */
