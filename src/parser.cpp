@@ -51,9 +51,8 @@ namespace slurp {
 
         qDebug() << "debug: page instance running in thread: " << page->thread();
 
-         /* FIXME: find a way to lower this timeout for large pages*/
+        qDebug() << "debug: beginning parse of page: " << url;
         page->mainFrame()->setHtml(data, url);
-        /* page->mainFrame()->load(url); */
 
         qDebug() << "debug: post setHtml/load calls";
         qDebug() << "debug: dumping page children and thread info";

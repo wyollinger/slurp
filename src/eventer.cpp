@@ -236,7 +236,7 @@ namespace slurp {
                 newParser->start();
 
                 curl_multi_remove_handle(multi, easy);
-                //delete retriever;
+                delete retriever;
             }
         }   /* while */
 
