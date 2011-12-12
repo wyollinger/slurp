@@ -41,6 +41,9 @@ namespace slurp {
     } 
     
     void Parser::run() {
+        QWebElementCollection linkTags;
+        QString currentRawUrl;
+
         setAutoDelete(false);
 
         qDebug() << "debug: in parse thread " << QThread::currentThreadId();
@@ -89,6 +92,7 @@ namespace slurp {
         qDebug() << "debug: setting html with "
                  << data.size() << " bytes of data..";
 
+        /* FIXME: find a way to lower this timeout */
         page->mainFrame()->setHtml(data, url);
         //page->mainFrame()->load(url);
 
@@ -105,8 +109,21 @@ namespace slurp {
             qDebug() << "debug: dumping frame " << cchild;    
         }
 
-        qDebug() << "debug: after parse, main frame contains " << page->mainFrame()->findAllElements("a").count() << " links";
+        linkTags = page->mainFrame()->findAllElements("a");
 
-        /* page.clear(); */
+        qDebug() << "debug: after parse, main frame contains " 
+                 << linkTags.count() << " links";
+       
+        foreach(QWebElement currentElement, linkTags) {
+            currentRawUrl = currentElement.attribute("href");
+
+            if (currentRawUrl != "") {
+                owner->addUrl(QUrl(currentRawUrl));
+            }
+        }
+
+        page.clear(); 
+
+        owner -> dispatchRetrievers();
     }
 }   /* namespace slurp */

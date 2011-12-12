@@ -39,15 +39,12 @@ namespace slurp {
         QString currentRawUrl;
         QUrl currentUrl;
 
-        qDebug() << "debug: current frame contains "
-                 << frame->contentsSize() 
-                 << " bytes of information";
+        qDebug() << "debug: starting scan thread";
 
-        qDebug() << "debug: retrieving document element";
-        document = frame->documentElement();
+        allLinkTags = frame->findAllElements("a");
 
         qDebug() << "debug: document element contains "
-                 << frame->documentElement().findAll("a").count()
+                 << allLinkTags.count()
                  << " link tags";
 
         /*
