@@ -21,7 +21,7 @@
 #include <QList>
 #include <QString>
 #include <QObject>
-#include <QRunnable>
+#include <QThread>
 #include <QWebPage>
 #include <QUrl>
 #include <QMutex>
@@ -30,7 +30,7 @@
 
 namespace slurp {
     class Eventer;
-    class Parser : public QRunnable {
+    class Parser : public QThread {
 
         Eventer *owner;
         QUrl url;

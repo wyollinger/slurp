@@ -31,7 +31,6 @@
 #include <curl/curl.h>
 
 //#include "retriever.h"
-#include "threader.h"
 
 namespace slurp {
     class Threader;
@@ -45,7 +44,6 @@ namespace slurp {
         struct event *timerEventPtr;
         QMutex urlQueueMutex, dispatchMutex;
         QQueue < QUrl > urlQueue;
-        Threader parserPool;
         QApplication* appInstance;
 
     public:
@@ -70,11 +68,6 @@ namespace slurp {
         void stop();
         void dumpChildren();
         void dumpThreads();
-
-        inline Threader* getParserPool() {
-            return &parserPool;
-        }
-
     };
 
 }   /* namespace slurp */

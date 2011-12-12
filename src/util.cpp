@@ -26,7 +26,9 @@
 namespace slurp {
 
     void initLibraries() {
-        /* insert some macro magic here for a windows compile */
+
+        /* FIXME: insert some macro magic here for a windows compile */
+
         if (evthread_use_pthreads()) {
             die("error: could not initialize libevent with pthreads",
                 EXIT_FAILURE);

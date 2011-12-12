@@ -23,7 +23,6 @@
 #include <QQueue>
 
 #include "eventer.h"
-#include "threader.h"
 #include "callbacks.h"
 #include "retriever.h"
 #include "util.h"
@@ -34,7 +33,7 @@ namespace slurp {
     Eventer::Eventer(QApplication * thisApp,
                      QQueue < QString > &initialUrls, 
                      int quota, 
-                     int flags) : parserPool(this)  {
+                     int flags) {
          QUrl currentUrl;
          QString rawUrl;
          retrieving = 0;
@@ -44,8 +43,6 @@ namespace slurp {
          this->flags = flags;
          appInstance = thisApp;
          
-         parserPool.setExpiryTimeout(-1);
-
         while (!initialUrls.isEmpty()) {
             currentUrl = QUrl(initialUrls.dequeue());
 
@@ -217,6 +214,7 @@ namespace slurp {
         Retriever *retriever;
         char *rawUrl;
         int msgsRemaining;
+        Parser* newParser;
 
         while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
             if (msgPtr->msg == CURLMSG_DONE) {
@@ -232,17 +230,13 @@ namespace slurp {
                     << " error buffer: " << (retriever->getErrorBuffer())
                     << " content buffer size: " << retriever->getData().size();
 
-                qDebug() << "debug: adding new parser to parserPool";
+                qDebug() << "debug: creating new parser thread";
 
-                parserPool.start(new Parser(this,
-                                            QString(rawUrl),
-                                            retriever->getData()));
-
-                qDebug() << "debug: parser pool now has "
-                    << parserPool.activeThreadCount() << " threads";
+                newParser = new Parser(this, QString(rawUrl), retriever->getData());
+                newParser->start();
 
                 curl_multi_remove_handle(multi, easy);
-                delete retriever;
+                //delete retriever;
             }
         }   /* while */
 
@@ -274,12 +268,6 @@ namespace slurp {
             qDebug() << "debug: dumping eventer child: " << child;
             child -> dumpObjectTree();
         }
-
-        qDebug() << "debug: threader instance: " << &parserPool;
-
-        foreach( QObject* child, parserPool.children() ) {
-            qDebug() << "debug: dumping parser pool child: " << child;
-        }
     }
 
     void Eventer::dumpThreads() {
@@ -291,12 +279,6 @@ namespace slurp {
 
         foreach( QObject* child, children() ) {
             qDebug() << "debug: dumping eventer child thread: " << child->thread();
-        }
-
-        qDebug() << "debug: threader instance thread: " << (&parserPool)->thread();
-
-        foreach( QObject* child, parserPool.children() ) {
-            qDebug() << "debug: dumping parser pool child thread: " << child->thread();
         }
     }
 }                               /* namespace slurp */

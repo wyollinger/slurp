@@ -28,7 +28,6 @@
 #include "eventer.h"
 #include "retriever.h"
 #include "util.h"
-#include "scanner.h"
 
 namespace slurp {
 
@@ -44,7 +43,6 @@ namespace slurp {
         QWebElementCollection linkTags;
         QString currentRawUrl;
 
-        setAutoDelete(false);
 
         qDebug() << "debug: in parse thread " << QThread::currentThreadId();
 
@@ -53,48 +51,9 @@ namespace slurp {
 
         qDebug() << "debug: page instance running in thread: " << page->thread();
 
-        QObject::connect(
-            page.data(),
-            SIGNAL(destroyed()),
-            owner -> getParserPool(),
-            SLOT(destroyedCallback()));
-
-        QObject::connect( 
-            page.data(), 
-            SIGNAL(loadStarted()),
-            owner -> getParserPool(),
-            SLOT(loadStartedCallback()));
-
-         QObject::connect( 
-           page.data(), 
-           SIGNAL(loadProgress(int)),
-           owner -> getParserPool(),
-           SLOT(loadProgressCallback(int)));
-         
-        QObject::connect(
-            page.data(),
-            SIGNAL(loadFinished(bool)),
-            owner -> getParserPool(),
-            SLOT(loadFinishedCallback(bool)));
-
-        QObject::connect(
-            page.data(),
-            SIGNAL(frameCreated(QWebFrame*)),
-            owner -> getParserPool(),
-            SLOT(frameCreationCallback(QWebFrame*)));
-
-        QObject::connect(
-            page.data(),
-            SIGNAL(contentsChanged()),
-            owner -> getParserPool(),
-            SLOT(contentsChangedCallback()));
-
-        qDebug() << "debug: setting html with "
-                 << data.size() << " bytes of data..";
-
-        /* FIXME: find a way to lower this timeout */
+         /* FIXME: find a way to lower this timeout for large pages*/
         page->mainFrame()->setHtml(data, url);
-        //page->mainFrame()->load(url);
+        /* page->mainFrame()->load(url); */
 
         qDebug() << "debug: post setHtml/load calls";
         qDebug() << "debug: dumping page children and thread info";
@@ -114,15 +73,17 @@ namespace slurp {
         qDebug() << "debug: after parse, main frame contains " 
                  << linkTags.count() << " links";
        
-        foreach(QWebElement currentElement, linkTags) {
-            currentRawUrl = currentElement.attribute("href");
+        if( linkTags.count() > 0 ) {
+            foreach(QWebElement currentElement, linkTags) {
+                currentRawUrl = currentElement.attribute("href");
 
-            if (currentRawUrl != "") {
-                owner->addUrl(QUrl(currentRawUrl));
+                    if (currentRawUrl != "") {
+                    owner->addUrl(QUrl(currentRawUrl));
+                }
             }
         }
 
-        page.clear(); 
+       // page.clear(); 
 
         owner -> dispatchRetrievers();
     }

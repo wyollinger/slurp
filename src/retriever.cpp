@@ -87,7 +87,7 @@ namespace slurp {
         this->sockfd = sockfd;
         this->action = action;
 
-        if (socketEvent) {
+        if (socketEvent != NULL ) {
             event_del(socketEvent);
             socketEvent = NULL;
         }
