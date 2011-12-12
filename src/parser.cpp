@@ -41,11 +41,7 @@ namespace slurp {
         QString currentRawUrl;
         QUrl currentUrl;
 
-        qDebug() << "debug: in parse thread " << QThread::currentThreadId()
-            << " beginning...";
-
-        qDebug() << "debug: global threadpool instance at " 
-                 << QThreadPool::globalInstance();
+        qDebug() << "debug: in parse thread " << QThread::currentThreadId();
 
         qDebug() << "debug: eventer's parser pool insance at "
                  << owner -> getParserPool();
@@ -53,6 +49,13 @@ namespace slurp {
         qDebug() << "debug: constructing web page instance";
         page = new QWebPage();
 
+        /*
+         * Because setHtml can cause asynchronous behavior
+         * related to page construction we must wait until
+         * the signals are dispatched by the page, but because
+         * this QRunnable has no event loop, we connect them
+         * to the threadpool instead.
+         */ 
         qDebug() << "debug: setting html with "
             << data.size() << " bytes of data..";
         page->mainFrame()->setHtml(data, url);
@@ -63,13 +66,13 @@ namespace slurp {
             owner -> getParserPool(),
             SLOT(loadStartedCallback()));
 
-         QObject::connect( 
+        QObject::connect( 
             page, 
             SIGNAL(loadProgress(int)),
             owner -> getParserPool(),
             SLOT(loadProgressCallback(int)));
          
-         QObject::connect(
+        QObject::connect(
             page,
             SIGNAL(loadFinished(bool)),
             owner -> getParserPool(),
