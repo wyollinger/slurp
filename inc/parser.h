@@ -26,20 +26,18 @@
 #include <QUrl>
 #include <QMutex>
 
-#include "eventer.h"
+//#include "eventer.h"
 
 namespace slurp {
-
     class Eventer;
     class Parser : public QRunnable {
-        
+
         Eventer *owner;
         QUrl url;
         QWebPage *page;
         QString data;
-        QMutex parseLock;
 
- public:
+    public:
 
          Parser(Eventer * owner, QString raw_url, QString raw_data);
         ~Parser();
@@ -47,5 +45,6 @@ namespace slurp {
         void run();
     };
 
-}                               /* namespace slurp */
-#endif                          /* SLURP_PARSER_H */
+}   /* namespace slurp */
+
+#endif  /* SLURP_PARSER_H */

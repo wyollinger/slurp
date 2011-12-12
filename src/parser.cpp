@@ -77,10 +77,6 @@ namespace slurp {
             SIGNAL(loadFinished(bool)),
             owner -> getParserPool(),
             SLOT(loadFinishedCallback(bool)));
-        /* 
-         * FIXME: wait for this to complete by connecting to a signal
-         */
-
         /*
         qDebug() << "debug: retrieving document element...";
         document = page->mainFrame()->documentElement();

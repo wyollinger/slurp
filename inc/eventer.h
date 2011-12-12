@@ -25,17 +25,20 @@
 #include <QMutex>
 #include <QRunnable>
 #include <QApplication>
+#include <QUrl>
 
 #include <event2/event.h>
 #include <curl/curl.h>
 
-#include "retriever.h"
+//#include "retriever.h"
 #include "threader.h"
 
 namespace slurp {
-    class Retriever;
     class Threader;
+    class Retriever;
     class Eventer : public QThread {
+        Q_OBJECT
+
         CURLM *multi;
         int quota, flags, retrieving, parsing;
         event_base *eventBasePtr;
@@ -44,7 +47,7 @@ namespace slurp {
         QQueue < QUrl > urlQueue;
         Threader parserPool;
 
- public:
+    public:
 
         Eventer(QApplication * thisApp,
                  QQueue < QString > &initialUrls, int quota, int flags);
@@ -70,5 +73,7 @@ namespace slurp {
         }
 
     };
-}
-#endif                          /* SLURP_EVENTER_H */
+
+}   /* namespace slurp */
+
+#endif  /* SLURP_EVENTER_H */

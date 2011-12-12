@@ -20,8 +20,8 @@
 #include <event2/thread.h>
 #include <event2/event.h>
 
-#include "globals.h"
 #include "util.h"
+#include "globals.h"
 
 namespace slurp {
 

@@ -34,5 +34,7 @@ namespace slurp {
     size_t writeCallback(void *curlBuffer,
                          size_t size, size_t nmemb, void *userp);
     void keyboardCallback(evutil_socket_t s, short type, void *userp);
-}
-#endif                          /* SLURP_CALLBACKS_H */
+
+}   /* namespace slurp */
+
+#endif  /* SLURP_CALLBACKS_H */

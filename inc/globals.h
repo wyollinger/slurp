@@ -27,11 +27,12 @@ namespace slurp {
     const static int FLAGS_CONTD = 8;
     const static int FLAGS_INVALID = -1;
 
-/* these are defined in slurper.cpp */
+    /* note: these are defined in slurper.cpp */
+    /* FIXME: encapsulate slurp and util into their own class */
     extern const char *USAGE_MESSAGE;
     extern const char *HELP_MENU;
     extern const char *LICENSE_INFO;
 
-}
+}   /* namespace slurp */
 
-#endif                          /* SLURP_GLOBALS_H */
+#endif  /* SLURP_GLOBALS_H */

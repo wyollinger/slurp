@@ -20,8 +20,10 @@
 
 #include <QThreadPool>
 
-namespace slurp {
+//#include "parser.h"
 
+namespace slurp {
+    class Parser;
     class Threader : public QThreadPool {
         Q_OBJECT
 
@@ -32,8 +34,9 @@ namespace slurp {
             void loadStartedCallback();
             void loadProgressCallback(int n);
             void loadFinishedCallback(bool ok);
+            void registerParserInstance(Parser* parser);
     };
 
-}
+}   /* namespace slurp */
 
-#endif
+#endif  /* SLURP_THREADER_H */

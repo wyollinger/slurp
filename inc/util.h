@@ -22,11 +22,14 @@
 #include <curl/curl.h>
 
 namespace slurp {
+
     void initLibraries();
     int validateArgs(int argc, char **argv, char **env,
                      QQueue < QString > &seedURIs, int &quota, int &maxThreads);
     void die(const char *errmsg, int errcode);
     void curlVerify(const char *where, CURLMcode code);
     void libeventVerify(const char *where, int code);
-}
-#endif                          /* SLURP_UTIL_H */
+
+}   /* namespace slurp */
+
+#endif  /* SLURP_UTIL_H */

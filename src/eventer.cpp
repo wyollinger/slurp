@@ -23,6 +23,7 @@
 #include <QQueue>
 
 #include "eventer.h"
+#include "threader.h"
 #include "callbacks.h"
 #include "retriever.h"
 #include "util.h"

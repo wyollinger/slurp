@@ -17,13 +17,21 @@
 
 #include <QDebug>
 #include <QThread>
+#include <QList>
+#include <QObject>
 
 #include "threader.h"
+#include "parser.h"
 
 namespace slurp {
 
     void Threader::loadStartedCallback() {
+     //   QList<QObject*> children = children();
+
         qDebug() << "debug: received load started callback";
+
+        
+        
     }
 
     void Threader::loadProgressCallback(int n) {
@@ -34,4 +42,8 @@ namespace slurp {
         qDebug() << "debug: received load complete callback: " << ok;
     }
 
-}
+    void Threader::registerParserInstance(Parser* parser) {
+
+    }
+
+}   /* namespace slurp */

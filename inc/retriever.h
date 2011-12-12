@@ -53,6 +53,7 @@ namespace slurp {
             return dataBuffer;
         }
     };
-}                               /* namespace slurp */
 
-#endif                          /* SLURP_RETREIVER_H */
+}    /* namespace slurp */
+
+#endif  /* SLURP_RETREIVER_H */
