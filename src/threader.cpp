@@ -26,24 +26,52 @@
 namespace slurp {
 
     void Threader::loadStartedCallback() {
-     //   QList<QObject*> children = children();
+        qDebug() << "debug: received load started callback from sender: " 
+                 << QObject::sender();
 
-        qDebug() << "debug: received load started callback";
+        /*
+        qDebug() << "debug: threader dumping children... ";
 
-        
-        
+        foreach( QObject* currentChild, children() ) {
+            qDebug() << "debug: child " << currentChild -> objectName();    
+        }
+
+        qDebug() << "debug: dump complete";
+        */
     }
 
     void Threader::loadProgressCallback(int n) {
-        qDebug() << "debug: received load progress callback: " << n;
+        qDebug() << "debug: received load progress callback: " 
+                 << n << " from sender: " << QObject::sender();
+
+        if( n == 100 ) {
+            qDebug() << "debug: scanner creation stub in thread "
+                     << QThread::currentThreadId();
+        }
+        /*
+        qDebug() << "debug: threader dumping children... ";
+
+        foreach( QObject* currentChild, children() ) {
+            qDebug() << "debug: child " << currentChild -> objectName();    
+        }
+
+        qDebug() << "debug: dump complete";
+        */
     }
 
     void Threader::loadFinishedCallback(bool ok) {
-        qDebug() << "debug: received load complete callback: " << ok;
-    }
+        qDebug() << "debug: received load complete callback: " 
+                 << ok << " from sender: " << QObject::sender();
 
-    void Threader::registerParserInstance(Parser* parser) {
+        /*
+        qDebug() << "debug: threader dumping children... ";
 
+        foreach( QObject* currentChild, children() ) {
+            qDebug() << "debug: child " << currentChild -> objectName();    
+        }
+
+        qDebug() << "debug: dump complete";
+        */
     }
 
 }   /* namespace slurp */

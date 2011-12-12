@@ -66,11 +66,11 @@ namespace slurp {
             owner -> getParserPool(),
             SLOT(loadStartedCallback()));
 
-        QObject::connect( 
-            page, 
-            SIGNAL(loadProgress(int)),
-            owner -> getParserPool(),
-            SLOT(loadProgressCallback(int)));
+         QObject::connect( 
+           page, 
+           SIGNAL(loadProgress(int)),
+           owner -> getParserPool(),
+           SLOT(loadProgressCallback(int)));
          
         QObject::connect(
             page,

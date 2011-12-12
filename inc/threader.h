@@ -34,7 +34,10 @@ namespace slurp {
             void loadStartedCallback();
             void loadProgressCallback(int n);
             void loadFinishedCallback(bool ok);
-            void registerParserInstance(Parser* parser);
+
+        private:
+
+            
     };
 
 }   /* namespace slurp */
