@@ -41,6 +41,8 @@ namespace slurp {
         socketEvent = NULL;
         errorBuffer[0] = '\0';
         dataBuffer = "";
+        sockfd = -1;
+        action = -1;
 
         conn = curl_easy_init();
 

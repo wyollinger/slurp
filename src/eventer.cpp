@@ -243,12 +243,17 @@ namespace slurp {
     }
 
     void Eventer::dispatchRetrievers() {
+        QUrl currentUrl;
+        
         dispatchMutex.lock();
+        urlQueueMutex.lock();
 
         if (!urlQueue.isEmpty() && retrieving < 64) {   /* FIXME: make this a member */
-            new Retriever(this, urlQueue.dequeue(), flags);
+            currentUrl = urlQueue.dequeue();
+            new Retriever(this, currentUrl, flags);
         }
 
+        urlQueueMutex.unlock();
         dispatchMutex.unlock();
     }
 
