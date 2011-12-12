@@ -27,52 +27,25 @@
 #include <QApplication>
 #include <QUrl>
 
-#include <csignal>
-
-#include <event2/event.h>
-#include <curl/curl.h>
-
-//#include "retriever.h"
-
 namespace slurp {
-    class Threader;
     class Retriever;
-    class Eventer : public QThread {
+    class Eventer : public QApplication {
         Q_OBJECT
 
-        CURLM *multi;
-        int quota, flags, retrieving, parsing;
-        event_base *eventBasePtr;
-        struct event *timerEventPtr;
         QMutex urlQueueMutex, dispatchMutex;
         QQueue < QUrl > urlQueue;
-        QApplication* appInstance;
-        struct sigaction action;
 
     public:
 
-        Eventer(QApplication * thisApp,
-                 QQueue < QString > &initialUrls, int quota, int flags);
-        struct event *registerSocket(curl_socket_t sockfd, int kind);
-        void addHandle(CURL * handle);
-        void processSocketEvent(int fd, short kind);
-        void checkTimer();
-        void updateTimer();
-        void addTimer(long timeout_ms);
-        void setSocket(Retriever * retriever,
-                       curl_socket_t s, CURL * e, int act);
+        Eventer(int argc, 
+                char** argv,
+                QQueue < QString > &initialUrls, 
+                int quota, 
+                int flags);
 
-        void addSocket(curl_socket_t s, CURL * easy, int action);
-        void scanMultiInfo();
-        void processEvent(int fd, short kind);
-        void run();
+    public slots:    
+
         void addUrl(QUrl url);
-        void dispatchRetrievers();
-        void stop();
-        void dumpChildren();
-        void dumpThreads();
-
-        static void catchSigpipe( int n );
     };
 
 }   /* namespace slurp */

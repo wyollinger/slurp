@@ -26,10 +26,7 @@
 #include <QUrl>
 #include <QMutex>
 
-#include <csignal>
-
-
-//#include "eventer.h"
+#include "eventer.h"
 
 namespace slurp {
     class Eventer;
@@ -39,17 +36,12 @@ namespace slurp {
         QUrl url;
         QSharedPointer<QWebPage> page;
         QString data; 
-        struct sigaction action;
 
     public:
 
         Parser(Eventer * owner, QString raw_url, QString raw_data);
 
         void run();
-
-        inline Eventer* getOwner() {
-            return owner;
-        }
 
         static void catchSegfault(int n);
     };

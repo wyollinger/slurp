@@ -58,21 +58,15 @@ using namespace slurp;
 
 int main(int argc, char **argv, char **env)
 {
-    int flags, quota = -1, maxThreads = QThread::idealThreadCount();
-    QApplication application(argc, argv);
-    QQueue < QString > seedURIs;
+    int flags = FLAGS_INVALID, 
+        quota = -1, 
+        maxThreads = QThread::idealThreadCount();
 
-    qDebug() << "debug: main thread is " << application.thread();
+    QQueue < QString > seedUrls;
 
-    initLibraries();
-    flags = validateArgs(argc, argv, env, seedURIs, quota, maxThreads);
-    Eventer ev(&application, seedURIs, quota, flags);
+    flags = validateArgs(argc, argv, env, seedUrls, quota, maxThreads);
 
-    qDebug() << "debug: launching eventer instance";
+    Eventer ev( argc, argv, seedUrls, quota, flags );
 
-    ev.start();
-
-    qDebug() << "debug: entering qt application loop";
-
-    return application.exec();
+    return ev.exec();
 }

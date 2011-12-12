@@ -24,83 +24,19 @@
 #include <QWidget>
 #include <QUrl>
 
-#include <csignal>
-
 #include "parser.h"
 #include "eventer.h"
-#include "retriever.h"
 #include "util.h"
 
 namespace slurp {
 
-    /* NOTE: parser does not delete it's page instance */
-
     Parser::Parser(Eventer * owner, QString raw_url, QString raw_data) {
-        this->owner = owner;
-        url = QUrl(raw_url);
-        data = raw_data;
-    } 
-    
+
+    }
+
     void Parser::run() {
-        QWebElementCollection linkTags;
-        QString currentRawUrl;
 
-        action.sa_flags = 0;
-        action.sa_handler = catchSegfault;
-        sigemptyset(&(action.sa_mask));
-
-        qDebug() << "debug: in parse thread " << QThread::currentThreadId();
-
-        if(sigaction(SIGSEGV, &action, NULL) < 0 || sigaction(SIGABRT, &action, NULL ) < 0 ) {
-            qDebug() << "debug: cannot set signal";
-            return;
-        }
-
-        qDebug() << "debug: constructing web page instance";
-        page = QSharedPointer< QWebPage > ( new QWebPage() );
-
-        qDebug() << "debug: page instance running in thread: " << page->thread();
-
-        qDebug() << "debug: beginning parse of page: " << url;
-        page->mainFrame()->setHtml(data, url);
-
-        qDebug() << "debug: post setHtml/load calls";
-        qDebug() << "debug: dumping page children and thread info";
-
-        foreach( QObject* cchild, page->children() ) {
-            qDebug() << "debug: page child " << cchild << " on thread " << cchild -> thread();
-        }
-
-        qDebug() << "debug: dumping main frame children";
-
-        foreach( QObject* cchild, page->mainFrame()->children() ) {
-            qDebug() << "debug: dumping frame " << cchild;    
-        }
-
-        linkTags = page->mainFrame()->findAllElements("a");
-
-        qDebug() << "debug: after parse, main frame contains " 
-                 << linkTags.count() << " links";
-       
-        if( linkTags.count() > 0 ) {
-            foreach(QWebElement currentElement, linkTags) {
-                currentRawUrl = currentElement.attribute("href");
-
-                    if (currentRawUrl != "") {
-                    owner->addUrl(QUrl(currentRawUrl));
-                }
-            }
-        }
-
-       // page.clear(); 
-
-        owner -> dispatchRetrievers();
     }
 
-    void Parser::catchSegfault( int n ) {
-        (void) n;
-
-        qDebug() << "debug: warning: parser thread segfaulted!";
-    }
 
 }   /* namespace slurp */
