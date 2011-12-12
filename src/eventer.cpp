@@ -266,13 +266,9 @@ namespace slurp {
  
         foreach( QObject* child, appInstance -> children() ) {
             qDebug() << "debug: dumping application child :" << child;
-            child->dumpObjectTree();
         }
 
-        appInstance -> dumpObjectTree();
-
         qDebug() << "debug: eventer instance: " << this;
-        dumpObjectTree();
 
         foreach( QObject* child, children() ) {
             qDebug() << "debug: dumping eventer child: " << child;
@@ -280,11 +276,9 @@ namespace slurp {
         }
 
         qDebug() << "debug: threader instance: " << &parserPool;
-        parserPool.dumpObjectTree();
 
         foreach( QObject* child, parserPool.children() ) {
             qDebug() << "debug: dumping parser pool child: " << child;
-            child -> dumpObjectTree();
         }
     }
 

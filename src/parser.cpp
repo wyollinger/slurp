@@ -41,7 +41,6 @@ namespace slurp {
     } 
     
     void Parser::run() {
-
         setAutoDelete(false);
 
         qDebug() << "debug: in parse thread " << QThread::currentThreadId();
@@ -94,5 +93,20 @@ namespace slurp {
         page->mainFrame()->load(url);
 
         qDebug() << "debug: post setHtml/load calls";
+        qDebug() << "debug: dumping page children and thread info";
+
+        foreach( QObject* cchild, page->children() ) {
+            qDebug() << "debug: page child " << cchild << " on thread " << cchild -> thread();
+        }
+
+        qDebug() << "debug: dumping main frame children";
+
+        foreach( QObject* cchild, page->mainFrame()->children() ) {
+            qDebug() << "debug: dumping frame " << cchild;    
+        }
+
+        qDebug() << "debug: main frame contains " << page->mainFrame()->contentsSize() << " bytes";
+        qDebug() << "debug: current frame contains " << page->currentFrame()->contentsSize() << " bytes";
+        /* page.clear(); */
     }
 }   /* namespace slurp */

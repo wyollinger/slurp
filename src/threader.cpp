@@ -32,25 +32,42 @@ namespace slurp {
     }
 
     void Threader::loadProgressCallback(int n) {
+        QWebPage *currentPage = ((QWebPage*) QObject::sender());
+        QWebFrame *mainFrame = currentPage -> mainFrame();
+        QWebFrame *currentFrame = currentPage -> currentFrame();
+
         qDebug() << "debug: received load progress callback: " 
                  << n << " from sender: " << QObject::sender();
 
-        if( n == 100 ) {
-            qDebug() << "debug: stub to dispatch scanner thread in "
-                     << thread();
-
-            //delete QObject::sender();
-        }
+        qDebug() << "debug: main frame contains: "
+                 << mainFrame -> contentsSize()
+                 << " bytes and current frame contains "
+                 << currentFrame -> contentsSize();
     }
 
     void Threader::loadFinishedCallback(bool ok) {
+        QWebFrame *currentFrame = ((QWebFrame*) QObject::sender());
+
         qDebug() << "debug: received load complete callback: " 
-                 << ok << " from sender: " << QObject::sender();
+                 << ok << " from sender: " << currentFrame;
+
+        if( ok ) {
+            /* TODO: examine frame */
+        }
     }
 
     void Threader::frameCreationCallback( QWebFrame* frame ) {
         qDebug() << "debug: received frame creation callback from page: "
                  << QObject::sender() << " on frame: " << frame;
+
+        qDebug() << "debug: new frame running on thread "
+                 << QObject::sender()->thread();
+
+        QObject::connect( 
+            frame,
+            SIGNAL(loadFinished(bool)),
+            this,
+            SLOT(loadFrameFinishedCallback(bool)));
     }
 
     void Threader::contentsChangedCallback() {
@@ -60,6 +77,13 @@ namespace slurp {
 
     void Threader::destroyedCallback() {
         qDebug() << "debug: received notification that QWebPage instance is being destroyed";
+    }
+
+    void Threader::loadFrameFinishedCallback(bool ok) {
+        QWebFrame* currentFrame = (QWebFrame*) QObject::sender();
+
+        qDebug() << "debug: received load frame finshed callback with status: " << ok
+                 << "from frame :" << currentFrame << " with size " << currentFrame -> contentsSize();
     }
 
 }   /* namespace slurp */
