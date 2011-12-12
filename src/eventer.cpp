@@ -22,6 +22,8 @@
 #include <QUrl>
 #include <QQueue>
 
+#include <csignal>
+
 #include "eventer.h"
 #include "callbacks.h"
 #include "retriever.h"
@@ -42,7 +44,19 @@ namespace slurp {
          this->quota = quota;
          this->flags = flags;
          appInstance = thisApp;
-         
+        
+
+         action.sa_flags = 0;
+         action.sa_handler = catchSigpipe;
+         sigemptyset(&(action.sa_mask));
+ 
+         if(sigaction(SIGPIPE, &action, NULL) < 0 ) {
+            qDebug() << "debug: cannot set signal";
+            return;
+         }
+ 
+
+
         while (!initialUrls.isEmpty()) {
             currentUrl = QUrl(initialUrls.dequeue());
 
@@ -50,6 +64,7 @@ namespace slurp {
                 urlQueue.enqueue(currentUrl);
             }
         }
+
         eventBasePtr = event_base_new();
 
         multi = curl_multi_init();
@@ -286,4 +301,9 @@ namespace slurp {
             qDebug() << "debug: dumping eventer child thread: " << child->thread();
         }
     }
-}                               /* namespace slurp */
+
+    void Eventer::catchSigpipe( int n ) {
+        (void ) n;
+        qDebug() << "debug: eventer caught sigpipe";
+    }
+}    /* namespace slurp */

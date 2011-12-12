@@ -23,6 +23,7 @@
 #include <QPainter>
 #include <QWidget>
 #include <QUrl>
+
 #include <csignal>
 
 #include "parser.h"

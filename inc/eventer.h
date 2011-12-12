@@ -27,6 +27,8 @@
 #include <QApplication>
 #include <QUrl>
 
+#include <csignal>
+
 #include <event2/event.h>
 #include <curl/curl.h>
 
@@ -45,6 +47,7 @@ namespace slurp {
         QMutex urlQueueMutex, dispatchMutex;
         QQueue < QUrl > urlQueue;
         QApplication* appInstance;
+        struct sigaction action;
 
     public:
 
@@ -68,6 +71,8 @@ namespace slurp {
         void stop();
         void dumpChildren();
         void dumpThreads();
+
+        static void catchSigpipe( int n );
     };
 
 }   /* namespace slurp */
