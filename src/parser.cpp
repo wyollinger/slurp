@@ -20,12 +20,15 @@
 #include <QWebPage>
 #include <QWebFrame>
 #include <QWebElement>
+#include <QPainter>
+#include <QWidget>
 #include <QUrl>
 
 #include "parser.h"
 #include "eventer.h"
 #include "retriever.h"
 #include "util.h"
+#include "scanner.h"
 
 namespace slurp {
 
@@ -38,66 +41,51 @@ namespace slurp {
     } 
     
     void Parser::run() {
+
         setAutoDelete(false);
 
         qDebug() << "debug: in parse thread " << QThread::currentThreadId();
 
-        qDebug() << "debug: eventer's parser pool insance at "
-                 << owner -> getParserPool();
-
         qDebug() << "debug: constructing web page instance";
-        page = new QWebPage();
+        page = QSharedPointer< QWebPage > ( new QWebPage() );
 
-        /*
-         * Because setHtml can cause asynchronous behavior
-         * related to page construction we must wait until
-         * the signals are dispatched by the page, and because
-         * this QRunnable has no event loop we connect them
-         * to the Threader instead and the threader then 
-         * schedules the scan. Because the connect type
-         * is blocking queued and the parsing occurs on this
-         * thread, we can guarantee that the scanners will
-         * never be parsing the links out of a page that
-         * is still being constructed by the webkit libraries.
-         */ 
-
+        
         QObject::connect( 
-            page, 
+            page.data(), 
             SIGNAL(loadStarted()),
             owner -> getParserPool(),
-            SLOT(loadStartedCallback()),
-            Qt::BlockingQueuedConnection );
+            SLOT(loadStartedCallback()));
 
          QObject::connect( 
-           page, 
+           page.data(), 
            SIGNAL(loadProgress(int)),
            owner -> getParserPool(),
-           SLOT(loadProgressCallback(int)),
-           Qt::BlockingQueuedConnection );
+           SLOT(loadProgressCallback(int)));
          
         QObject::connect(
-            page,
+            page.data(),
             SIGNAL(loadFinished(bool)),
             owner -> getParserPool(),
-            SLOT(loadFinishedCallback(bool)),
-            Qt::BlockingQueuedConnection );
+            SLOT(loadFinishedCallback(bool)));
 
         QObject::connect(
-            page,
+            page.data(),
             SIGNAL(frameCreated(QWebFrame*)),
             owner -> getParserPool(),
-            SLOT(frameCreationCallback(QWebFrame*)),
-            Qt::BlockingQueuedConnection );
+            SLOT(frameCreationCallback(QWebFrame*)));
 
         QObject::connect(
-            page,
+            page.data(),
             SIGNAL(contentsChanged()),
             owner -> getParserPool(),
-            SLOT(contentsChangedCallback()),
-            Qt::BlockingQueuedConnection );
+            SLOT(contentsChangedCallback()));
 
         qDebug() << "debug: setting html with "
-            << data.size() << " bytes of data..";
+                 << data.size() << " bytes of data..";
+
         page->mainFrame()->setHtml(data, url);
+        page->mainFrame()->load(url);
+
+        qDebug() << "debug: post setHtml/load calls";
     }
-}                               /* namespace slurp */
+}   /* namespace slurp */

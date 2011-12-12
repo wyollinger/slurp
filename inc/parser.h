@@ -34,7 +34,7 @@ namespace slurp {
 
         Eventer *owner;
         QUrl url;
-        QWebPage *page;
+        QSharedPointer<QWebPage> page;
         QString data;
 
     public:
@@ -42,6 +42,10 @@ namespace slurp {
         Parser(Eventer * owner, QString raw_url, QString raw_data);
 
         void run();
+
+        inline Eventer* getOwner() {
+            return owner;
+        }
     };
 
 }   /* namespace slurp */

@@ -27,13 +27,19 @@ namespace slurp {
     
     class Scanner : public QRunnable {
         
-        QWebPage* page;
+        QSharedPointer<QWebPage> page;
+
         Eventer* owner;
 
         public:
 
-            Scanner( Eventer* owner, QWebPage* page );
+            Scanner( Eventer* owner, QSharedPointer<QWebPage> page );
+
             void run();
+
+            inline Eventer* getOwner() {
+                return owner;
+            }
 
     };
 

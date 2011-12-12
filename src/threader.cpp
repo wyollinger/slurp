@@ -22,6 +22,7 @@
 
 #include "threader.h"
 #include "parser.h"
+#include "scanner.h"
 
 namespace slurp {
 
@@ -34,14 +35,8 @@ namespace slurp {
         qDebug() << "debug: received load progress callback: " 
                  << n << " from sender: " << QObject::sender();
 
-        /* NOTE: this doesn't get to 100 all the time, but
-         * because the parse thread blocks while we are handling
-         * this signal, it's ok to scan a partially complete
-         * tree.
-         */
-
         if( n == 100 ) {
-            qDebug() << "debug: scanner creation stub in thread "
+            qDebug() << "debug: stub to dispatch scanner thread in "
                      << QThread::currentThreadId();
         }
     }

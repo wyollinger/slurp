@@ -32,7 +32,9 @@
 namespace slurp {
 
     Eventer::Eventer(QApplication * thisApp,
-                     QQueue < QString > &initialUrls, int quota, int flags) {
+                     QQueue < QString > &initialUrls, 
+                     int quota, 
+                     int flags) : parserPool(this)  {
         (void)thisApp;
 
         QUrl currentUrl;
@@ -43,6 +45,7 @@ namespace slurp {
          this->quota = quota;
          this->flags = flags;
 
+         
          parserPool.setExpiryTimeout(-1);
 
         while (!initialUrls.isEmpty()) {

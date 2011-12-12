@@ -21,13 +21,14 @@
 #include <QWebFrame>
 #include <QString>
 #include <QUrl>
+#include <QSharedPointer>
 
 #include "scanner.h"
 #include "eventer.h"
 
 namespace slurp {
 
-    Scanner::Scanner( Eventer* owner, QWebPage* page ) {
+    Scanner::Scanner( Eventer* owner, QSharedPointer<QWebPage> page ) {
         this->owner = owner;
         this->page = page;
     }
@@ -37,12 +38,25 @@ namespace slurp {
         QWebElementCollection allLinkTags;
         QString currentRawUrl;
         QUrl currentUrl;
-           
-        qDebug() << "debug: retrieving document element...";
+        
+        qDebug() << "debug: in scanner with " 
+                 << page->totalBytes() << " bytes of parsed html";   
+
+        qDebug() << "debug: dumping main frame: "
+                 << page->mainFrame()->renderTreeDump();
+        qDebug() << "debug: main frame dump complete";
+
+        qDebug() << "debug: dumping current frame: "
+                << page->currentFrame()->renderTreeDump();
+        qDebug() << "debug: current frame dump complete";
+
+        qDebug() << "debug: retrieving document element";
         document = page->mainFrame()->documentElement();
 
         qDebug() << "debug: finding all link tags";
         allLinkTags = document.findAll("a");
+
+        qDebug() << "debug: found " << allLinkTags.count() << " link tags";
 
         foreach(QWebElement currentElement, allLinkTags) {
             currentRawUrl = currentElement.attribute("href");
@@ -52,10 +66,10 @@ namespace slurp {
             }
         }
 
-        qDebug() << "debug: scan complete on thread "
-            << QThread::currentThreadId();
+        qDebug() << "debug: scan complete on thread " << QThread::currentThreadId();
 
         owner->dispatchRetrievers();
+        
     }
 
 }   /* namespace slurp */

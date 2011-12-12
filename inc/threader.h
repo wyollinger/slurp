@@ -22,13 +22,21 @@
 #include <QWebFrame>
 
 //#include "parser.h"
+//#include "eventer.h"
 
 namespace slurp {
     class Parser;
+    class Eventer;
     class Threader : public QThreadPool {
         Q_OBJECT
 
+        Eventer *owner; 
+
         public:
+
+            Threader( Eventer* owner ) {
+                this -> owner = owner;
+            }
 
         public slots:
 
@@ -37,7 +45,7 @@ namespace slurp {
             void loadFinishedCallback(bool ok);
             void frameCreationCallback(QWebFrame* frame);
             void contentsChangedCallback();
-
+          
         private:
 
             
