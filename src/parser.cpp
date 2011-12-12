@@ -56,11 +56,6 @@ namespace slurp {
          * to the Threader instead and the threader then 
          * schedules the scan.
          */ 
-
-        qDebug() << "debug: setting html with "
-            << data.size() << " bytes of data..";
-        page->mainFrame()->setHtml(data, url);
-
         QObject::connect( 
             page, 
             SIGNAL(loadStarted()),
@@ -79,5 +74,8 @@ namespace slurp {
             owner -> getParserPool(),
             SLOT(loadFinishedCallback(bool)));
 
+        qDebug() << "debug: setting html with "
+            << data.size() << " bytes of data..";
+        page->mainFrame()->setHtml(data, url);
     }
 }                               /* namespace slurp */
