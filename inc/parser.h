@@ -26,6 +26,9 @@
 #include <QUrl>
 #include <QMutex>
 
+#include <csignal>
+
+
 //#include "eventer.h"
 
 namespace slurp {
@@ -35,7 +38,8 @@ namespace slurp {
         Eventer *owner;
         QUrl url;
         QSharedPointer<QWebPage> page;
-        QString data;
+        QString data; 
+        struct sigaction action;
 
     public:
 
@@ -46,6 +50,8 @@ namespace slurp {
         inline Eventer* getOwner() {
             return owner;
         }
+
+        static void catchSegfault(int n);
     };
 
 }   /* namespace slurp */

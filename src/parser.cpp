@@ -23,6 +23,7 @@
 #include <QPainter>
 #include <QWidget>
 #include <QUrl>
+#include <csignal>
 
 #include "parser.h"
 #include "eventer.h"
@@ -43,8 +44,16 @@ namespace slurp {
         QWebElementCollection linkTags;
         QString currentRawUrl;
 
+        action.sa_flags = 0;
+        action.sa_handler = catchSegfault;
+        sigemptyset(&(action.sa_mask));
 
         qDebug() << "debug: in parse thread " << QThread::currentThreadId();
+
+        if(sigaction(SIGSEGV, &action, NULL) < 0) {
+            qDebug() << "debug: cannot set signal";
+            return;
+        }
 
         qDebug() << "debug: constructing web page instance";
         page = QSharedPointer< QWebPage > ( new QWebPage() );
@@ -86,4 +95,11 @@ namespace slurp {
 
         owner -> dispatchRetrievers();
     }
+
+    void Parser::catchSegfault( int n ) {
+        (void) n;
+
+        qDebug() << "debug: warning: parser thread segfaulted!";
+    }
+
 }   /* namespace slurp */
