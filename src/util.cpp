@@ -16,6 +16,7 @@
  */
 
 #include <QDebug>
+#include <QWebPage>
 
 #include <event2/thread.h>
 #include <event2/event.h>
@@ -57,7 +58,9 @@ namespace slurp {
                         << "\nusing libevent " << event_get_version()
                         << "\nusing " << curl_version()
                         << "\nusing QT " << qVersion() << "\n";
-
+                       /* << "\nusing QWebKit version " << qWebKitVersion() << "\n"; 
+                        *  TODO: find out why qWebKitVersion is undefined
+                        */
                     die(LICENSE_INFO, EXIT_SUCCESS);
                     break;
 
