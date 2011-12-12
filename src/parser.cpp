@@ -90,7 +90,7 @@ namespace slurp {
                  << data.size() << " bytes of data..";
 
         page->mainFrame()->setHtml(data, url);
-        page->mainFrame()->load(url);
+        //page->mainFrame()->load(url);
 
         qDebug() << "debug: post setHtml/load calls";
         qDebug() << "debug: dumping page children and thread info";
@@ -105,8 +105,8 @@ namespace slurp {
             qDebug() << "debug: dumping frame " << cchild;    
         }
 
-        qDebug() << "debug: main frame contains " << page->mainFrame()->contentsSize() << " bytes";
-        qDebug() << "debug: current frame contains " << page->currentFrame()->contentsSize() << " bytes";
+        qDebug() << "debug: after parse, main frame contains " << page->mainFrame()->findAllElements("a").count() << " links";
+
         /* page.clear(); */
     }
 }   /* namespace slurp */

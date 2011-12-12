@@ -19,6 +19,7 @@
 #include <QThread>
 #include <QList>
 #include <QObject>
+#include <QWebElementCollection>
 
 #include "threader.h"
 #include "parser.h"
@@ -39,10 +40,11 @@ namespace slurp {
         qDebug() << "debug: received load progress callback: " 
                  << n << " from sender: " << QObject::sender();
 
-        qDebug() << "debug: main frame contains: "
-                 << mainFrame -> contentsSize()
-                 << " bytes and current frame contains "
-                 << currentFrame -> contentsSize();
+        qDebug() << "debug: in progress callback, main frame contains: "
+                 << mainFrame -> findAllElements("a").count()
+                 << " link tags and current frame contains "
+                 << currentFrame -> findAllElements("a").count()
+                 << " link tags";
     }
 
     void Threader::loadFinishedCallback(bool ok) {
