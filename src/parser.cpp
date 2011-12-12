@@ -30,8 +30,9 @@
 
 namespace slurp {
 
-    Parser::Parser(Eventer * owner, QString raw_url, QString raw_data) {
-
+    Parser::Parser(Eventer * owner, QUrl url) {
+        this->owner = owner;
+        this->url = url;
     }
 
     void Parser::run() {

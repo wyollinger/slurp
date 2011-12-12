@@ -34,7 +34,7 @@ namespace slurp {
         Q_OBJECT
 
         QQueue < QUrl > urlQueue;
-        QList < Parser* > queuedParsers;
+        QQueue < Parser* > queuedParsers;
         QMutex queueMutex;
         QList < Parser* > runningParsers;
         QMutex runMutex;

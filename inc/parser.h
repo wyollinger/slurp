@@ -35,16 +35,13 @@ namespace slurp {
 
         Eventer *owner;
         QUrl url;
-        QSharedPointer<QWebPage> page;
-        QString data; 
+        QWebPage *page;
 
     public:
 
-        Parser(Eventer * owner, QString raw_url, QString raw_data);
-
+        Parser(Eventer * owner, QUrl url);
         void run();
 
-        static void catchSegfault(int n);
     };
 
 }   /* namespace slurp */

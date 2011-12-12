@@ -34,7 +34,16 @@ namespace slurp {
         QQueue < QString > &initialUrls, 
         int quota, 
         int flags) : QApplication( argc, argv ) {
-            
+            QUrl currentUrl;
+
+            while( !initialUrls.isEmpty() ) {
+                currentUrl = QUrl( initialUrls.dequeue() );
+
+                if( currentUrl.isValid() ) {
+                    qDebug() << "debug: adding " << currentUrl << " to queued parser";
+                    queuedParsers.enqueue( new Parser( this, currentUrl ) );
+                }
+            }
         }
 
     void Eventer::addUrl( QUrl url ) {
