@@ -29,6 +29,8 @@
 
 namespace slurp {
 
+    /* NOTE: parser does not delete it's page instance */
+
     Parser::Parser(Eventer * owner, QString raw_url, QString raw_data) {
         this->owner = owner;
         url = QUrl(raw_url);
@@ -36,10 +38,7 @@ namespace slurp {
     } 
     
     void Parser::run() {
-        QWebElement document;
-        QWebElementCollection allLinkTags;
-        QString currentRawUrl;
-        QUrl currentUrl;
+        setAutoDelete(false);
 
         qDebug() << "debug: in parse thread " << QThread::currentThreadId();
 
@@ -54,8 +53,10 @@ namespace slurp {
          * related to page construction we must wait until
          * the signals are dispatched by the page, but because
          * this QRunnable has no event loop, we connect them
-         * to the threadpool instead.
+         * to the Threader instead and the threader then 
+         * schedules the scan.
          */ 
+
         qDebug() << "debug: setting html with "
             << data.size() << " bytes of data..";
         page->mainFrame()->setHtml(data, url);
@@ -77,37 +78,6 @@ namespace slurp {
             SIGNAL(loadFinished(bool)),
             owner -> getParserPool(),
             SLOT(loadFinishedCallback(bool)));
-        /*
-        qDebug() << "debug: retrieving document element...";
-        document = page->mainFrame()->documentElement();
 
-        qDebug() << "debug: finding all link tags";
-        allLinkTags = document.findAll("a");
-
-        foreach(QWebElement currentElement, allLinkTags) {
-            currentRawUrl = currentElement.attribute("href");
-
-            if (currentRawUrl != "") {
-                owner->addUrl(QUrl(currentRawUrl));
-            }
-        }
-
-        qDebug() << "debug: "
-            << data.size() << " bytes in data string and "
-            << page->totalBytes() << " bytes in page, and found "
-            << allLinkTags.count() << " link tags";
-
-        qDebug() << "debug: parse complete on thread "
-            << QThread::currentThreadId();
-
-        owner->dispatchRetrievers();
-        */
     }
-
-
-
-    Parser::~Parser() {
-        delete page;
-    }
-
 }                               /* namespace slurp */

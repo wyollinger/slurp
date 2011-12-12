@@ -19,12 +19,21 @@
 #define SLURP_SCANNER_H
 
 #include <QRunnable>
+#include <QWebPage>
+
+#include "eventer.h"
 
 namespace slurp {
-
+    
     class Scanner : public QRunnable {
         
-        /* TODO: stub */
+        QWebPage* page;
+        Eventer* owner;
+
+        public:
+
+            Scanner( Eventer* owner, QWebPage* page );
+            void run();
 
     };
 

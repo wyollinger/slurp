@@ -15,10 +15,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+#include <QWebPage>
+#include <QWebElement>
+#include <QWebFrame>
+#include <QString>
+#include <QUrl>
+
 #include "scanner.h"
+#include "eventer.h"
 
 namespace slurp {
 
-    /* TODO: stub */
+    Scanner::Scanner( Eventer* owner, QWebPage* page ) {
+        this->owner = owner;
+        this->page = page;
+    }
+
+    void Scanner::run() {
+        QWebElement document;
+        QWebElementCollection allLinkTags;
+        QString currentRawUrl;
+        QUrl currentUrl;
+           
+        qDebug() << "debug: retrieving document element...";
+        document = page->mainFrame()->documentElement();
+
+        qDebug() << "debug: finding all link tags";
+        allLinkTags = document.findAll("a");
+
+        foreach(QWebElement currentElement, allLinkTags) {
+            currentRawUrl = currentElement.attribute("href");
+
+            if (currentRawUrl != "") {
+                owner->addUrl(QUrl(currentRawUrl));
+            }
+        }
+
+        qDebug() << "debug: scan complete on thread "
+            << QThread::currentThreadId();
+
+        owner->dispatchRetrievers();
+    }
 
 }   /* namespace slurp */

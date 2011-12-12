@@ -39,8 +39,7 @@ namespace slurp {
 
     public:
 
-         Parser(Eventer * owner, QString raw_url, QString raw_data);
-        ~Parser();
+        Parser(Eventer * owner, QString raw_url, QString raw_data);
 
         void run();
     };
