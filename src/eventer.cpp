@@ -30,235 +30,231 @@
 
 namespace slurp {
 
-    Eventer::Eventer( QApplication* thisApp,
-		      QQueue < QString > &initialUrls,
-		      int quota, int flags) {
-        (void) thisApp;
-	    
+    Eventer::Eventer(QApplication * thisApp,
+                     QQueue < QString > &initialUrls, int quota, int flags) {
+        (void)thisApp;
+
         QUrl currentUrl;
         QString rawUrl;
-	retrieving = 0;
-        parsing = 0;
+         retrieving = 0;
+         parsing = 0;
 
-	this->quota = quota;
-	this->flags = flags;
+         this->quota = quota;
+         this->flags = flags;
 
-	parserPool.setExpiryTimeout(-1);
+         parserPool.setExpiryTimeout(-1);
 
-	while( !initialUrls.isEmpty() ) {
-	    currentUrl = QUrl( initialUrls.dequeue() );
+        while (!initialUrls.isEmpty()) {
+            currentUrl = QUrl(initialUrls.dequeue());
 
-            if( currentUrl.isValid() ) {
-                urlQueue.enqueue( currentUrl );
-	    }
-	}
+            if (currentUrl.isValid()) {
+                urlQueue.enqueue(currentUrl);
+            }
+        }
+        eventBasePtr = event_base_new();
 
-	eventBasePtr = event_base_new();
+        multi = curl_multi_init();
 
-	multi = curl_multi_init();
+        timerEventPtr = event_new(eventBasePtr, -1, 0, timerCallback, this);
 
-	timerEventPtr = event_new(eventBasePtr, -1, 0, timerCallback, this);
+        curlVerify("error: multi_setopt: socket callback",
+                   curl_multi_setopt(multi, CURLMOPT_SOCKETFUNCTION,
+                                     socketCallback));
+        curlVerify("error: multi_setopt: socket data",
+                   curl_multi_setopt(multi, CURLMOPT_SOCKETDATA, this));
+        curlVerify("error: multi_setopt: timer callback",
+                   curl_multi_setopt(multi, CURLMOPT_TIMERFUNCTION,
+                                     multiTimerCallback));
+        curlVerify("error: multi_setopt: timer data",
+                   curl_multi_setopt(multi, CURLMOPT_TIMERDATA, this));
+    }
 
-	curlVerify("error: multi_setopt: socket callback",
-		   curl_multi_setopt(multi, CURLMOPT_SOCKETFUNCTION,
-				     socketCallback));
-	curlVerify("error: multi_setopt: socket data",
-		   curl_multi_setopt(multi, CURLMOPT_SOCKETDATA, this));
-	curlVerify("error: multi_setopt: timer callback",
-		   curl_multi_setopt(multi, CURLMOPT_TIMERFUNCTION,
-				     multiTimerCallback));
-	curlVerify("error: multi_setopt: timer data",
-		   curl_multi_setopt(multi, CURLMOPT_TIMERDATA, this));
-    } 
+    struct event *Eventer::registerSocket(curl_socket_t sockfd, int kind) {
+        struct event *newEvent;
 
-    struct event* Eventer::registerSocket(curl_socket_t sockfd, int kind) {
-	struct event *newEvent;
+        newEvent = event_new(eventBasePtr, sockfd, kind, eventCallback, this);
 
-	newEvent = event_new(eventBasePtr, sockfd, kind, eventCallback, this);
-
-	return newEvent;
+        return newEvent;
     }
 
     void Eventer::addHandle(CURL * handle) {
-	CURLMcode rc;
+        CURLMcode rc;
 
-	rc = curl_multi_add_handle(multi, handle);
+        rc = curl_multi_add_handle(multi, handle);
 
-	curlVerify("curl_multi_add_handle from Retriever()", rc);
+        curlVerify("curl_multi_add_handle from Retriever()", rc);
     }
 
     void Eventer::processSocketEvent(int fd, short kind) {
-	CURLMcode rc;
-	int action =
-	    (kind & EV_READ ? CURL_CSELECT_IN : 0) |
-	    (kind & EV_WRITE ? CURL_CSELECT_OUT : 0);
+        CURLMcode rc;
+        int action =
+            (kind & EV_READ ? CURL_CSELECT_IN : 0) |
+            (kind & EV_WRITE ? CURL_CSELECT_OUT : 0);
 
-	rc = curl_multi_socket_action(multi, fd, action, &retrieving);
+        rc = curl_multi_socket_action(multi, fd, action, &retrieving);
 
-	curlVerify("curl_multi_socket_action from Eventer::processSocketEvent",
-		   rc);
+        curlVerify("curl_multi_socket_action from Eventer::processSocketEvent",
+                   rc);
 
     }
 
     void Eventer::checkTimer() {
-	if (retrieving <= 0) {
-	    qDebug() << "debug: last transfer complete";
+        if (retrieving <= 0) {
+            qDebug() << "debug: last transfer complete";
 
-	    if (evtimer_pending(timerEventPtr, NULL)) {
-		evtimer_del(timerEventPtr);
-	    }
-	} else {
+            if (evtimer_pending(timerEventPtr, NULL)) {
+                evtimer_del(timerEventPtr);
+            }
+        } else {
             dispatchRetrievers();
-	}
+        }
     }
 
     void Eventer::updateTimer() {
-	CURLMcode mrc;
+        CURLMcode mrc;
 
-	mrc = curl_multi_socket_action(multi, CURL_SOCKET_TIMEOUT, 0, &retrieving);
+        mrc = curl_multi_socket_action(multi,
+                                       CURL_SOCKET_TIMEOUT, 0, &retrieving);
 
-	curlVerify("curl_multi_socket_action from timerCallback", mrc);
+        curlVerify("curl_multi_socket_action from timerCallback", mrc);
     }
 
     void Eventer::addTimer(long timeout_ms) {
-	timeval timeout;
+        timeval timeout;
 
-	timeout.tv_sec = timeout_ms / 1000;
-	timeout.tv_usec = (timeout_ms % 1000) * 1000;
+        timeout.tv_sec = timeout_ms / 1000;
+        timeout.tv_usec = (timeout_ms % 1000) * 1000;
 
-	if (evtimer_add(timerEventPtr, &timeout) == -1) {
-	    qFatal("error: evtimer_add(..) failed!\n");
-	}
+        if (evtimer_add(timerEventPtr, &timeout) == -1) {
+            qFatal("error: evtimer_add(..) failed!\n");
+        }
     }
 
     void Eventer::run() {
-	struct event *kbEvent;
+        struct event *kbEvent;
         int ret;
 
-	qDebug() << "debug: running eventer on thread " 
-		 << QThread::currentThreadId();
+        qDebug() << "debug: running eventer on thread "
+            << QThread::currentThreadId();
 
+        kbEvent = event_new(eventBasePtr,
+                            0, EV_READ | EV_PERSIST, keyboardCallback, this);
 
-	kbEvent = event_new(eventBasePtr,
-			    0, EV_READ | EV_PERSIST, keyboardCallback, this);
+        if (event_add(kbEvent, NULL) == -1) {
+            qFatal("error: could not add keyboard event\n");
+            exit(1);
+        }
 
-	if (event_add(kbEvent, NULL) == -1) {
-	    qFatal("error: could not add keyboard event\n");
-	    exit(1);
-	}
+        qDebug() << "debug: calling event_base_dispatch";
 
-	qDebug() << "debug: calling event_base_dispatch";
+        dispatchRetrievers();
 
-	dispatchRetrievers();
+        ret = event_base_dispatch(eventBasePtr);
 
-	ret = event_base_dispatch(eventBasePtr);
+        qDebug() << "debug: event dispatch returned " << ret;
 
-	qDebug() << "debug: event dispatch returned " << ret;
+        event_free(kbEvent);
 
-	event_free(kbEvent);
+        checkTimer();
+        event_free(timerEventPtr);
+        timerEventPtr = NULL;
 
-	checkTimer();
-	event_free(timerEventPtr);
-	timerEventPtr = NULL;
+        event_base_free(eventBasePtr);
+        eventBasePtr = NULL;
 
-	event_base_free(eventBasePtr);
-	eventBasePtr = NULL;
+        curl_multi_cleanup(multi);
+        multi = NULL;
 
-	curl_multi_cleanup(multi);
-	multi = NULL;
+        qDebug() << "debug: Eventer::run() returning";
 
-	qDebug() << "debug: Eventer::run() returning";
-
-	QCoreApplication::quit();
+        QCoreApplication::quit();
     }
 
     void Eventer::addUrl(QUrl url) {
-        if( !url.isRelative() && url.isValid() ) {
-	    urlQueueMutex.lock();
-	    urlQueue.enqueue( url );
-	    urlQueueMutex.unlock();
-	}
+        if (!url.isRelative() && url.isValid()) {
+            urlQueueMutex.lock();
+            urlQueue.enqueue(url);
+            urlQueueMutex.unlock();
+        }
 
-	if( QThread::currentThread() == this ) {
-           dispatchRetrievers();
-	}
+        if (QThread::currentThread() == this) {
+            dispatchRetrievers();
+        }
     }
 
     void Eventer::setSocket(Retriever * retriever,
-			    curl_socket_t s, CURL * e, int act) {
-	int kind = (act & CURL_POLL_IN ? EV_READ : false)
-	    | (act & CURL_POLL_OUT ? EV_WRITE : false)
-	    | EV_PERSIST;
+                            curl_socket_t s, CURL * e, int act) {
+        int kind = (act & CURL_POLL_IN ? EV_READ : false)
+            | (act & CURL_POLL_OUT ? EV_WRITE : false)
+            | EV_PERSIST;
 
-	qDebug() << "debug: in setSocket with socket " << s
-	    << "kind " << kind
-	    << " easy@ " << e
-	    << " act " << act
-	    << " eventer@ " << this << " retriever@ " << retriever;
+        qDebug() << "debug: in setSocket with socket " << s
+            << "kind " << kind
+            << " easy@ " << e
+            << " act " << act
+            << " eventer@ " << this << " retriever@ " << retriever;
 
-	curl_multi_assign(multi, s, retriever);
+        curl_multi_assign(multi, s, retriever);
 
-	retriever->setSocketData(s, act, kind, e);
+        retriever->setSocketData(s, act, kind, e);
     }
 
     void Eventer::addSocket(curl_socket_t s, CURL * easy, int action) {
-	Retriever *retriever = NULL;
-	curl_easy_getinfo(easy, CURLINFO_PRIVATE, &retriever);
-	setSocket(retriever, s, easy, action);
+        Retriever *retriever = NULL;
+        curl_easy_getinfo(easy, CURLINFO_PRIVATE, &retriever);
+        setSocket(retriever, s, easy, action);
     }
 
     void Eventer::scanMultiInfo() {
-	CURLMsg *msgPtr;
-	CURL *easy;
-	CURLcode rc;
-	Retriever *retriever;
-	char *rawUrl;
-	int msgsRemaining;
+        CURLMsg *msgPtr;
+        CURL *easy;
+        CURLcode rc;
+        Retriever *retriever;
+        char *rawUrl;
+        int msgsRemaining;
 
-	while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
-	    if (msgPtr->msg == CURLMSG_DONE) {
+        while ((msgPtr = curl_multi_info_read(multi, &msgsRemaining))) {
+            if (msgPtr->msg == CURLMSG_DONE) {
 
-		easy = msgPtr->easy_handle;
-		rc = msgPtr->data.result;
+                easy = msgPtr->easy_handle;
+                rc = msgPtr->data.result;
 
-		curl_easy_getinfo(easy, CURLINFO_PRIVATE, &retriever);
-		curl_easy_getinfo(easy, CURLINFO_EFFECTIVE_URL, &rawUrl);
+                curl_easy_getinfo(easy, CURLINFO_PRIVATE, &retriever);
+                curl_easy_getinfo(easy, CURLINFO_EFFECTIVE_URL, &rawUrl);
 
-		qDebug() << "debug: " << rawUrl
-		    << " complete, rc = " << rc
-		    << " error buffer: " << (retriever->getErrorBuffer())
-		    << " content buffer size: " << retriever->getData().size();
+                qDebug() << "debug: " << rawUrl
+                    << " complete, rc = " << rc
+                    << " error buffer: " << (retriever->getErrorBuffer())
+                    << " content buffer size: " << retriever->getData().size();
 
-		qDebug() << "debug: adding new parser to parserPool";
+                qDebug() << "debug: adding new parser to parserPool";
 
-		parserPool.start(
-		    new Parser(
-		        this, 
-			QString( rawUrl ), 
-			retriever->getData() ));
+                parserPool.start(new Parser(this,
+                                            QString(rawUrl),
+                                            retriever->getData()));
 
-		qDebug() << "debug: parser pool now has " 
-			<< parserPool.activeThreadCount() << " threads";
+                qDebug() << "debug: parser pool now has "
+                    << parserPool.activeThreadCount() << " threads";
 
-		curl_multi_remove_handle(multi, easy);
-		delete retriever;
-	    }
-	}			/* while */
+                curl_multi_remove_handle(multi, easy);
+                delete retriever;
+            }
+        }                       /* while */
 
     }
 
     void Eventer::dispatchRetrievers() {
-	dispatchMutex.lock();
-       
-	if( !urlQueue.isEmpty() && retrieving < 64 ) { /* FIXME: make this a member */
-                 new Retriever( this, urlQueue.dequeue(), flags );
+        dispatchMutex.lock();
+
+        if (!urlQueue.isEmpty() && retrieving < 64) {   /* FIXME: make this a member */
+            new Retriever(this, urlQueue.dequeue(), flags);
         }
-	
-	dispatchMutex.unlock();
+
+        dispatchMutex.unlock();
     }
 
     void Eventer::stop() {
-	event_base_loopbreak(eventBasePtr);
+        event_base_loopbreak(eventBasePtr);
     }
 
-}				/* namespace slurp */
+}                               /* namespace slurp */

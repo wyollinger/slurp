@@ -32,38 +32,36 @@
 #include "retriever.h"
 
 namespace slurp {
-    class Retriever;	    
-    class Eventer : public QThread {
-	CURLM *multi;
-	int quota, flags, retrieving, parsing;
-	event_base *eventBasePtr;
-	struct event *timerEventPtr;
-	QMutex urlQueueMutex, dispatchMutex;
-	QQueue < QUrl > urlQueue;
-	QThreadPool parserPool;
+    class Retriever;
+    class Eventer:public QThread {
+        CURLM *multi;
+        int quota, flags, retrieving, parsing;
+        event_base *eventBasePtr;
+        struct event *timerEventPtr;
+        QMutex urlQueueMutex, dispatchMutex;
+         QQueue < QUrl > urlQueue;
+        QThreadPool parserPool;
 
-    public:
+ public:
 
-	Eventer(
-	    QApplication* thisApp,
-	    QQueue < QString > &initialUrls, 
-	    int quota, int flags);
-	struct event *registerSocket(curl_socket_t sockfd, int kind);
-	void addHandle(CURL * handle);
-	void processSocketEvent(int fd, short kind);
-	void checkTimer();
-	void updateTimer();
-	void addTimer(long timeout_ms);
-	void setSocket(Retriever * retriever,
-		       curl_socket_t s, CURL * e, int act);
+        Eventer(QApplication * thisApp,
+                 QQueue < QString > &initialUrls, int quota, int flags);
+        struct event *registerSocket(curl_socket_t sockfd, int kind);
+        void addHandle(CURL * handle);
+        void processSocketEvent(int fd, short kind);
+        void checkTimer();
+        void updateTimer();
+        void addTimer(long timeout_ms);
+        void setSocket(Retriever * retriever,
+                       curl_socket_t s, CURL * e, int act);
 
-	void addSocket(curl_socket_t s, CURL * easy, int action);
-	void scanMultiInfo();
-	void processEvent(int fd, short kind);
-	void run();
-	void addUrl( QUrl url);
-	void dispatchRetrievers();
-	void stop();
+        void addSocket(curl_socket_t s, CURL * easy, int action);
+        void scanMultiInfo();
+        void processEvent(int fd, short kind);
+        void run();
+        void addUrl(QUrl url);
+        void dispatchRetrievers();
+        void stop();
     };
 }
-#endif				/* SLURP_EVENTER_H */
+#endif                          /* SLURP_EVENTER_H */

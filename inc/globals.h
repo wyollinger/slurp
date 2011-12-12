@@ -32,6 +32,6 @@ namespace slurp {
     extern const char *HELP_MENU;
     extern const char *LICENSE_INFO;
 
-} 
+}
 
-#endif				/* SLURP_GLOBALS_H */
+#endif                          /* SLURP_GLOBALS_H */

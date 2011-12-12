@@ -27,32 +27,32 @@
 namespace slurp {
     class Eventer;
     class Retriever {
-	QString dataBuffer;
-	QUrl url;
-	CURL *conn;
-	char errorBuffer[CURL_ERROR_SIZE];
-	int flags;
-	event *socketEvent;
-	Eventer *owner;
-	curl_socket_t sockfd;
-	int action;
+        QString dataBuffer;
+        QUrl url;
+        CURL *conn;
+        char errorBuffer[CURL_ERROR_SIZE];
+        int flags;
+        event *socketEvent;
+        Eventer *owner;
+        curl_socket_t sockfd;
+        int action;
 
-        public:
+ public:
 
-	 Retriever(Eventer * eventer, QUrl url, int flags);
-	~Retriever();
-	void setSocketData(curl_socket_t sockfd, int action, int kind,
-			   CURL * curlHandle);
-	size_t bufferData(const char *data);
+         Retriever(Eventer * eventer, QUrl url, int flags);
+        ~Retriever();
+        void setSocketData(curl_socket_t sockfd, int action, int kind,
+                           CURL * curlHandle);
+        size_t bufferData(const char *data);
 
-	inline const char *getErrorBuffer() const {
-	    return errorBuffer;
-	} 
-	
-	inline const QString getData() {
-	    return dataBuffer;
+        inline const char *getErrorBuffer() const {
+            return errorBuffer;
+        }
+
+        inline const QString getData() {
+            return dataBuffer;
         }
     };
-}				/* namespace slurp */
+}                               /* namespace slurp */
 
-#endif				/* SLURP_RETREIVER_H */
+#endif                          /* SLURP_RETREIVER_H */

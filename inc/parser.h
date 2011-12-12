@@ -29,21 +29,23 @@
 
 namespace slurp {
 
-    class Parser : public QRunnable {
+    class Parser:public QRunnable {
 
-	Eventer *owner;
-	QUrl url;
+        Eventer *owner;
+        QUrl url;
         QWebPage *page;
         QString data;
 
-        public:
+ public:
 
-	Parser( Eventer * owner, 
-		QString raw_url, 
-	        QString raw_data); 
-	~Parser();
-	void run();
+         Parser(Eventer * owner, QString raw_url, QString raw_data);
+        ~Parser();
+
+        void run();
+
+        public slots:void loadStartedCallback();
+
     };
-}				/* namespace slurp */
 
-#endif				/* SLURP_PARSER_H */
+}                               /* namespace slurp */
+#endif                          /* SLURP_PARSER_H */

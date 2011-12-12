@@ -29,65 +29,69 @@
 
 namespace slurp {
 
-    Parser::Parser(
-        Eventer * owner, 
-        QString raw_url, 
-        QString raw_data) {
-  	    this->owner = owner;
-	    url = QUrl( raw_url );
-	    data = raw_data;
-    }
-	
+    Parser::Parser(Eventer * owner, QString raw_url, QString raw_data) {
+        this->owner = owner;
+        url = QUrl(raw_url);
+        data = raw_data;
+    } 
+    
     void Parser::run() {
-	QWebElement document;
+        QObject eventProxy;
+        QWebElement document;
         QWebElementCollection allLinkTags;
         QString currentRawUrl;
         QUrl currentUrl;
 
-	setAutoDelete(true);
-
-	qDebug() << "debug: in parse thread " 
-	         << QThread::currentThreadId()
-		 << " beginning...";
-
-	/* FIXME: debug this and determine why it causes segfaults */
+        qDebug() << "debug: in parse thread " << QThread::currentThreadId()
+            << " beginning...";
 
         qDebug() << "debug: constructing web page instance";
-	page = new QWebPage();
+        page = new QWebPage();
 
-	qDebug() << "debug: setting html with " << data.size() << " bytes of data..";
-	page->mainFrame()->setHtml(data, url);
+        qDebug() << "debug: setting html with "
+            << data.size() << " bytes of data..";
+        page->mainFrame()->setHtml(data, url);
 
-	/* 
-	 * FIXME: wait for this to complete by connecting to a signal
-	 */
+        /*
+         * suspend execution by locking a mutex, submitting 
+         * a handle to this qthread to the threader, 
+         * and waiting for qwebpage to emit signals
+         */
 
-	qDebug() << "debug: retrieving document element...";
-	document = page->mainFrame()->documentElement();
+        /* 
+         * FIXME: wait for this to complete by connecting to a signal
+         */
 
-	qDebug() << "debug: finding all link tags";
-	allLinkTags = document.findAll("a");
+        qDebug() << "debug: retrieving document element...";
+        document = page->mainFrame()->documentElement();
 
-	foreach (QWebElement currentElement, allLinkTags) {
-             currentRawUrl = currentElement.attribute("href");
+        qDebug() << "debug: finding all link tags";
+        allLinkTags = document.findAll("a");
 
-	     if( currentRawUrl != "" ) {
-                 owner -> addUrl( QUrl( currentRawUrl ) );
-	     }
+        foreach(QWebElement currentElement, allLinkTags) {
+            currentRawUrl = currentElement.attribute("href");
+
+            if (currentRawUrl != "") {
+                owner->addUrl(QUrl(currentRawUrl));
+            }
         }
 
-	qDebug() << "debug: " 
-		 << data.size() << " bytes in data string and "
-		 << page ->totalBytes() << " bytes in page, and found " 
-		 << allLinkTags.count() << " link tags";
+        qDebug() << "debug: "
+            << data.size() << " bytes in data string and "
+            << page->totalBytes() << " bytes in page, and found "
+            << allLinkTags.count() << " link tags";
 
-	qDebug() << "debug: parse complete on thread " 
-		 << QThread::currentThreadId();
+        qDebug() << "debug: parse complete on thread "
+            << QThread::currentThreadId();
 
-	owner -> dispatchRetrievers();
+        owner->dispatchRetrievers();
     }
 
     Parser::~Parser() {
         delete page;
     }
-  }				/* namespace slurp */
+
+    void Parser::loadStartedCallback() {
+
+    }
+}                               /* namespace slurp */
