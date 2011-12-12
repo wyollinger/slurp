@@ -49,6 +49,14 @@ namespace slurp {
         qDebug() << "debug: constructing web page instance";
         page = QSharedPointer< QWebPage > ( new QWebPage() );
 
+        qDebug() << "debug: page instance running in thread: " << page->thread();
+
+        QObject::connect(
+            page.data(),
+            SIGNAL(destroyed()),
+            owner -> getParserPool(),
+            SLOT(destroyedCallback()));
+
         QObject::connect( 
             page.data(), 
             SIGNAL(loadStarted()),

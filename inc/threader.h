@@ -45,7 +45,8 @@ namespace slurp {
             void loadFinishedCallback(bool ok);
             void frameCreationCallback(QWebFrame* frame);
             void contentsChangedCallback();
-          
+            void destroyedCallback();
+
         private:
 
             

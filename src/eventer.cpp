@@ -137,7 +137,7 @@ namespace slurp {
         int ret;
 
         qDebug() << "debug: running eventer on thread "
-            << QThread::currentThreadId();
+            << thread();
 
         kbEvent = event_new(eventBasePtr,
                             0, EV_READ | EV_PERSIST, keyboardCallback, this);
@@ -263,21 +263,46 @@ namespace slurp {
     }
 
     void Eventer::dumpChildren() {
+ 
         foreach( QObject* child, appInstance -> children() ) {
             qDebug() << "debug: dumping application child :" << child;
+            child->dumpObjectTree();
         }
 
+        appInstance -> dumpObjectTree();
+
         qDebug() << "debug: eventer instance: " << this;
+        dumpObjectTree();
 
         foreach( QObject* child, children() ) {
             qDebug() << "debug: dumping eventer child: " << child;
+            child -> dumpObjectTree();
         }
 
         qDebug() << "debug: threader instance: " << &parserPool;
+        parserPool.dumpObjectTree();
 
         foreach( QObject* child, parserPool.children() ) {
             qDebug() << "debug: dumping parser pool child: " << child;
+            child -> dumpObjectTree();
         }
     }
 
+    void Eventer::dumpThreads() {
+        foreach( QObject* child, appInstance -> children() ) {
+            qDebug() << "debug: dumping application child thread:" << child->thread();
+        }
+
+        qDebug() << "debug: eventer instance thread: " << this->thread();
+
+        foreach( QObject* child, children() ) {
+            qDebug() << "debug: dumping eventer child thread: " << child->thread();
+        }
+
+        qDebug() << "debug: threader instance thread: " << (&parserPool)->thread();
+
+        foreach( QObject* child, parserPool.children() ) {
+            qDebug() << "debug: dumping parser pool child thread: " << child->thread();
+        }
+    }
 }                               /* namespace slurp */

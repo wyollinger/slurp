@@ -10,7 +10,7 @@ RCC_DIR = obj/rcc
 UI_DIR = obj/ui
 
 # Link in the required libraries
-CONFIG += qt link_pkgconfig debug#release
+CONFIG += qt link_pkgconfig debug #release
 QT = core gui network webkit 
 PKGCONFIG = libevent libevent_pthreads libcurl
 

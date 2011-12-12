@@ -69,6 +69,7 @@ namespace slurp {
         void dispatchRetrievers();
         void stop();
         void dumpChildren();
+        void dumpThreads();
 
         inline Threader* getParserPool() {
             return &parserPool;

@@ -95,8 +95,8 @@ namespace slurp {
             eventer->stop();
         } else if (userInput == "children" ) {
             eventer->dumpChildren();
-            /* TODO: stub */  
-
+        } else if (userInput == "threads" ) {
+            eventer->dumpThreads();
         } else if (userInput.size() > 0) {
             qDebug() << "debug: command unrecognized. treating as url...";
             eventer->addUrl(QString(userInput.c_str()));

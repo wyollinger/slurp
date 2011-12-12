@@ -37,7 +37,9 @@ namespace slurp {
 
         if( n == 100 ) {
             qDebug() << "debug: stub to dispatch scanner thread in "
-                     << QThread::currentThreadId();
+                     << thread();
+
+            //delete QObject::sender();
         }
     }
 
@@ -54,6 +56,10 @@ namespace slurp {
     void Threader::contentsChangedCallback() {
         qDebug() << "debug: received contents changed callback from page: "
                  << QObject::sender();
+    }
+
+    void Threader::destroyedCallback() {
+        qDebug() << "debug: received notification that QWebPage instance is being destroyed";
     }
 
 }   /* namespace slurp */

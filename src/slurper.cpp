@@ -62,7 +62,7 @@ int main(int argc, char **argv, char **env)
     QApplication application(argc, argv);
     QQueue < QString > seedURIs;
 
-    qDebug() << "debug: main thread is " << QThread::currentThreadId();
+    qDebug() << "debug: main thread is " << application.thread();
 
     initLibraries();
     flags = validateArgs(argc, argv, env, seedURIs, quota, maxThreads);
