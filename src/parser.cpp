@@ -51,28 +51,50 @@ namespace slurp {
         /*
          * Because setHtml can cause asynchronous behavior
          * related to page construction we must wait until
-         * the signals are dispatched by the page, but because
-         * this QRunnable has no event loop, we connect them
+         * the signals are dispatched by the page, and because
+         * this QRunnable has no event loop we connect them
          * to the Threader instead and the threader then 
-         * schedules the scan.
+         * schedules the scan. Because the connect type
+         * is blocking queued and the parsing occurs on this
+         * thread, we can guarantee that the scanners will
+         * never be parsing the links out of a page that
+         * is still being constructed by the webkit libraries.
          */ 
+
         QObject::connect( 
             page, 
             SIGNAL(loadStarted()),
             owner -> getParserPool(),
-            SLOT(loadStartedCallback()));
+            SLOT(loadStartedCallback()),
+            Qt::BlockingQueuedConnection );
 
          QObject::connect( 
            page, 
            SIGNAL(loadProgress(int)),
            owner -> getParserPool(),
-           SLOT(loadProgressCallback(int)));
+           SLOT(loadProgressCallback(int)),
+           Qt::BlockingQueuedConnection );
          
         QObject::connect(
             page,
             SIGNAL(loadFinished(bool)),
             owner -> getParserPool(),
-            SLOT(loadFinishedCallback(bool)));
+            SLOT(loadFinishedCallback(bool)),
+            Qt::BlockingQueuedConnection );
+
+        QObject::connect(
+            page,
+            SIGNAL(frameCreated(QWebFrame*)),
+            owner -> getParserPool(),
+            SLOT(frameCreationCallback(QWebFrame*)),
+            Qt::BlockingQueuedConnection );
+
+        QObject::connect(
+            page,
+            SIGNAL(contentsChanged()),
+            owner -> getParserPool(),
+            SLOT(contentsChangedCallback()),
+            Qt::BlockingQueuedConnection );
 
         qDebug() << "debug: setting html with "
             << data.size() << " bytes of data..";

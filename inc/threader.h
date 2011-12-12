@@ -19,6 +19,7 @@
 #define SLURP_THREADER_H
 
 #include <QThreadPool>
+#include <QWebFrame>
 
 //#include "parser.h"
 
@@ -34,6 +35,8 @@ namespace slurp {
             void loadStartedCallback();
             void loadProgressCallback(int n);
             void loadFinishedCallback(bool ok);
+            void frameCreationCallback(QWebFrame* frame);
+            void contentsChangedCallback();
 
         private:
 

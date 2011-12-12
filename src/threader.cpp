@@ -28,50 +28,37 @@ namespace slurp {
     void Threader::loadStartedCallback() {
         qDebug() << "debug: received load started callback from sender: " 
                  << QObject::sender();
-
-        /*
-        qDebug() << "debug: threader dumping children... ";
-
-        foreach( QObject* currentChild, children() ) {
-            qDebug() << "debug: child " << currentChild -> objectName();    
-        }
-
-        qDebug() << "debug: dump complete";
-        */
     }
 
     void Threader::loadProgressCallback(int n) {
         qDebug() << "debug: received load progress callback: " 
                  << n << " from sender: " << QObject::sender();
 
+        /* NOTE: this doesn't get to 100 all the time, but
+         * because the parse thread blocks while we are handling
+         * this signal, it's ok to scan a partially complete
+         * tree.
+         */
+
         if( n == 100 ) {
             qDebug() << "debug: scanner creation stub in thread "
                      << QThread::currentThreadId();
         }
-        /*
-        qDebug() << "debug: threader dumping children... ";
-
-        foreach( QObject* currentChild, children() ) {
-            qDebug() << "debug: child " << currentChild -> objectName();    
-        }
-
-        qDebug() << "debug: dump complete";
-        */
     }
 
     void Threader::loadFinishedCallback(bool ok) {
         qDebug() << "debug: received load complete callback: " 
                  << ok << " from sender: " << QObject::sender();
+    }
 
-        /*
-        qDebug() << "debug: threader dumping children... ";
+    void Threader::frameCreationCallback( QWebFrame* frame ) {
+        qDebug() << "debug: received frame creation callback from page: "
+                 << QObject::sender() << " on frame: " << frame;
+    }
 
-        foreach( QObject* currentChild, children() ) {
-            qDebug() << "debug: child " << currentChild -> objectName();    
-        }
-
-        qDebug() << "debug: dump complete";
-        */
+    void Threader::contentsChangedCallback() {
+        qDebug() << "debug: received contents changed callback from page: "
+                 << QObject::sender();
     }
 
 }   /* namespace slurp */
