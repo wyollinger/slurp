@@ -1,12 +1,8 @@
-rewrite the debugging info handling system to include timing and thread information,
-write it to a file by default
+rewrite the debugging info handling system to include timing and thread information, and allow for filtering at run-time
+write it to a file as well as the console 
 
 link in libdb
 
-use boost to parse command line arugments 
-replace flex with boost's spirit for lexical analysis
-eliminate pkg-config from slurp.pro, replace it with a directory system
+test windows builds
 
-extend the set of run-time management commands
-
-use QT to add GUI support
+add GUI support
