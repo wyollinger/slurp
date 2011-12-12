@@ -179,6 +179,9 @@ namespace slurp {
             urlQueueMutex.lock();
             urlQueue.enqueue(url);
             urlQueueMutex.unlock();
+        } else {
+            qDebug() << "debug: url given was not valid, discarding";
+            qDebug() << "debug: hint: include protocol";
         }
 
         if (QThread::currentThread() == this) {
