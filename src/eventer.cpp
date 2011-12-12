@@ -33,8 +33,13 @@ namespace slurp {
         char** argv,
         QQueue < QString > &initialUrls, 
         int quota, 
-        int flags) : QApplication( argc, argv ) {
+        int flags,
+        int maxThreads ) : QApplication( argc, argv ) {
             QUrl currentUrl;
+
+            this->quota = quota;
+            this->flags = flags;
+            this->maxThreads = maxThreads;
 
             while( !initialUrls.isEmpty() ) {
                 currentUrl = QUrl( initialUrls.dequeue() );
@@ -44,6 +49,7 @@ namespace slurp {
                     queuedParsers.enqueue( new Parser( this, currentUrl ) );
                 }
             }
+
         }
 
     void Eventer::addUrl( QUrl url ) {

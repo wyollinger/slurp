@@ -66,7 +66,7 @@ int main(int argc, char **argv, char **env)
 
     flags = validateArgs(argc, argv, env, seedUrls, quota, maxThreads);
 
-    Eventer ev( argc, argv, seedUrls, quota, flags );
+    Eventer ev( argc, argv, seedUrls, quota, flags, maxThreads );
 
     return ev.exec();
 }

@@ -38,6 +38,7 @@ namespace slurp {
         QMutex queueMutex;
         QList < Parser* > runningParsers;
         QMutex runMutex;
+        int maxThreads, quota, flags;
 
     public:
 
@@ -45,7 +46,8 @@ namespace slurp {
                 char** argv,
                 QQueue < QString > &initialUrls, 
                 int quota, 
-                int flags);
+                int flags,
+                int maxThreads);
 
     public slots:    
 
