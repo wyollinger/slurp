@@ -34,12 +34,11 @@ namespace slurp {
         QQueue < QString > &initialUrls, 
         int quota, 
         int flags) : QApplication( argc, argv ) {
-
+            
         }
 
     void Eventer::addUrl( QUrl url ) {
         
     }
 
- 
 }    /* namespace slurp */

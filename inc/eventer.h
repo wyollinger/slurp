@@ -20,20 +20,23 @@
 
 #include <QString>
 #include <QQueue>
+#include <QList>
 #include <QThread>
-#include <QThreadPool>
 #include <QMutex>
-#include <QRunnable>
 #include <QApplication>
 #include <QUrl>
 
+#include "parser.h"
+
 namespace slurp {
-    class Retriever;
+    class Parser;
     class Eventer : public QApplication {
         Q_OBJECT
 
         QMutex urlQueueMutex, dispatchMutex;
         QQueue < QUrl > urlQueue;
+        QList < Parser* > queuedParsers;
+        QList < Parser* > runningParsers;
 
     public:
 
