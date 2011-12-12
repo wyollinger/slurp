@@ -33,10 +33,11 @@ namespace slurp {
     class Eventer : public QApplication {
         Q_OBJECT
 
-        QMutex urlQueueMutex, dispatchMutex;
         QQueue < QUrl > urlQueue;
         QList < Parser* > queuedParsers;
+        QMutex queueMutex;
         QList < Parser* > runningParsers;
+        QMutex runMutex;
 
     public:
 

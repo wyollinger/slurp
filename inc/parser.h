@@ -31,6 +31,7 @@
 namespace slurp {
     class Eventer;
     class Parser : public QThread {
+        Q_OBJECT
 
         Eventer *owner;
         QUrl url;
