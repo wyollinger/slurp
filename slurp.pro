@@ -15,5 +15,5 @@ QT = core gui network webkit
 PKGCONFIG = libevent libevent_pthreads libcurl
 
 # Input
-HEADERS += inc/eventer.h inc/threader.h inc/retriever.h inc/parser.h inc/callbacks.h inc/util.h inc/globals.h
-SOURCES += src/slurper.cpp src/threader.cpp src/eventer.cpp src/retriever.cpp src/parser.cpp src/callbacks.cpp src/util.cpp
+HEADERS += inc/eventer.h inc/scanner.h inc/threader.h inc/retriever.h inc/parser.h inc/callbacks.h inc/util.h inc/globals.h
+SOURCES += src/slurper.cpp src/scanner.cpp src/threader.cpp src/eventer.cpp src/retriever.cpp src/parser.cpp src/callbacks.cpp src/util.cpp
