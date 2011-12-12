@@ -36,7 +36,6 @@ namespace slurp {
     } 
     
     void Parser::run() {
-        QObject eventProxy;
         QWebElement document;
         QWebElementCollection allLinkTags;
         QString currentRawUrl;
@@ -52,16 +51,12 @@ namespace slurp {
             << data.size() << " bytes of data..";
         page->mainFrame()->setHtml(data, url);
 
-        /*
-         * suspend execution by locking a mutex, submitting 
-         * a handle to this qthread to the threader, 
-         * and waiting for qwebpage to emit signals
-         */
 
         /* 
          * FIXME: wait for this to complete by connecting to a signal
          */
 
+        /*
         qDebug() << "debug: retrieving document element...";
         document = page->mainFrame()->documentElement();
 
@@ -85,13 +80,13 @@ namespace slurp {
             << QThread::currentThreadId();
 
         owner->dispatchRetrievers();
+        */
     }
+
+
 
     Parser::~Parser() {
         delete page;
     }
 
-    void Parser::loadStartedCallback() {
-
-    }
 }                               /* namespace slurp */

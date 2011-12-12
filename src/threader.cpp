@@ -15,7 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+#include <QThread>
+
+#include "threader.h"
+
 namespace slurp {
 
-    /* TODO: stub */
+    Threader::Threader() {
+        qDebug() << "debug: creating threader at " << this
+                 << " in thread " << QThread::currentThreadId();
+    }
 }

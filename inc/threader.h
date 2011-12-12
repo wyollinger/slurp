@@ -15,6 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef SLURP_THREADER_H
+#define SLURP_THREADER_H
+
 #include <QThreadPool>
 
 namespace slurp {
@@ -23,7 +26,9 @@ namespace slurp {
 
         public:
 
-        /* TODO: stub */
+            Threader();
     };
 
 }
+
+#endif

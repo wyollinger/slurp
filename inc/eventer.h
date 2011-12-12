@@ -30,17 +30,19 @@
 #include <curl/curl.h>
 
 #include "retriever.h"
+#include "threader.h"
 
 namespace slurp {
     class Retriever;
-    class Eventer:public QThread {
+    class Threader;
+    class Eventer : public QThread {
         CURLM *multi;
         int quota, flags, retrieving, parsing;
         event_base *eventBasePtr;
         struct event *timerEventPtr;
         QMutex urlQueueMutex, dispatchMutex;
-         QQueue < QUrl > urlQueue;
-        QThreadPool parserPool;
+        QQueue < QUrl > urlQueue;
+        Threader parserPool;
 
  public:
 
