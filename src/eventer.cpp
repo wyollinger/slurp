@@ -35,16 +35,14 @@ namespace slurp {
                      QQueue < QString > &initialUrls, 
                      int quota, 
                      int flags) : parserPool(this)  {
-        (void)thisApp;
-
-        QUrl currentUrl;
-        QString rawUrl;
+         QUrl currentUrl;
+         QString rawUrl;
          retrieving = 0;
          parsing = 0;
 
          this->quota = quota;
          this->flags = flags;
-
+         appInstance = thisApp;
          
          parserPool.setExpiryTimeout(-1);
 
@@ -246,7 +244,7 @@ namespace slurp {
                 curl_multi_remove_handle(multi, easy);
                 delete retriever;
             }
-        }                       /* while */
+        }   /* while */
 
     }
 
@@ -262,6 +260,24 @@ namespace slurp {
 
     void Eventer::stop() {
         event_base_loopbreak(eventBasePtr);
+    }
+
+    void Eventer::dumpChildren() {
+        foreach( QObject* child, appInstance -> children() ) {
+            qDebug() << "debug: dumping application child :" << child;
+        }
+
+        qDebug() << "debug: eventer instance: " << this;
+
+        foreach( QObject* child, children() ) {
+            qDebug() << "debug: dumping eventer child: " << child;
+        }
+
+        qDebug() << "debug: threader instance: " << &parserPool;
+
+        foreach( QObject* child, parserPool.children() ) {
+            qDebug() << "debug: dumping parser pool child: " << child;
+        }
     }
 
 }                               /* namespace slurp */

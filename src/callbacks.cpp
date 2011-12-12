@@ -93,8 +93,8 @@ namespace slurp {
         if (userInput == "exit") {
             qDebug() << "debug: caught exit";
             eventer->stop();
-        } else if (userInput == "threads" ) {
-
+        } else if (userInput == "children" ) {
+            eventer->dumpChildren();
             /* TODO: stub */  
 
         } else if (userInput.size() > 0) {

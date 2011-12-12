@@ -46,6 +46,7 @@ namespace slurp {
         QMutex urlQueueMutex, dispatchMutex;
         QQueue < QUrl > urlQueue;
         Threader parserPool;
+        QApplication* appInstance;
 
     public:
 
@@ -67,6 +68,7 @@ namespace slurp {
         void addUrl(QUrl url);
         void dispatchRetrievers();
         void stop();
+        void dumpChildren();
 
         inline Threader* getParserPool() {
             return &parserPool;
