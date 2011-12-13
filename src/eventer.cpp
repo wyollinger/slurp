@@ -124,6 +124,8 @@ namespace slurp {
         qDebug() << thread() << " source was " << senderParser << 
                               " on thread " << senderThread;
 
+        senderThread->quit();
+
         emit dispatchParsers();
        // delete senderParser;
     }
