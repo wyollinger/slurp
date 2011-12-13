@@ -36,7 +36,16 @@ namespace slurp {
     }
 
     void Parser::run() {
+        qDebug() << "parser: new parser running with " << url 
+                 << " in thread " << thread();
 
+        qDebug() << "parser: constructing page instance";
+        page = new QWebPage();
+
+        qDebug() << "parser: starting load";
+        page->mainFrame()->load( url );
+
+        qDebug() << "parser: done";
     }
 
 

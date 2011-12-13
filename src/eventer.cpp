@@ -42,18 +42,37 @@ namespace slurp {
             this->maxThreads = maxThreads;
 
             while( !initialUrls.isEmpty() ) {
-                currentUrl = QUrl( initialUrls.dequeue() );
-
-                if( currentUrl.isValid() ) {
-                    qDebug() << "debug: adding " << currentUrl << " to queued parser";
-                    queuedParsers.enqueue( new Parser( this, currentUrl ) );
-                }
+                addUrl( initialUrls.dequeue());
             }
-
         }
 
     void Eventer::addUrl( QUrl url ) {
-        
+        if( !url.isValid() ) {
+            qDebug() << "warning: discarding invalid " << url;
+            return;
+        } 
+
+        queueMutex.lock();
+        queuedParsers.enqueue( new Parser( this, url ) );
+
+        runMutex.lock();
+        bool done = false;
+        for( int i = runningParsers.count();
+             !done && i < maxThreads;
+             ++i ) {
+            qDebug() << " i = " << i << " max = " << maxThreads;
+
+            if( !queuedParsers.isEmpty() ) {
+                Parser* currentParser = queuedParsers.dequeue();
+                currentParser->start();
+                runningParsers.push_back( currentParser );
+            } else {
+                done = true;
+            }
+        }
+        runMutex.unlock();
+
+        queueMutex.unlock();
     }
 
 }    /* namespace slurp */
