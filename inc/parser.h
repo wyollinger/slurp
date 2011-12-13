@@ -48,6 +48,7 @@ namespace slurp {
     public slots:
         
         void requestPage();
+        void cleanup();
 
     signals:
 

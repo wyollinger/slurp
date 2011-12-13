@@ -64,6 +64,10 @@ namespace slurp {
         page->mainFrame()->load( url );
     }
 
+    void Parser::cleanup() {
+        /* TODO: fix stub */
+    }   
+
     void Parser::parse() {
         QWebElementCollection linkTags = page->mainFrame()->findAllElements("a");
 

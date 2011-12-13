@@ -58,6 +58,11 @@ namespace slurp {
         void addUrl(QUrl url);
         void dispatchParsers();
         void parserFinished( parseResult urls );
+
+    signals:
+
+        void consumedUrls();
+    
     };
 
 }   /* namespace slurp */

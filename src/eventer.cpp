@@ -94,6 +94,9 @@ namespace slurp {
                 QObject::connect(queuedParser, SIGNAL(finished(parseResult)), 
                                  this, SLOT(parserFinished(parseResult)));
                 
+                QObject::connect(this, SIGNAL(consumedUrls()),
+                                 queuedParser, SLOT(cleanup()));
+
                 newThread -> start();
                 runningParserThreads.push_back( newThread );
                 runningParserMap[ queuedParser ] = newThread;
@@ -132,6 +135,7 @@ namespace slurp {
         senderThread->quit();
 
         emit dispatchParsers();
-    }
+        emit consumedUrls();
+    } 
 
 }    /* namespace slurp */
