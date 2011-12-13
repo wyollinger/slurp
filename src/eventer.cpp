@@ -132,7 +132,6 @@ namespace slurp {
         senderThread->quit();
 
         emit dispatchParsers();
-       // delete senderParser;
     }
 
 }    /* namespace slurp */

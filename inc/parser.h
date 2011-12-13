@@ -44,8 +44,7 @@ namespace slurp {
     public:
 
         Parser(Eventer * owner, QUrl url);
-        ~Parser();
-
+      
     public slots:
         
         void requestPage();

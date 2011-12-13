@@ -37,13 +37,6 @@ namespace slurp {
         page = NULL;
     }
 
-    Parser::~Parser() {
-        qDebug() << thread() << "parser: deleting";
-        if( page != NULL ) {
-           // delete page;
-        }
-    }
-
     void Parser::requestPage() {
         qDebug() << thread() << "parser: constructing page instance";
 
