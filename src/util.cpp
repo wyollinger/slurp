@@ -24,8 +24,7 @@
 namespace slurp {
 
     int validateArgs(int argc, char **argv, char **env,
-                     QQueue < QString > &seedURIs, int &quota,
-                     int &maxThreads) {
+                     QQueue < QString > &seedURIs, int &quota) {
         int i;
         int flags = 0;
 
@@ -61,22 +60,6 @@ namespace slurp {
                         i++;
                     } else {
                         die("error: could not find numeric portion of -n option", EXIT_FAILURE);
-                    }
-
-                    break;
-
-                case 't':
-                    if (strlen(argv[i] + 2)) {
-                        maxThreads = atoi((argv[i] + 2));
-                    } else if (i + 1 < argc) {
-                        maxThreads = atoi(argv[i + 1]);
-                        i++;
-                    } else {
-                        die("error: could not find numeric portion of -t option", EXIT_FAILURE);
-                    }
-
-                    if (maxThreads <= 0) {
-                        die("error: t must be greater than zero", EXIT_FAILURE);
                     }
 
                     break;

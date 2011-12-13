@@ -24,27 +24,24 @@
 #include <QThread>
 #include <QWebPage>
 #include <QUrl>
-#include <QMutex>
 
+#include "globals.h"
 #include "eventer.h"
 
 namespace slurp {
-
-    typedef QList<QUrl> parseResult;
 
     class Eventer;
     class Parser : public QObject {
         Q_OBJECT
 
-        Eventer *owner;
         QUrl url;
         QWebPage *page;
         QList< QUrl > parsedUrls;
 
     public:
 
-        Parser(Eventer * owner, QUrl url);
-      
+        Parser( QUrl url);
+     
     public slots:
         
         void requestPage();
@@ -58,9 +55,7 @@ namespace slurp {
 
         void parse();
         void loadProgress(int);
-        void frameLoadFinished(bool);
         void pageLoadFinished(bool);
-        void frameCreated(QWebFrame *frame);
     };
 
 }   /* namespace slurp */

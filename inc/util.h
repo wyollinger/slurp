@@ -23,7 +23,7 @@
 namespace slurp {
 
     int validateArgs(int argc, char **argv, char **env,
-                     QQueue < QString > &seedURIs, int &quota, int &maxThreads);
+                     QQueue < QString > &seedURIs, int &quota );
     void die(const char *errmsg, int errcode);
     
 }   /* namespace slurp */

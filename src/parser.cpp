@@ -25,22 +25,22 @@
 #include <QWidget>
 #include <QUrl>
 
+#include "globals.h"
 #include "parser.h"
 #include "eventer.h"
 #include "util.h"
 
 namespace slurp {
 
-    Parser::Parser(Eventer * owner, QUrl url) {
-        this->owner = owner;
+    Parser::Parser( QUrl url) {
         this->url = url;
         page = NULL;
     }
-
+	
     void Parser::requestPage() {
-        qDebug() << thread() << "parser: constructing page instance";
+        qDebug() << "parser: constructing page instance";
 
-        page = new QWebPage();
+        page = new QWebPage(this);
 
         page->settings()->setAttribute( QWebSettings::AutoLoadImages, false );
 
@@ -49,33 +49,23 @@ namespace slurp {
             this, SLOT(loadProgress(int)));
         
         QObject::connect(
-            page->mainFrame(), SIGNAL(loadFinished(bool)),
-            this, SLOT(frameLoadFinished(bool)));        
-
-        QObject::connect(
             page, SIGNAL(loadFinished(bool)),
             this, SLOT(pageLoadFinished(bool)));
 
-        QObject::connect(
-            page, SIGNAL(frameCreated(QWebFrame*)),
-            this, SLOT(frameCreated(QWebFrame*)));
-
-        qDebug() << thread() << "parser: initiating page load";
+        qDebug() << "parser: initiating page load";
         page->mainFrame()->load( url );
     }
 
     void Parser::cleanup() {
-        /* TODO: fix stub */
+		/* TODO: stub */
     }   
 
     void Parser::parse() {
         QWebElementCollection linkTags = page->mainFrame()->findAllElements("a");
 
-        if( linkTags.count() > 0 ) {
-            foreach(QWebElement current, linkTags) {
-                if ( current.attribute("href") != "") {
-                    parsedUrls.push_back( QUrl( current.attribute("href")));
-                }
+        foreach(QWebElement current, linkTags) {
+            if ( current.attribute("href") != "") {
+                parsedUrls.push_back( QUrl( current.attribute("href")));
             }
         }
 
@@ -86,18 +76,9 @@ namespace slurp {
         qDebug() << thread() << "parser: " << url << " load progress " << n ;
     }
 
-    void Parser::frameLoadFinished(bool ok) {
-        qDebug() << thread() << "parser: " << url << " frame load finished ok?: " << ok;
-        emit parse();
-    }
-
     void Parser::pageLoadFinished(bool ok) {
         qDebug() << thread() << "parser: " << url << " page load finished ok?: " << ok;
+		emit parse();
     }
-
-    void Parser::frameCreated(QWebFrame *frame) {
-        qDebug() << thread() << "parser: got new frame " << frame;
-    }
-
 
 }   /* namespace slurp */

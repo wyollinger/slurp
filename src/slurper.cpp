@@ -57,17 +57,16 @@ namespace slurp {
 
 using namespace slurp;
 
-int main(int argc, char **argv, char **env)
-{
+int main(int argc, char **argv, char **env) {
     int flags = FLAGS_INVALID, 
-        quota = -1, 
-        maxThreads = QThread::idealThreadCount();
-
+        quota = -1;
     QQueue < QString > seedUrls;
 
-    flags = validateArgs(argc, argv, env, seedUrls, quota, maxThreads);
+	qDebug() << "slurp started up";
+	
+    flags = validateArgs(argc, argv, env, seedUrls, quota );
 
-    Eventer ev( argc, argv, seedUrls, quota, flags, maxThreads );
+    Eventer ev( argc, argv, seedUrls, quota, flags );
 
     Interacter inter;
 

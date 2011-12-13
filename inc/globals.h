@@ -18,6 +18,9 @@
 #ifndef SLURP_GLOBALS_H
 #define SLURP_GLOBALS_H
 
+#include <QList>
+#include <QUrl>
+
 namespace slurp {
 
     const static int VERSION_ID[3] = { 0, 0, 9 };
@@ -33,6 +36,7 @@ namespace slurp {
     extern const char *HELP_MENU;
     extern const char *LICENSE_INFO;
 
+	 typedef QList<QUrl> parseResult;
 }   /* namespace slurp */
 
 #endif  /* SLURP_GLOBALS_H */
