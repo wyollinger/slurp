@@ -34,8 +34,11 @@ namespace slurp {
         QQueue < QString > &initialUrls, 
         int quota, 
         int flags,
-        int maxThreads ) : QApplication( argc, argv ) {
+        int maxThreads ) : QApplication( argc, argv, QApplication::GuiClient ) {
             QUrl currentUrl;
+
+            setOrganizationName("Megafrock Laboratories");
+            setApplicationName("Slurp");
 
             this->quota = quota;
             this->flags = flags;

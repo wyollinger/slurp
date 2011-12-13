@@ -15,41 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SLURP_PARSER_H
-#define SLURP_PARSER_H
 
-#include <QList>
-#include <QString>
-#include <QObject>
-#include <QThread>
-#include <QWebPage>
-#include <QUrl>
-#include <QMutex>
+#ifndef SLURP_INTERACTER_H
+#define SLURP_INTERACTER_H
 
-#include "eventer.h"
+#include <QMainWindow>
+#include <QLabel>
 
 namespace slurp {
-    class Eventer;
-    class Parser : public QThread {
+
+    class Interacter : public QMainWindow {
         Q_OBJECT
 
-        Eventer *owner;
-        QUrl url;
-        QWebPage *page;
+        QLabel* mainLabel;
 
-    public:
+        public:
 
-        Parser(Eventer * owner, QUrl url);
-        void run();
-
-    private slots:
-
-        void loadProgress(int);
-        void frameLoadFinished(bool);
-        void pageLoadFinished(bool);
-        void frameCreated(QWebFrame *frame);
+            Interacter();
     };
 
-}   /* namespace slurp */
+}    /* namespace slurp */
 
-#endif  /* SLURP_PARSER_H */
+
+#endif    /* SLURP_INTERACTER_H */

@@ -36,24 +36,65 @@ namespace slurp {
     }
 
     void Parser::run() {
-        qDebug() << "parser: new parser running with " << url 
+        qDebug() << "parser: constructing new parser running with " << url 
                  << " in thread " << thread();
 
-        qDebug() << "parser: constructing page instance";
         page = new QWebPage();
 
         QObject::connect(
             page, SIGNAL(loadProgress(int)),
             this, SLOT(loadProgress(int)));
-                        
-        qDebug() << "parser: starting load";
+        
+        QObject::connect(
+            page->mainFrame(), SIGNAL(loadFinished(bool)),
+            this, SLOT(frameLoadFinished(bool)));        
+
+        QObject::connect(
+            page, SIGNAL(loadFinished(bool)),
+            this, SLOT(pageLoadFinished(bool)));
+
+        QObject::connect(
+            page, SIGNAL(frameCreated(QWebFrame*)),
+            this, SLOT(frameCreated(QWebFrame*)));
+
         page->mainFrame()->load( url );
-
+      
         exec();
+
+        qDebug() << "parser: thread quitting";
+
+        QWebElementCollection linkTags = page->mainFrame()->findAllElements("a");
+        qDebug() << "parser: done with " << linkTags.count();
+
+        if( linkTags.count() > 0 ) {
+            foreach(QWebElement currentElement, linkTags) {
+                    if ( currentElement.attribute("href") != "") {
+                    owner -> addUrl(QUrl( currentElement.attribute("href")));
+                }
+            }
+        }
+
+        //delete page;
     }
 
-    void Parser::loadProgress(int n){
+    void Parser::loadProgress(int n) {
         qDebug() << "parser: " << url << " load progress " << n ;
+
+        owner -> processEvents();
     }
+
+    void Parser::frameLoadFinished(bool ok) {
+        qDebug() << "parser: " << url << " frame load finished ok?: " << ok;
+        quit();
+    }
+
+    void Parser::pageLoadFinished(bool ok) {
+        qDebug() << "parser: " << url << " page load finished ok?: " << ok;
+    }
+
+    void Parser::frameCreated(QWebFrame *frame) {
+        qDebug() << "parser: got new frame " << frame;
+    }
+
 
 }   /* namespace slurp */

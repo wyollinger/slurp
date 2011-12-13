@@ -23,6 +23,7 @@
 #include "globals.h"
 #include "util.h"
 #include "eventer.h"
+#include "interacter.h"
 
 namespace slurp {
 
@@ -67,6 +68,10 @@ int main(int argc, char **argv, char **env)
     flags = validateArgs(argc, argv, env, seedUrls, quota, maxThreads);
 
     Eventer ev( argc, argv, seedUrls, quota, flags, maxThreads );
+
+    Interacter inter;
+
+    inter.show();
 
     return ev.exec();
 }
