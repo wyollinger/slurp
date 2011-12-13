@@ -60,6 +60,11 @@ namespace slurp {
             return;
         } 
 
+        if( url.scheme() == "https" ) {
+            qDebug() << "information: discarding https url " << url;
+            return;
+        }
+
         qDebug() << thread() << "waiting for queue mutex";
         queueMutex.lock();
 
