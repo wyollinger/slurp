@@ -6,11 +6,7 @@ Abstract:
   A high performance cross platform event driven web crawler written in C++.
 
 Acknowledgements/Dependencies:
-  This program uses:
-     libevent, which was developed by Niels Provos and Nick Mathewson
-     libcurl, which was developed by Haxx, a group of programmers based in Sweden.
-     QT, A cross-platform application and UI framework developed by Nokia Corporation
-     flex, which was developed by a great many people over a long period of time
+  This program uses QT, A cross-platform application and UI framework developed by Nokia Corporation
 
 Bugs:
   Please report any bugs to: https://github.com/maxdeliso/slurp/issues
