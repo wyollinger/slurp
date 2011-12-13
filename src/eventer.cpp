@@ -91,9 +91,7 @@ namespace slurp {
 
             runningParsers.push_back( queuedParser );
 			
-			qDebug() << "parsed: " << visitedUrls.count() 
-			         << " queued: " << queuedParsers.count()
-					 << " parsing: " << runningParsers.count();
+			qDebug() << " queued: " << queuedParsers.count();
         }
     }
 
