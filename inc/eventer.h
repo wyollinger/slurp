@@ -26,6 +26,7 @@
 #include <QMutex>
 #include <QApplication>
 #include <QUrl>
+#include <QSet>
 
 #include "parser.h"
 
@@ -42,6 +43,8 @@ namespace slurp {
         QMutex runMutex;
         QVector < QThread* > runningParserThreads;
         QMap < Parser*, QThread* > runningParserMap;
+        QSet < QUrl > visitedUrls;
+        QMutex visitedMutex;
         int maxThreads, quota, flags;
 
     public:

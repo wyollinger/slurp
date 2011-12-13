@@ -23,6 +23,7 @@
 #include <QQueue>
 #include <QVector>
 #include <QMetaType>
+#include <QSet>
 
 #include "eventer.h"
 #include "util.h"
@@ -64,6 +65,15 @@ namespace slurp {
             qDebug() << "information: discarding https url " << url;
             return;
         }
+
+        visitedMutex.lock();
+        if( visitedUrls.contains( url ) ) {
+            qDebug() << "information: discarding url because it's already been visited";
+            visitedMutex.unlock();
+            return;
+        }
+        visitedUrls.insert( url );
+        visitedMutex.unlock();
 
         qDebug() << thread() << "waiting for queue mutex";
         queueMutex.lock();
