@@ -20,8 +20,9 @@
 
 #include <QString>
 #include <QQueue>
-#include <QList>
+#include <QVector>
 #include <QThread>
+#include <QMap>
 #include <QMutex>
 #include <QApplication>
 #include <QUrl>
@@ -29,14 +30,18 @@
 #include "parser.h"
 
 namespace slurp {
+
+    typedef QList<QUrl> parseResult;
+
     class Parser;
     class Eventer : public QApplication {
         Q_OBJECT
 
         QQueue < Parser* > queuedParsers;
         QMutex queueMutex;
-        QList < Parser* > runningParsers;
         QMutex runMutex;
+        QVector < QThread* > runningParserThreads;
+        QMap < Parser*, QThread* > runningParserMap;
         int maxThreads, quota, flags;
 
     public:
@@ -51,6 +56,8 @@ namespace slurp {
     public slots:    
 
         void addUrl(QUrl url);
+        void dispatchParsers();
+        void parserFinished( parseResult urls );
     };
 
 }   /* namespace slurp */

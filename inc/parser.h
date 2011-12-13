@@ -29,21 +29,34 @@
 #include "eventer.h"
 
 namespace slurp {
+
+    typedef QList<QUrl> parseResult;
+
     class Eventer;
-    class Parser : public QThread {
+    class Parser : public QObject {
         Q_OBJECT
 
         Eventer *owner;
         QUrl url;
         QWebPage *page;
+        QList< QUrl > parsedUrls;
 
     public:
 
         Parser(Eventer * owner, QUrl url);
-        void run();
+        ~Parser();
+
+    public slots:
+        
+        void requestPage();
+
+    signals:
+
+        void finished( parseResult parsedUrls );    
 
     private slots:
 
+        void parse();
         void loadProgress(int);
         void frameLoadFinished(bool);
         void pageLoadFinished(bool);

@@ -21,6 +21,8 @@
 #include <QDebug>
 #include <QUrl>
 #include <QQueue>
+#include <QVector>
+#include <QMetaType>
 
 #include "eventer.h"
 #include "util.h"
@@ -40,42 +42,90 @@ namespace slurp {
             setOrganizationName("Megafrock Laboratories");
             setApplicationName("Slurp");
 
+            qRegisterMetaType<parseResult>("parseResult");
+
             this->quota = quota;
             this->flags = flags;
             this->maxThreads = maxThreads;
 
             while( !initialUrls.isEmpty() ) {
-                addUrl( initialUrls.dequeue());
+                addUrl( initialUrls.dequeue() );
             }
         }
 
     void Eventer::addUrl( QUrl url ) {
+
         if( !url.isValid() ) {
             qDebug() << "warning: discarding invalid " << url;
             return;
         } 
 
+        qDebug() << thread() << "waiting for queue mutex";
         queueMutex.lock();
+
+        qDebug() << thread() << "queuing a new parser";
         queuedParsers.enqueue( new Parser( this, url ) );
 
-        runMutex.lock();
-        bool done = false;
-        for( int i = runningParsers.count();
-             !done && i < maxThreads;
-             ++i ) {
-            qDebug() << " i = " << i << " max = " << maxThreads;
+        queueMutex.unlock();
+        emit dispatchParsers();
+    }
 
-            if( !queuedParsers.isEmpty() ) {
-                Parser* currentParser = queuedParsers.dequeue();
-                currentParser->start();
-                runningParsers.push_back( currentParser );
-            } else {
-                done = true;
+
+    void Eventer::dispatchParsers() {
+        qDebug() << thread() << "waiting for run lock";
+
+        runMutex.lock();
+            while( ! queuedParsers.isEmpty() && runningParserThreads.count() < maxThreads ) {
+                qDebug() << thread() << "starting a new parser";
+
+                QThread* newThread = new QThread();
+                Parser* queuedParser = queuedParsers.dequeue();
+
+                queuedParser -> moveToThread( newThread );
+
+                QObject::connect(newThread, SIGNAL(started()),
+                                 queuedParser, SLOT(requestPage()));
+
+                QObject::connect(queuedParser, SIGNAL(finished(parseResult)), 
+                                 this, SLOT(parserFinished(parseResult)));
+                
+                newThread -> start();
+                runningParserThreads.push_back( newThread );
+                runningParserMap[ queuedParser ] = newThread;
             }
-        }
         runMutex.unlock();
 
-        queueMutex.unlock();
+        qDebug() << thread() << "released run lock";
+    }
+
+    void Eventer::parserFinished( parseResult urls ) {
+        Parser* senderParser = reinterpret_cast< Parser* > ( QObject::sender() );
+        QThread* senderThread = runningParserMap.take( senderParser );
+
+        qDebug() << thread() << " eventer has " << urls.count() << " urls";
+
+        foreach( QUrl currentUrl, urls ) {
+            emit addUrl( currentUrl );
+        }
+    
+        qDebug() << thread() << " waiting for run lock";
+        runMutex.lock();
+        
+        if( runningParserThreads.contains( senderThread ) ) {
+            int i = runningParserThreads.indexOf( senderThread );
+            runningParserThreads.erase( runningParserThreads.begin() + i );
+        } else {
+            qDebug() << thread() << " warning: got parserFinished() from an unknown source";
+        }
+
+        runMutex.unlock();
+        qDebug() << thread() << " released run lock";
+
+        qDebug() << thread() << " source was " << senderParser << 
+                              " on thread " << senderThread;
+
+        emit dispatchParsers();
+       // delete senderParser;
     }
 
 }    /* namespace slurp */
