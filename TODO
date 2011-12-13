@@ -1,8 +1,5 @@
-rewrite the debugging info handling system to include timing and thread information, and allow for filtering at run-time
-write it to a file as well as the console 
+write debug messages to a file as well as the console.
 
-link in libdb
+migrate to a totally signal based system, QWebPages must all be created and accessed on the gui thread.
 
-test windows builds
-
-add GUI support
+periodically write results of crawl to the disk
