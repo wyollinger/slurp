@@ -42,6 +42,10 @@ namespace slurp {
         Parser(Eventer * owner, QUrl url);
         void run();
 
+    private slots:
+
+        void loadProgress(int);
+
     };
 
 }   /* namespace slurp */

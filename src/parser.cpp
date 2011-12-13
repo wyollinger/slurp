@@ -42,11 +42,18 @@ namespace slurp {
         qDebug() << "parser: constructing page instance";
         page = new QWebPage();
 
+        QObject::connect(
+            page, SIGNAL(loadProgress(int)),
+            this, SLOT(loadProgress(int)));
+                        
         qDebug() << "parser: starting load";
         page->mainFrame()->load( url );
 
-        qDebug() << "parser: done";
+        exec();
     }
 
+    void Parser::loadProgress(int n){
+        qDebug() << "parser: " << url << " load progress " << n ;
+    }
 
 }   /* namespace slurp */
