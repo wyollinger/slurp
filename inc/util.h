@@ -19,7 +19,6 @@
 #define SLURP_UTIL_H
 
 #include <QQueue>
-#include <curl/curl.h>
 
 namespace slurp {
 
