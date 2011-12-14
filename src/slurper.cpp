@@ -56,6 +56,7 @@ namespace slurp {
         "If not, see <http://www.gnu.org/licenses/>.\n";
 
     const char *LOGFILE_NAME = "slurp.log";
+
     QFile logFile; 
 
 } /* namespace slurp */ 

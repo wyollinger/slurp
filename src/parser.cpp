@@ -42,7 +42,9 @@ namespace slurp {
 
         page = new QWebPage(this);
 
+        page->settings()->setAttribute( QWebSettings::JavascriptEnabled, false );
         page->settings()->setAttribute( QWebSettings::AutoLoadImages, false );
+        page->settings()->setAttribute( QWebSettings::PluginsEnabled, false );
 
         QObject::connect(
             page, SIGNAL(loadProgress(int)),

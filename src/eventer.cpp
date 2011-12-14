@@ -59,18 +59,26 @@ namespace slurp {
 
     void Eventer::addUrl( QUrl url ) {
         if( !url.isValid() ) {
+            qDebug() << "discarding invalid " << url;
             return;
         } 
 
         if( url.scheme() == "https" ) {
+            qDebug() << "discarding https " << url;
             return;
         }
 
         if( visitedUrls.contains( url ) ) {
+            qDebug() << "discarding duplicate" << url;
             return;
         } else {
 			visitedUrls.insert( url );
 		}
+
+        if( url.host() == "" ) {
+            qDebug() << "discarding url with no host";
+            return;
+        }
 
         qDebug() << thread() << "queuing a new parser";
         queuedParsers.enqueue( new Parser( url ) );
