@@ -19,13 +19,16 @@
 #define SLURP_UTIL_H
 
 #include <QQueue>
+#include <QFile>
 
 namespace slurp {
+   extern QFile logFile; 
 
-    int validateArgs(int argc, char **argv, char **env,
-                     QQueue < QString > &seedURIs, int &quota );
-    void die(const char *errmsg, int errcode);
-    
+   int validateArgs(int argc, char **argv, char **env,
+                QQueue < QString > &seedURIs, int &quota );
+   void die(const char *errmsg, int errcode);
+   void debugHandler(QtMsgType, const char* msg);
+
 }   /* namespace slurp */
 
 #endif  /* SLURP_UTIL_H */

@@ -54,6 +54,7 @@ namespace slurp {
         void addUrl(QUrl url);
         void dispatchParsers();
         void parserFinished( parseResult urls );
+        void crawlFinished();
 
     signals:
 

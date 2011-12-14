@@ -51,6 +51,10 @@ namespace slurp {
 			foreach( QUrl currentUrl, initialUrls ) {
 				emit addUrl( currentUrl );
 			}
+
+            QObject::connect( 
+                this, SIGNAL(aboutToQuit()),
+                this, SLOT(crawlFinished()) );
         }
 
     void Eventer::addUrl( QUrl url ) {
@@ -95,8 +99,10 @@ namespace slurp {
         }
     }
 
+    /* TODO: emit senderParser in signal */
     void Eventer::parserFinished( parseResult urls ) {
-        Parser* senderParser = reinterpret_cast< Parser* > ( QObject::sender() );
+        Parser* senderParser = 
+            reinterpret_cast< Parser* > ( QObject::sender() );
    
         qDebug() << " eventer got " << urls.count() << " urls";
 
@@ -114,5 +120,9 @@ namespace slurp {
         emit dispatchParsers();
         emit consumedUrls();
     } 
+
+    void Eventer::crawlFinished() {
+        qDebug() << "slurp shutting down";
+    }
 
 }    /* namespace slurp */

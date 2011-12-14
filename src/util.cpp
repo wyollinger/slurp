@@ -17,6 +17,7 @@
 
 #include <QDebug>
 #include <QWebPage>
+//#include <cstring>
 
 #include "util.h"
 #include "globals.h"
@@ -87,4 +88,10 @@ namespace slurp {
         exit(errcode);
     }
 
+   void debugHandler(QtMsgType type, const char* msg ) {
+        (void)type;
+
+        logFile.write( msg, qstrlen( msg ) );
+        logFile.write( "\n", 1 );
+   }
 }                               /* namespace slurp */

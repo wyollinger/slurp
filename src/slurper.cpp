@@ -19,6 +19,7 @@
 #include <QDebug>
 #include <QThread>
 #include <QApplication>
+#include <QFile>
 
 #include "globals.h"
 #include "util.h"
@@ -51,7 +52,11 @@ namespace slurp {
         "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
         "GNU General Public License for more details.\n\n"
         "You should have received a copy of the GNU General Public License\n"
-        "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n";
+        "along with this program.\n"
+        "If not, see <http://www.gnu.org/licenses/>.\n";
+
+    const char *LOGFILE_NAME = "slurp.log";
+    QFile logFile; 
 
 } /* namespace slurp */ 
 
@@ -60,8 +65,14 @@ using namespace slurp;
 int main(int argc, char **argv, char **env) {
     int flags = FLAGS_INVALID, 
         quota = -1;
+
     QQueue < QString > seedUrls;
 
+    logFile.setFileName( LOGFILE_NAME );
+    logFile.open( QIODevice::ReadWrite );
+
+    qInstallMsgHandler( debugHandler );
+ 
 	qDebug() << "slurp started up";
 	
     flags = validateArgs(argc, argv, env, seedUrls, quota );

@@ -61,7 +61,8 @@ namespace slurp {
     }   
 
     void Parser::parse() {
-        QWebElementCollection linkTags = page->mainFrame()->findAllElements("a");
+        QWebElementCollection linkTags = 
+            page->mainFrame()->findAllElements("a");
 
         foreach(QWebElement current, linkTags) {
             if ( current.attribute("href") != "") {
@@ -73,15 +74,22 @@ namespace slurp {
     }
 
     void Parser::loadProgress(int n) {
-        qDebug() << thread() << "parser: " << url << " load progress " << n ;
+        qDebug() << "parser: " << url << " load progress " << n ;
 		
 		QCoreApplication::flush ();
-		//processEvents();
     }
 
     void Parser::pageLoadFinished(bool ok) {
-        qDebug() << thread() << "parser: " << url << " page load finished ok?: " << ok;
-		emit parse();
+        if( ok ) {
+
+            qDebug() << "parser: " 
+                     << url 
+                     << " page load finished ok.";
+
+		    emit parse();
+        } else { 
+            qDebug() << "parser: failed to parse page " << url;
+        }
     }
 
 }   /* namespace slurp */
