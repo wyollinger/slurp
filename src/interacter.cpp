@@ -62,7 +62,8 @@ namespace slurp {
 
         urlBrowser = new QTextBrowser(centralwidget);
         urlBrowser->setGeometry(QRect(110, 150, 381, 181));
-
+        urlBrowser->setOpenExternalLinks( true );
+        
         splitter = new QSplitter(centralwidget);
         splitter->setGeometry(QRect(20, 50, 471, 25));
         splitter->setOrientation(Qt::Horizontal);
@@ -98,7 +99,13 @@ namespace slurp {
     }
 
     void Interacter::newUrl( QUrl url ) {
-        urlBrowser->append( url.toString() );
+        urlBrowser->append( 
+            "<a href='" + 
+            url.toString() + 
+            "'>" + 
+            url.toString() +
+            "</a> "
+        );
     }
 
     void Interacter::handleCrawlClicked() {
