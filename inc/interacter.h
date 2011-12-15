@@ -62,6 +62,7 @@ namespace slurp {
 
             void updateStats( int queued, int crawled );
             void updateProgress( int n );
+            void newUrl( QUrl url );
 
         signals:
 

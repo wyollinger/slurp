@@ -92,6 +92,9 @@ int main(int argc, char **argv, char **env) {
     QObject::connect( &inter, SIGNAL( crawlAborted() ),
                       &ev, SLOT( stopCrawling() ) );
 
+    QObject::connect( &ev, SIGNAL( newUrl( QUrl ) ), 
+                      &inter, SLOT( newUrl( QUrl ) ) );
+
     QObject::connect( &ev, SIGNAL( statsChanged(int, int) ),
                       &inter, SLOT( updateStats(int, int) ) );
 

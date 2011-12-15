@@ -97,6 +97,10 @@ namespace slurp {
         emit progressBar->setValue( n );
     }
 
+    void Interacter::newUrl( QUrl url ) {
+        urlBrowser->append( url.toString() );
+    }
+
     void Interacter::handleCrawlClicked() {
         if( crawlButton -> text() == "Crawl" ) {
         

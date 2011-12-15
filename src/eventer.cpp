@@ -125,6 +125,7 @@ namespace slurp {
 
         foreach( QUrl currentUrl, urls ) {
             emit addUrl( currentUrl );
+            emit newUrl( currentUrl );
         }
     
         if( runningParsers.contains( senderParser ) ) {
