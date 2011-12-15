@@ -49,7 +49,7 @@ namespace slurp {
         }
 
         if( url.host() == "" ) {
-            qDebug() << "discarding url with no host";
+            qDebug() << "discarding url with no host" << url;
             return false;
         }
         
@@ -88,9 +88,21 @@ namespace slurp {
 
         foreach(QWebElement current, linkTags) {
             currentUrl = QUrl( current.attribute( "href" ) );
+            currentUrl.setEncodedFragment( QByteArray() );
+            
+            if( currentUrl.isEmpty() ) {
+                continue;
+            }
+            
+            if( currentUrl.isRelative() && currentUrl.host() == "" && currentUrl.path() != "" ) {
+                qDebug() << currentUrl << " is relative path. prepending host";
+                currentUrl.setHost( url.host() );
+                currentUrl.setScheme( url.scheme() );
+                qDebug() << "with host fix: " << currentUrl;
+            }
             
             if ( validateUrl( currentUrl ) ) {
-                parsedUrls.push_back( QUrl( current.attribute("href")));
+                parsedUrls.push_back( currentUrl );
             }
         }
 

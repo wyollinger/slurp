@@ -60,10 +60,6 @@ namespace slurp {
         }
 
     void Eventer::addUrl( QUrl url ) {
-        if( !Parser::validateUrl( url ) ) {
-            return;
-        }
-        
         if( visitedUrls.contains( url ) ) {
             qDebug() << "discarding duplicate" << url;
             return;
@@ -71,9 +67,7 @@ namespace slurp {
 			visitedUrls.insert( url );
 		}
 
-        qDebug() << "queuing a new parser";
         queuedParsers.enqueue( new Parser( url ) );
-
         emit statsChanged( queuedParsers.count(), visitedUrls.count() );
 
         if( active ) {
