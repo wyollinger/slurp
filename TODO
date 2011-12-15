@@ -1,5 +1,5 @@
-write debug messages to a file as well as the console.
-
-migrate to a totally signal based system, QWebPages must all be created and accessed on the gui thread.
-
-periodically write results of crawl to the disk
+periodically write results of crawl to a database
+improve progress reporting
+improve gui
+add more crawl options
+add the ability to push/pull crawl database to another instance of slurp over the network
