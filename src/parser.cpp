@@ -37,6 +37,25 @@ namespace slurp {
         page = NULL;
     }
 	
+	bool Parser::validateUrl( QUrl url ) {
+        if( !url.isValid() ) {
+            qDebug() << "discarding invalid " << url;
+            return false;
+        } 
+
+        if( url.scheme() == "https" ) {
+            qDebug() << "discarding https " << url;
+            return false;
+        }
+
+        if( url.host() == "" ) {
+            qDebug() << "discarding url with no host";
+            return false;
+        }
+        
+        return true;
+	}
+	
     void Parser::requestPage() {
         qDebug() << "parser: constructing page instance";
 
@@ -63,11 +82,14 @@ namespace slurp {
     }   
 
     void Parser::parse() {
+        QUrl currentUrl;
         QWebElementCollection linkTags = 
             page->mainFrame()->findAllElements("a");
 
         foreach(QWebElement current, linkTags) {
-            if ( current.attribute("href") != "") {
+            currentUrl = QUrl( current.attribute( "href" ) );
+            
+            if ( validateUrl( currentUrl ) ) {
                 parsedUrls.push_back( QUrl( current.attribute("href")));
             }
         }
@@ -84,7 +106,6 @@ namespace slurp {
 
     void Parser::pageLoadFinished(bool ok) {
         if( ok ) {
-
             qDebug() << "parser: " 
                      << url 
                      << " page load finished ok.";
