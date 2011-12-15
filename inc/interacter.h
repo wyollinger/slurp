@@ -66,12 +66,14 @@ namespace slurp {
         signals:
 
             void crawlClicked( QUrl seedUrl );
+            void crawlStarted();
+            void crawlAborted();
 
         private slots:
 
             void handleCrawlClicked();
             void handleAboutClicked();
-            void handleKeyPress(QKeyEvent* k);
+            void handleUrlChange(const QString& newUrl);
     };
 
 }    /* namespace slurp */

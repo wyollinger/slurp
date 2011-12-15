@@ -55,6 +55,8 @@ namespace slurp {
             QObject::connect( 
                 this, SIGNAL(aboutToQuit()),
                 this, SLOT(crawlFinished()) );
+
+            active = false;
         }
 
     void Eventer::addUrl( QUrl url ) {
@@ -84,12 +86,15 @@ namespace slurp {
         queuedParsers.enqueue( new Parser( url ) );
 
         emit statsChanged( queuedParsers.count(), visitedUrls.count() );
-        emit dispatchParsers();
+
+        if( active ) {
+            emit dispatchParsers();
+        }
     }
 
 
     void Eventer::dispatchParsers() {
-        while( ! queuedParsers.isEmpty() && runningParsers.count() < 8 ) {
+        while( active && ! queuedParsers.isEmpty() && runningParsers.count() < 8 ) {
             qDebug() << "starting a new parser";
         
             Parser* queuedParser = queuedParsers.dequeue();
@@ -104,7 +109,6 @@ namespace slurp {
 
             QObject::connect(this, SIGNAL(consumedUrls()),
                 queuedParser, SLOT(cleanup()));
-
 
             runningParsers.push_back( queuedParser );
 			
@@ -130,13 +134,28 @@ namespace slurp {
             qDebug() << " warning: got parserFinished() from an unknown source";
         }
 
-        emit dispatchParsers();
+        if( active ) {
+            emit dispatchParsers(); 
+        }
+
         emit consumedUrls();
         emit statsChanged( queuedParsers.count(), visitedUrls.count() );
     } 
 
     void Eventer::crawlFinished() {
         qDebug() << "slurp shutting down";
+    }
+
+    void Eventer::stopCrawling() {
+        qDebug() << "user aborted crawl";
+
+        queuedParsers.clear();
+        active = false;
+    }
+
+    void Eventer::startCrawling() {
+        active = true;
+        emit dispatchParsers();
     }
 
     void Eventer::parserProgress( int n ) {

@@ -40,6 +40,7 @@ namespace slurp {
         QVector < Parser* > runningParsers;
         QSet < QUrl > visitedUrls;
         int quota, flags;
+        bool active;
 
     public:
 
@@ -55,10 +56,12 @@ namespace slurp {
         void dispatchParsers();
         void parserFinished( parseResult urls );
         void crawlFinished();
+        void stopCrawling();
+        void startCrawling();
 
     private slots:
 
-        void parserProgress(int n);
+        void parserProgress( int n );
 
     signals:
 

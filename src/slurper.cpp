@@ -83,11 +83,17 @@ int main(int argc, char **argv, char **env) {
 
     Interacter inter;
 
-    QObject::connect( &inter, SIGNAL( crawlClicked(QUrl ) ), 
+    QObject::connect( &inter, SIGNAL( crawlClicked( QUrl ) ), 
                       &ev, SLOT( addUrl( QUrl ) ));
 
+    QObject::connect( &inter, SIGNAL( crawlStarted() ),
+                      &ev, SLOT( startCrawling() ) );
+
+    QObject::connect( &inter, SIGNAL( crawlAborted() ),
+                      &ev, SLOT( stopCrawling() ) );
+
     QObject::connect( &ev, SIGNAL( statsChanged(int, int) ),
-                     &inter, SLOT( updateStats(int, int) ) );
+                      &inter, SLOT( updateStats(int, int) ) );
 
     QObject::connect( &ev, SIGNAL( progressChanged(int ) ),
                       &inter, SLOT( updateProgress( int ) ) );

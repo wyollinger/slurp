@@ -33,6 +33,8 @@
 #include <QtGui/QWidget>
 #include <QKeyEvent>
 
+#include <QDebug>
+
 #include "globals.h"
 #include "interacter.h"
 
@@ -82,8 +84,8 @@ namespace slurp {
         QObject::connect( aboutButton, SIGNAL(clicked()),
             this, SLOT(handleAboutClicked()) );
 
-        QObject::connect( urlEntry, SIGNAL(keyPressEvent(QKeyEvent*)), 
-            this, SLOT(handleKeyPress(QKeyEvent*)) );
+        QObject::connect( urlEntry, SIGNAL(textChanged(const QString&)), 
+            this, SLOT(handleUrlChange(const QString&)) );
     }
 
     void Interacter::updateStats( int queued, int crawled ) {
@@ -96,23 +98,39 @@ namespace slurp {
     }
 
     void Interacter::handleCrawlClicked() {
-        QUrl seedUrl = QUrl( urlEntry->text() );
+        if( crawlButton -> text() == "Crawl" ) {
+        
+            QUrl seedUrl = QUrl( urlEntry->text() );
 
-        if( seedUrl.isValid() && 
-            seedUrl.host() != "" && 
-            !seedUrl.isRelative() ) {
-            emit crawlClicked( seedUrl );
-        } else {
-            /* TODO: warn user */
-        }
+            if( seedUrl.isValid() && 
+                seedUrl.host() != "" && 
+                !seedUrl.isRelative() ) {
+
+                emit crawlClicked( seedUrl );
+                emit crawlStarted();
+
+                crawlButton -> setText( "Stop" );
+
+                qDebug() << "user clicked crawl with valid url. starting...";
+            } else {
+                /* TODO: warn user */
+                qDebug() << "user clicked crawl but url was invalid. ignoring";
+            }
+
+       } else if( crawlButton -> text() == "Stop" ) {
+           qDebug() << "in interface: user aborted crawl";
+
+           emit crawlAborted();
+           crawlButton -> setText( "Crawl" );
+       }
     }
 
     void Interacter::handleAboutClicked() {
 
     }
 
-    void Interacter::handleKeyPress(QKeyEvent* k) {
-
+    void Interacter::handleUrlChange(const QString& newUrl) {
+        (void) newUrl;
     }
 
 }   /* namespace slurp */
