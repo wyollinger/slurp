@@ -20,14 +20,37 @@
 #define SLURP_INTERACTER_H
 
 #include <QMainWindow>
-#include <QLabel>
+#include <QtCore/QVariant>
+#include <QtGui/QAction>
+#include <QtGui/QApplication>
+#include <QtGui/QButtonGroup>
+#include <QtGui/QHeaderView>
+#include <QtGui/QLCDNumber>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QMainWindow>
+#include <QtGui/QProgressBar>
+#include <QtGui/QPushButton>
+#include <QtGui/QSplitter>
+#include <QtGui/QStatusBar>
+#include <QtGui/QTextBrowser>
+#include <QtGui/QWidget>
 
 namespace slurp {
 
     class Interacter : public QMainWindow {
         Q_OBJECT
 
-        QLabel* mainLabel;
+        QWidget *centralwidget;
+        QLabel *label;
+        QProgressBar *progressBar;
+        QLCDNumber *queuedNumber;
+        QLCDNumber *crawledNumber;
+        QTextBrowser *urlBrowser;
+        QSplitter *splitter;
+        QLineEdit *urlEntry;
+        QPushButton *crawlButton;
+        QPushButton *aboutButton;
 
         public:
 
@@ -35,6 +58,7 @@ namespace slurp {
     };
 
 }    /* namespace slurp */
+
 
 
 #endif    /* SLURP_INTERACTER_H */
