@@ -1,17 +1,14 @@
 Dependencies:
- libevent 2.0.16
- libcurl 7.23.1
- pkg-config 0.21
- qt 4.7.3
- flex 2.5.4
+ Qt 4.7.3
 
-Once the dependencies are satisfied, you should be able to simply type:
+Linux: 
 
 $ qmake
-$ make
+$ make 
 
-Linux is directly supported. 
+Windows:
 
-This code *SHOULD* compile on any current versions of Windows, Mac OS, 
-and probably a few others, but it'll probably take some hacking.
+$ qmake
+$ nmake 
 
+Builds successfully on all platforms that Qt supports.
