@@ -55,6 +55,11 @@ namespace slurp {
         public:
 
             Interacter();
+
+        public slots:
+
+            void updateStats( int queued, int crawled );
+            void updateProgress( int n );
     };
 
 }    /* namespace slurp */

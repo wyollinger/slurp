@@ -38,7 +38,6 @@
 namespace slurp {
 
     Interacter::Interacter() {
-        setObjectName(QString::fromUtf8("MainWindow"));
         setFixedSize(512, 361);
 
         centralwidget = new QWidget(this);
@@ -75,6 +74,15 @@ namespace slurp {
         splitter->addWidget(aboutButton);
 
         setCentralWidget(centralwidget);
+    }
+
+    void Interacter::updateStats( int queued, int crawled ) {
+        emit queuedNumber->display( queued );
+        emit crawledNumber->display( crawled );
+    }
+
+    void Interacter::updateProgress( int n ) {
+        emit progressBar->setValue( n );
     }
 
 }   /* namespace slurp */
