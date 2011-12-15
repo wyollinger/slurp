@@ -50,6 +50,7 @@ namespace slurp {
     signals:
 
         void finished( parseResult parsedUrls );    
+        void progress( int );
 
     private slots:
 

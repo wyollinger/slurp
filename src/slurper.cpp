@@ -20,6 +20,7 @@
 #include <QThread>
 #include <QApplication>
 #include <QFile>
+#include <QUrl>
 
 #include "globals.h"
 #include "util.h"
@@ -81,6 +82,17 @@ int main(int argc, char **argv, char **env) {
     Eventer ev( argc, argv, seedUrls, quota, flags );
 
     Interacter inter;
+
+    QObject::connect( &inter, SIGNAL( crawlClicked(QUrl ) ), 
+                      &ev, SLOT( addUrl( QUrl ) ));
+
+    QObject::connect( &ev, SIGNAL( statsChanged(int, int) ),
+                     &inter, SLOT( updateStats(int, int) ) );
+
+    QObject::connect( &ev, SIGNAL( progressChanged(int ) ),
+                      &inter, SLOT( updateProgress( int ) ) );
+
+    /* TODO: handle textbrowser updates as well */
 
     inter.show();
 

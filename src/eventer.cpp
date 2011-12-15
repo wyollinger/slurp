@@ -80,9 +80,10 @@ namespace slurp {
             return;
         }
 
-        qDebug() << thread() << "queuing a new parser";
+        qDebug() << "queuing a new parser";
         queuedParsers.enqueue( new Parser( url ) );
 
+        emit statsChanged( queuedParsers.count(), visitedUrls.count() );
         emit dispatchParsers();
     }
 
@@ -98,8 +99,12 @@ namespace slurp {
             QObject::connect(queuedParser, SIGNAL(finished(parseResult)), 
                 this, SLOT(parserFinished(parseResult)));
                 
+            QObject::connect(queuedParser, SIGNAL(progress(int)),
+                this, SLOT(parserProgress(int)));
+
             QObject::connect(this, SIGNAL(consumedUrls()),
                 queuedParser, SLOT(cleanup()));
+
 
             runningParsers.push_back( queuedParser );
 			
@@ -127,10 +132,15 @@ namespace slurp {
 
         emit dispatchParsers();
         emit consumedUrls();
+        emit statsChanged( queuedParsers.count(), visitedUrls.count() );
     } 
 
     void Eventer::crawlFinished() {
         qDebug() << "slurp shutting down";
+    }
+
+    void Eventer::parserProgress( int n ) {
+        emit progressChanged( n );
     }
 
 }    /* namespace slurp */

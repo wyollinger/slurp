@@ -79,6 +79,7 @@ namespace slurp {
         qDebug() << "parser: " << url << " load progress " << n ;
 		
 		QCoreApplication::flush ();
+        emit progress( n );
     }
 
     void Parser::pageLoadFinished(bool ok) {

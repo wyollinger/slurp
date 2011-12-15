@@ -56,10 +56,16 @@ namespace slurp {
         void parserFinished( parseResult urls );
         void crawlFinished();
 
+    private slots:
+
+        void parserProgress(int n);
+
     signals:
 
         void consumedUrls();
-    
+        void statsChanged( int queued, int crawled );
+        void progressChanged( int n );
+   
     };
 
 }   /* namespace slurp */
