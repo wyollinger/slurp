@@ -12,3 +12,4 @@ $ qmake
 $ nmake 
 
 Builds successfully on all platforms that Qt supports.
+The resulting binary will be located at bin (/|\) slurp.
