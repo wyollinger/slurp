@@ -125,6 +125,7 @@ namespace slurp {
 		    emit parse();
         } else { 
             qDebug() << "parser: failed to parse page " << url;
+            emit parseFailed(url);
         }
     }
 

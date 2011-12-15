@@ -52,7 +52,8 @@ namespace slurp {
 
         void finished( parseResult parsedUrls );    
         void progress( int );
-
+        void parseFailed( QUrl url );
+        
     private slots:
 
         void parse();

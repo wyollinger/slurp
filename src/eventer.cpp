@@ -75,30 +75,6 @@ namespace slurp {
         }
     }
 
-
-    void Eventer::dispatchParsers() {
-        while( active && ! queuedParsers.isEmpty() && runningParsers.count() < 8 ) {
-            qDebug() << "starting a new parser";
-        
-            Parser* queuedParser = queuedParsers.dequeue();
-      
-            emit queuedParser -> requestPage();
-
-            QObject::connect(queuedParser, SIGNAL(finished(parseResult)), 
-                this, SLOT(parserFinished(parseResult)));
-                
-            QObject::connect(queuedParser, SIGNAL(progress(int)),
-                this, SLOT(parserProgress(int)));
-
-            QObject::connect(this, SIGNAL(consumedUrls()),
-                queuedParser, SLOT(cleanup()));
-
-            runningParsers.push_back( queuedParser );
-			
-			qDebug() << " queued: " << queuedParsers.count();
-        }
-    }
-
     /* TODO: emit senderParser in signal */
     void Eventer::parserFinished( parseResult urls ) {
         Parser* senderParser = 
@@ -142,8 +118,39 @@ namespace slurp {
         emit dispatchParsers();
     }
 
+    void Eventer::dispatchParsers() {
+        while( active && ! queuedParsers.isEmpty() && runningParsers.count() < 8 ) {
+            qDebug() << "starting a new parser";
+        
+            Parser* queuedParser = queuedParsers.dequeue();
+      
+            emit queuedParser -> requestPage();
+
+            QObject::connect(queuedParser, SIGNAL(finished(parseResult)), 
+                this, SLOT(parserFinished(parseResult)));
+                
+            QObject::connect(queuedParser, SIGNAL(progress(int)),
+                this, SLOT(parserProgress(int)));
+
+            QObject::connect(queuedParser, SIGNAL(parseFailed(QUrl)),
+                this, SLOT(handleParseFailure(QUrl)));
+                
+            QObject::connect(this, SIGNAL(consumedUrls()),
+                queuedParser, SLOT(cleanup()));
+
+            runningParsers.push_back( queuedParser );
+			
+			qDebug() << " queued: " << queuedParsers.count();
+        }
+    }
+    
     void Eventer::parserProgress( int n ) {
         emit progressChanged( n );
     }
 
+    void Eventer::handleParseFailure( QUrl url ) {
+        /* TODO: devise a scheme for retries */
+        
+        emit dispatchParsers();
+    }
 }    /* namespace slurp */

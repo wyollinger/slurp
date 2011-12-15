@@ -53,18 +53,20 @@ namespace slurp {
     public slots:    
 
         void addUrl(QUrl url);
-        void dispatchParsers();
+        
         void parserFinished( parseResult urls );
         void crawlFinished();
         void stopCrawling();
         void startCrawling();
-
+        void handleParseFailure( QUrl url );
+        
     private slots:
 
+        void dispatchParsers();
         void parserProgress( int n );
 
     signals:
-
+    
         void consumedUrls();
         void statsChanged( int queued, int crawled );
         void progressChanged( int n );
