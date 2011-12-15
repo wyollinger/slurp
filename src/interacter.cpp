@@ -31,6 +31,7 @@
 #include <QtGui/QStatusBar>
 #include <QtGui/QTextBrowser>
 #include <QtGui/QWidget>
+#include <QKeyEvent>
 
 #include "globals.h"
 #include "interacter.h"
@@ -74,6 +75,15 @@ namespace slurp {
         splitter->addWidget(aboutButton);
 
         setCentralWidget(centralwidget);
+
+        QObject::connect( crawlButton, SIGNAL(clicked()),
+            this, SLOT(handleCrawlClicked()) );
+
+        QObject::connect( aboutButton, SIGNAL(clicked()),
+            this, SLOT(handleAboutClicked()) );
+
+        QObject::connect( urlEntry, SIGNAL(keyPressEvent(QKeyEvent*)), 
+            this, SLOT(handleKeyPress(QKeyEvent*)) );
     }
 
     void Interacter::updateStats( int queued, int crawled ) {
@@ -83,6 +93,26 @@ namespace slurp {
 
     void Interacter::updateProgress( int n ) {
         emit progressBar->setValue( n );
+    }
+
+    void Interacter::handleCrawlClicked() {
+        QUrl seedUrl = QUrl( urlEntry->text() );
+
+        if( seedUrl.isValid() && 
+            seedUrl.host() != "" && 
+            !seedUrl.isRelative() ) {
+            emit crawlClicked( seedUrl );
+        } else {
+            /* TODO: warn user */
+        }
+    }
+
+    void Interacter::handleAboutClicked() {
+
+    }
+
+    void Interacter::handleKeyPress(QKeyEvent* k) {
+
     }
 
 }   /* namespace slurp */

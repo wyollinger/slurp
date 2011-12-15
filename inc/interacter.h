@@ -35,6 +35,8 @@
 #include <QtGui/QStatusBar>
 #include <QtGui/QTextBrowser>
 #include <QtGui/QWidget>
+#include <QUrl>
+#include <QKeyEvent>
 
 namespace slurp {
 
@@ -60,6 +62,16 @@ namespace slurp {
 
             void updateStats( int queued, int crawled );
             void updateProgress( int n );
+
+        signals:
+
+            void crawlClicked( QUrl seedUrl );
+
+        private slots:
+
+            void handleCrawlClicked();
+            void handleAboutClicked();
+            void handleKeyPress(QKeyEvent* k);
     };
 
 }    /* namespace slurp */
