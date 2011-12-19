@@ -22,6 +22,7 @@
 #include <QUrl>
 
 namespace slurp {
+
     const static int VERSION_ID[3] = { 0, 1, 2 };
     const static int FLAGS_VALID = 1;
     const static int FLAGS_VERBOSE = 2;
@@ -29,13 +30,12 @@ namespace slurp {
     const static int FLAGS_CONTD = 8;
     const static int FLAGS_INVALID = -1;
 
-    /* note: these are defined in slurper.cpp */
-    /* FIXME: encapsulate slurp and util into their own class */
     extern const char *USAGE_MESSAGE;
     extern const char *HELP_MENU;
     extern const char *LICENSE_INFO;
 
-	 typedef QList<QUrl> parseResult;
+	typedef QList<QUrl> parseResult;
+
 }   /* namespace slurp */
 
 #endif  /* SLURP_GLOBALS_H */

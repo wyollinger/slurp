@@ -22,6 +22,7 @@
 #include <QFile>
 
 namespace slurp {
+    
    extern QFile logFile; 
 
    int validateArgs(int argc, char **argv, char **env,
