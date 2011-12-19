@@ -33,11 +33,11 @@
 namespace slurp {
 
     Eventer::Eventer(
-        int argc, 
+        int& argc, 
         char** argv,
         QQueue < QString > &initialUrls, 
         int quota, 
-        int flags ) : QApplication( argc, argv, QApplication::GuiClient ) {
+        int flags ) : QApplication( argc, argv, true ) {
             QUrl currentUrl;
 
             setOrganizationName("Megafrock Laboratories");

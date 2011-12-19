@@ -44,7 +44,7 @@ namespace slurp {
 
     public:
 
-        Eventer(int argc, 
+        Eventer(int& argc, 
                 char** argv,
                 QQueue < QString > &initialUrls, 
                 int quota, 
