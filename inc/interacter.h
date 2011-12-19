@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef SLURP_INTERACTER_H
 #define SLURP_INTERACTER_H
 
@@ -38,6 +37,8 @@
 #include <QUrl>
 #include <QKeyEvent>
 
+#include "about.h"
+
 namespace slurp {
 
     class Interacter : public QMainWindow {
@@ -53,6 +54,7 @@ namespace slurp {
         QLineEdit *urlEntry;
         QPushButton *crawlButton;
         QPushButton *aboutButton;
+        About* aboutBox;
 
         public:
 
@@ -78,7 +80,5 @@ namespace slurp {
     };
 
 }    /* namespace slurp */
-
-
 
 #endif    /* SLURP_INTERACTER_H */

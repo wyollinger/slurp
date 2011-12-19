@@ -32,16 +32,20 @@
 #include <QtGui/QTextBrowser>
 #include <QtGui/QWidget>
 #include <QKeyEvent>
+#include <QMessageBox>
 
 #include <QDebug>
 
 #include "globals.h"
 #include "interacter.h"
+#include "about.h"
 
 namespace slurp {
 
     Interacter::Interacter() {
         setFixedSize(512, 361);
+
+        aboutBox = new About(this);
 
         centralwidget = new QWidget(this);
 
@@ -124,8 +128,8 @@ namespace slurp {
 
                 qDebug() << "user clicked crawl with valid url. starting...";
             } else {
-                /* TODO: warn user */
                 qDebug() << "user clicked crawl but url was invalid. ignoring";
+                QMessageBox::warning( this, "Warning", "The URL you specified was invalid");
             }
 
        } else if( crawlButton -> text() == "Stop" ) {
@@ -137,7 +141,7 @@ namespace slurp {
     }
 
     void Interacter::handleAboutClicked() {
-
+        aboutBox->show();
     }
 
     void Interacter::handleUrlChange(const QString& newUrl) {
