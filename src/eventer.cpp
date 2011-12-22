@@ -43,6 +43,10 @@ namespace slurp {
             setOrganizationName("Megafrock Laboratories");
             setApplicationName("Slurp");
 
+            /* For an explanation on what this is doing and
+             * why it is needed, you need to understand Qt's 
+             * meta object compiler. 
+             */
             qRegisterMetaType<parseResult>("parseResult");
 
             this->quota = quota;
