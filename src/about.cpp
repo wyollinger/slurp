@@ -26,17 +26,25 @@
 namespace slurp {
 
     const QString About::aboutText = " slurp v"+
-        QString('0'+VERSION_ID[0])+"."+
-        QString('0'+VERSION_ID[1])+"."+
-        QString('0'+VERSION_ID[2])+
-        " coded my Max DeLiso <maxdeliso@gmail.com>";
+          QString('0'+VERSION_ID[0])+"."+
+          QString('0'+VERSION_ID[1])+"."+
+          QString('0'+VERSION_ID[2])+
+          " coded my Max DeLiso <maxdeliso@gmail.com>";
 
-    About::About(QWidget* parent) : QDialog(parent) {
-        layout = new QVBoxLayout(this);
-        aboutLabel = new QLabel(aboutText, this);
+    About::About(QWidget* parent) : 
+        QDialog(parent, 
+            Qt::Dialog | 
+            Qt::WindowTitleHint | 
+            Qt::WindowSystemMenuHint | 
+            Qt::WindowCloseButtonHint | 
+            Qt::CustomizeWindowHint ) 
+                {
+                    layout = new QVBoxLayout(this);
+                    aboutLabel = new QLabel(aboutText, this);
 
-        layout->addWidget( aboutLabel );
-        setLayout(layout);
-    }
+                    layout->addWidget( aboutLabel );
+
+                    setLayout(layout);
+                }
 
 }   /* namespace slurp */
