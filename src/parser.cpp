@@ -32,11 +32,13 @@
 
 namespace slurp {
 
+    /* The parser constructor. It takes a target url and zeroes the page pointer */
     Parser::Parser( QUrl url) {
         this->url = url;
         page = NULL;
     }
 	
+    /* A public static function which is used to screen crawled URLs for potential queuing */
 	bool Parser::validateUrl( QUrl url ) {
         if( !url.isValid() ) {
             qDebug() << "discarding invalid " << url;
@@ -56,6 +58,13 @@ namespace slurp {
         return true;
 	}
 	
+    /* This function constructs a page instance and initiates network I/O.
+     * Note that this function must always run on the GUI thread ( the eventer
+     * thread. Even though QWebPage doesn't inherit from QWidget it will still
+     * make window manager calls which all must come from the same thread.
+     * Attempting to put this call into a separate thread WILL cause heap
+     * corruption and eventually a segfault. It will fail with an assertion
+     * at run-time on windows. */
     void Parser::requestPage() {
         qDebug() << "parser: constructing page instance";
 
@@ -77,10 +86,20 @@ namespace slurp {
         page->mainFrame()->load( url );
     }
 
+    /* The parses destructor. Qt tends to take care of a lot of memory management so 
+     * there's really nothing to do here but there may end up being some signals
+     * that need to be emitted in the future. */
     void Parser::cleanup() {
 		/* TODO: stub */
     }   
 
+    /* The parse function is invoked after the loadFinished signal is received from 
+     * the webkit code upon successfully parsing a page. From here, the entire DOM
+     * can be manipulated and traversed really conveniently. The code right now
+     * just traverses the DOM looking for link tags, and queues them if they are valid,
+     * but this function is where all of the interesting development will take place
+     * in the future. 
+     */
     void Parser::parse() {
         QUrl currentUrl;
         QWebElementCollection linkTags = 
@@ -88,12 +107,18 @@ namespace slurp {
 
         foreach(QWebElement current, linkTags) {
             currentUrl = QUrl( current.attribute( "href" ) );
+            /* This discards the fragment. It is useless in this context and 
+             * will complicate our visited hashtable
+             */
             currentUrl.setEncodedFragment( QByteArray() );
-            
+
             if( currentUrl.isEmpty() ) {
                 continue;
             }
             
+            /* Prepend the parent URL if we have a relative link in an attempt to 
+             * validate it for retrieval
+             */
             if( currentUrl.isRelative() && currentUrl.host() == "" && currentUrl.path() != "" ) {
                 qDebug() << currentUrl << " is relative path. prepending host";
                 currentUrl.setHost( url.host() );
@@ -101,6 +126,7 @@ namespace slurp {
                 qDebug() << "with host fix: " << currentUrl;
             }
             
+            /* Finally, check to make sure it's valid before queueing it */
             if ( validateUrl( currentUrl ) ) {
                 parsedUrls.push_back( currentUrl );
             }
@@ -109,6 +135,9 @@ namespace slurp {
         emit finished(parsedUrls);
     }
 
+    /* This function simply updates the GUI to tell it how far along
+     * this page is in being loaded. 
+     */
     void Parser::loadProgress(int n) {
         qDebug() << "parser: " << url << " load progress " << n ;
 		
@@ -116,6 +145,10 @@ namespace slurp {
         emit progress( n );
     }
 
+    /* This function is connected to the webkit code and receives the load
+     * results. On successful load, it schedules a parse. Otherwise, it 
+     * reports failure. 
+     */
     void Parser::pageLoadFinished(bool ok) {
         if( ok ) {
             qDebug() << "parser: " 
@@ -126,6 +159,9 @@ namespace slurp {
         } else { 
             qDebug() << "parser: failed to parse page " << url;
             emit parseFailed(url);
+            /* TODO: discover the reason of the failure and pass this along 
+             * with the parseFailed signal 
+             */
         }
     }
 
