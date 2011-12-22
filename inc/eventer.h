@@ -38,7 +38,7 @@ namespace slurp {
 
         QQueue < Parser* > queuedParsers;
         QVector < Parser* > runningParsers;
-        QSet < QUrl > visitedUrls;
+        QSet < QUrl > queuedUrls;
         QMap < QUrl , int > retryMap;
 
         int quota, flags;

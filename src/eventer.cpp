@@ -68,16 +68,16 @@ namespace slurp {
             qDebug() << "discarding url because we've failed to parse it thrice" 
                      << url;
             return;
-        } else if( visitedUrls.contains( url ) ) {
+        } else if( queuedUrls.contains( url ) ) {
             qDebug() << "discarding duplicate" << url;
             return;
         }
          
-		visitedUrls.insert( url );
+		queuedUrls.insert( url );
 		
         queuedParsers.enqueue( new Parser( url ) );
 
-        emit statsChanged( queuedParsers.count(), visitedUrls.count() );
+        emit statsChanged( queuedParsers.count(), queuedUrls.count() );
 
         if( active ) {
             emit dispatchParsers();
@@ -108,7 +108,7 @@ namespace slurp {
         }
 
         emit consumedUrls();
-        emit statsChanged( queuedParsers.count(), visitedUrls.count() );
+        emit statsChanged( queuedParsers.count(), queuedUrls.count() );
     } 
 
     void Eventer::crawlFinished() {
