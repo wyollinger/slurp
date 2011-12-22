@@ -29,7 +29,7 @@ namespace slurp {
           QString('0'+VERSION_ID[0])+"."+
           QString('0'+VERSION_ID[1])+"."+
           QString('0'+VERSION_ID[2])+
-          " coded my Max DeLiso <maxdeliso@gmail.com>";
+          " coded by Max DeLiso <maxdeliso@gmail.com>";
 
     About::About(QWidget* parent) : 
         QDialog(parent, 
