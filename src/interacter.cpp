@@ -51,27 +51,27 @@ namespace slurp {
 
         centralwidget = new QWidget(this);
 
-        label = new QLabel("Slurp", centralwidget);
+       /* label = new QLabel("Slurp", centralwidget);
         label->setGeometry(QRect(20, 10, 471, 31));
         label->setTextFormat(Qt::AutoText);
-        label->setAlignment(Qt::AlignCenter);
+        label->setAlignment(Qt::AlignCenter);*/
 
         progressBar = new QProgressBar(centralwidget);
-        progressBar->setGeometry(QRect(20, 90, 481, 31));
+        progressBar->setGeometry(QRect(20, 69, 481, 31));
         progressBar->setValue(0);
 
         queuedNumber = new QLCDNumber(centralwidget);
-        queuedNumber->setGeometry(QRect(20, 190, 64, 23));
+        queuedNumber->setGeometry(QRect(20, 168, 64, 23));
 
         crawledNumber = new QLCDNumber(centralwidget);
-        crawledNumber->setGeometry(QRect(20, 150, 64, 23));
+        crawledNumber->setGeometry(QRect(20, 129, 64, 23));
 
         urlBrowser = new QTextBrowser(centralwidget);
-        urlBrowser->setGeometry(QRect(110, 150, 381, 181));
+        urlBrowser->setGeometry(QRect(110, 129, 381, 202));
         urlBrowser->setOpenExternalLinks( true );
         
         splitter = new QSplitter(centralwidget);
-        splitter->setGeometry(QRect(20, 50, 471, 25));
+        splitter->setGeometry(QRect(20, 29, 471, 25));
         splitter->setOrientation(Qt::Horizontal);
 
         urlEntry = new QLineEdit("http://", splitter);

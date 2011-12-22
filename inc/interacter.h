@@ -45,7 +45,6 @@ namespace slurp {
         Q_OBJECT
 
         QWidget *centralwidget;
-        QLabel *label;
         QProgressBar *progressBar;
         QLCDNumber *queuedNumber;
         QLCDNumber *crawledNumber;
