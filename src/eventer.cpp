@@ -72,6 +72,7 @@ namespace slurp {
 		visitedUrls.insert( url );
 		
         queuedParsers.enqueue( new Parser( url ) );
+
         emit statsChanged( queuedParsers.count(), visitedUrls.count() );
 
         if( active ) {
@@ -158,6 +159,9 @@ namespace slurp {
         } else {
             ++retryMap[ url ];
         }
+
+        qDebug() << url << " has failed to parse " 
+                 << retryMap[url] << " times";
 
         emit addUrl( url );
         emit dispatchParsers();
