@@ -38,7 +38,9 @@ namespace slurp {
         page = NULL;
     }
 	
-    /* A public static function which is used to screen crawled URLs for potential queuing */
+    /* A public static function which is used to screen crawled URLs 
+     * for potential queuing 
+     */
 	bool Parser::validateUrl( QUrl url ) {
         if( !url.isValid() ) {
             qDebug() << "discarding invalid " << url;
@@ -90,7 +92,7 @@ namespace slurp {
      * there's really nothing to do here but there may end up being some signals
      * that need to be emitted in the future. */
     void Parser::cleanup() {
-		/* TODO: stub */
+        qDebug() << "parser: cleaning up " << url;
     }   
 
     void Parser::reset() {
@@ -165,6 +167,7 @@ namespace slurp {
 		    emit parse();
         } else { 
             qDebug() << "parser: failed to parse page " << url;
+
             emit parseFailed(url);
             /* TODO: discover the reason of the failure and pass this along 
              * with the parseFailed signal 

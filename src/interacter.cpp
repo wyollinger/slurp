@@ -124,6 +124,8 @@ namespace slurp {
     }
 
     void Interacter::forceCancel() {
+        qDebug() << "interacter: forcing cancel due to timeout";
+
         emit forceCrawlAbort();
     }
 
