@@ -96,9 +96,9 @@ namespace slurp {
     /* The parse function is invoked after the loadFinished signal is received from 
      * the webkit code upon successfully parsing a page. From here, the entire DOM
      * can be manipulated and traversed really conveniently. The code right now
-     * just traverses the DOM looking for link tags, and queues them if they are valid,
-     * but this function is where all of the interesting development will take place
-     * in the future. 
+     * just traverses the DOM looking for link tags, and queues them if they are 
+     * valid, but this function is where all of the interesting development will
+     * take place in the future. 
      */
     void Parser::parse() {
         QUrl currentUrl;
@@ -134,7 +134,7 @@ namespace slurp {
             }
         }
 
-        emit finished(parsedUrls);
+        emit finished(parsedUrls, this);
     }
 
     /* This function simply updates the GUI to tell it how far along

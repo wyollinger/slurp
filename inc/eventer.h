@@ -55,7 +55,7 @@ namespace slurp {
     public slots:    
 
         void addUrl(QUrl url);
-        void parserFinished( parseResult urls );
+        void parserFinished( parseResult urls, Parser* parser );
         void crawlFinished();
         void stopCrawling();
         void startCrawling();

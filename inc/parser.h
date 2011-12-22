@@ -50,7 +50,7 @@ namespace slurp {
 
     signals:
 
-        void finished( parseResult parsedUrls );    
+        void finished( parseResult parsedUrls, Parser* parser );    
         void progress( int );
         void parseFailed( QUrl url );
         

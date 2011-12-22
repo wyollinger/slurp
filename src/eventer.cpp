@@ -84,12 +84,15 @@ namespace slurp {
         }
     }
 
-    /* TODO: emit senderParser in signal */
-    void Eventer::parserFinished( parseResult urls ) {
+    void Eventer::parserFinished( parseResult urls, Parser* parser ) {
         Parser* senderParser = 
             reinterpret_cast< Parser* > ( QObject::sender() );
    
-        qDebug() << " eventer got " << urls.count() << " urls";
+        if( senderParser != parser ) {
+            qDebug() << "warning: parser sender and object sender mismatch";
+        }
+
+        qDebug() << "eventer got " << urls.count() << " urls";
 
         foreach( QUrl currentUrl, urls ) {
             emit addUrl( currentUrl );
@@ -97,10 +100,11 @@ namespace slurp {
         }
     
         if( runningParsers.contains( senderParser ) ) {
-            int i = runningParsers.indexOf( senderParser );
-            runningParsers.erase( runningParsers.begin() + i );
+            runningParsers.erase( 
+                runningParsers.begin() +
+                runningParsers.indexOf( senderParser ) );
         } else {
-            qDebug() << " warning: got parserFinished() from an unknown source";
+            qDebug() << "warning: got parserFinished() from an unknown source";
         }
 
         if( active ) {
@@ -135,8 +139,8 @@ namespace slurp {
       
             emit queuedParser -> requestPage();
 
-            QObject::connect(queuedParser, SIGNAL(finished(parseResult)), 
-                this, SLOT(parserFinished(parseResult)));
+            QObject::connect(queuedParser, SIGNAL(finished(parseResult, Parser*)), 
+                this, SLOT(parserFinished(parseResult, Parser*)));
                 
             QObject::connect(queuedParser, SIGNAL(progress(int)),
                 this, SLOT(parserProgress(int)));
@@ -149,7 +153,7 @@ namespace slurp {
 
             runningParsers.push_back( queuedParser );
 			
-			qDebug() << " queued: " << queuedParsers.count();
+			qDebug() << "queued: " << queuedParsers.count();
         }
     }
     
