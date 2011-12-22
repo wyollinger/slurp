@@ -34,10 +34,7 @@ namespace slurp {
 
     Eventer::Eventer(
         int& argc, 
-        char** argv,
-        QQueue < QString > &initialUrls, 
-        int quota, 
-        int flags ) : QApplication( argc, argv, true ) {
+        char** argv) : QApplication( argc, argv, true ) {
             QUrl currentUrl;
 
             setOrganizationName("Megafrock Laboratories");
@@ -48,13 +45,6 @@ namespace slurp {
              * meta object compiler. 
              */
             qRegisterMetaType<parseResult>("parseResult");
-
-            this->quota = quota;
-            this->flags = flags;
-
-			foreach( QUrl currentUrl, initialUrls ) {
-				emit addUrl( currentUrl );
-			}
 
             QObject::connect( 
                 this, SIGNAL(aboutToQuit()),

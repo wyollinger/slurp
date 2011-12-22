@@ -22,70 +22,10 @@
 #include "globals.h"
 
 namespace slurp {
-
-    int validateArgs(int argc, char **argv, char **env,
-                     QQueue < QString > &seedURIs, int &quota) {
-        int i;
-        int flags = 0;
-
-        /* TODO: QT probably has something nicer to handle this */
-
-        for (i = 1; i < argc; i++) {
-            if (argv[i][0] == '-') {
-                switch (argv[i][1]) {
-                case 'V':
-                    qDebug() << "slurp v"
-                        << VERSION_ID[0] << "."
-                        << VERSION_ID[1] << "." << VERSION_ID[2]
-                        << "\nusing QT " << qVersion() << "\n";
-                       /* << "\nusing QWebKit version " << qWebKitVersion() << "\n"; 
-                        *  TODO: find out why qWebKitVersion is undefined
-                        */
-                    die(LICENSE_INFO, EXIT_SUCCESS);
-                    break;
-
-                case 'h':
-                    die(HELP_MENU, EXIT_SUCCESS);
-                    break;
-
-                case 'v':
-                    flags |= FLAGS_VERBOSE;
-                    break;
-
-                case 'n':
-                    if (strlen(argv[i] + 2)) {
-                        quota = atoi((argv[i] + 2));
-                    } else if (i + 1 < argc) {
-                        quota = atoi(argv[i + 1]);
-                        i++;
-                    } else {
-                        die("error: could not find numeric portion of -n option", EXIT_FAILURE);
-                    }
-
-                    break;
-
-                default:
-                    qDebug() << "warning: unrecognized option: " << argv[i]
-                        << "\n";
-
-                    break;
-                }
-            } else {
-                seedURIs.enqueue(argv[i]);
-            }
-        }
-
-        for (i = 0; env[i]; i++) {
-            /* TODO: search for relevant environment variables */
-        }
-
-        return flags;
-    }
-
-    void die(const char *errmsg, int errcode) {
+   void die(const char *errmsg, int errcode) {
         qFatal(errmsg);
         exit(errcode);
-    }
+   }
 
    void debugHandler(QtMsgType type, const char* msg ) {
         (void)type;

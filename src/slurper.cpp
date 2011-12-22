@@ -29,20 +29,6 @@
 
 namespace slurp {
 
-    const char *USAGE_MESSAGE = "slurp [options] urls ...";
-
-    const char *HELP_MENU =
-        " slurp - a web crawler\n"
-        "   usage: slurp [options] urls ...\n"
-        "   where options are some combination of the following:\n"
-        "     v - verbose\n"
-        "     h - display this menu and exit\n"
-        "     V - display version information exit\n"
-        "     n - number of URIs to crawl\n"
-        "     t - maximum number of threads to use\n"
-        "   note: you cannot combine options, so -vn3 is not legal\n"
-        "   instead, use -v -n3 or -v -n 3\n";
-
     const char *LICENSE_INFO =
         "Copyright (C) 2011 Joseph Max DeLiso\n\n"
         "This program is free software: you can redistribute it and/or modify\n"
@@ -64,10 +50,7 @@ namespace slurp {
 
 using namespace slurp;
 
-int main(int argc, char **argv, char **env) {
-    int flags = FLAGS_INVALID, 
-        quota = -1;
-
+int main(int argc, char **argv) {
     QQueue < QString > seedUrls;
 
     logFile.setFileName( LOGFILE_NAME );
@@ -76,10 +59,8 @@ int main(int argc, char **argv, char **env) {
     qInstallMsgHandler( debugHandler );
  
 	qDebug() << "slurp started up";
-	
-    flags = validateArgs(argc, argv, env, seedUrls, quota );
 
-    Eventer ev( argc, argv, seedUrls, quota, flags );
+    Eventer ev( argc, argv);
 
     Interacter inter;
 

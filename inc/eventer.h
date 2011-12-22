@@ -41,16 +41,12 @@ namespace slurp {
         QSet < QUrl > queuedUrls;
         QMap < QUrl , int > retryMap;
 
-        int quota, flags;
         bool active;
 
     public:
 
         Eventer(int& argc, 
-                char** argv,
-                QQueue < QString > &initialUrls, 
-                int quota, 
-                int flags);
+                char** argv);
 
     public slots:    
 
