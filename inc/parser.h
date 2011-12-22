@@ -41,6 +41,7 @@ namespace slurp {
     public:
 
         Parser( QUrl url);
+        ~Parser();
 		static bool validateUrl( QUrl url );
 	 
     public slots:

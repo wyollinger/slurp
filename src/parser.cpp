@@ -37,6 +37,14 @@ namespace slurp {
         this->url = url;
         page = NULL;
     }
+
+    Parser::~Parser() {
+        qDebug() << "destroying parser";
+        if( page ) {
+            qDebug() << "freeing page";
+            delete page;
+        }
+    }
 	
     /* A public static function which is used to screen crawled URLs 
      * for potential queuing 
