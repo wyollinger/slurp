@@ -119,12 +119,14 @@ namespace slurp {
             /* Prepend the parent URL if we have a relative link in an attempt to 
              * validate it for retrieval
              */
-            if( currentUrl.isRelative() && currentUrl.host() == "" && currentUrl.path() != "" ) {
-                qDebug() << currentUrl << " is relative path. prepending host";
-                currentUrl.setHost( url.host() );
-                currentUrl.setScheme( url.scheme() );
-                qDebug() << "with host fix: " << currentUrl;
-            }
+            if( currentUrl.isRelative() && 
+                currentUrl.host() == "" && 
+                currentUrl.path() != "" ) {
+                    qDebug() << currentUrl << " is relative path. prepending host";
+                    currentUrl.setHost( url.host() );
+                    currentUrl.setScheme( url.scheme() );
+                    qDebug() << "with host fix: " << currentUrl;
+                }
             
             /* Finally, check to make sure it's valid before queueing it */
             if ( validateUrl( currentUrl ) ) {
