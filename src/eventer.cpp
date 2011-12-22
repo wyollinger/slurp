@@ -113,6 +113,15 @@ namespace slurp {
 
         emit consumedUrls();
         emit statsChanged( queuedParsers.count(), queuedUrls.count() );
+
+        if( runningParsers.count() == 0 ) {
+            emit lastParserFinished();
+            qDebug() << "last parser complete";
+        } else {
+            qDebug() << "there are now " 
+                     << runningParsers.count() 
+                     << " running parsers";
+        }
     } 
 
     void Eventer::crawlFinished() {

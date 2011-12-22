@@ -112,6 +112,11 @@ namespace slurp {
         );
     }
 
+    void Interacter::stopComplete() {
+        qDebug() << "interacter: received stopComplete signal";
+        crawlButton -> setText( "Crawl" );
+    }
+
     void Interacter::handleCrawlClicked() {
         if( crawlButton -> text() == "Crawl" ) {
         
@@ -129,14 +134,16 @@ namespace slurp {
                 qDebug() << "user clicked crawl with valid url. starting...";
             } else {
                 qDebug() << "user clicked crawl but url was invalid. ignoring";
-                QMessageBox::warning( this, "Warning", "The URL you specified was invalid");
+                QMessageBox::warning( 
+                    this, 
+                    "Warning", "The URL you specified was invalid");
             }
 
        } else if( crawlButton -> text() == "Stop" ) {
            qDebug() << "in interface: user aborted crawl";
 
            emit crawlAborted();
-           crawlButton -> setText( "Crawl" );
+           crawlButton -> setText( "Stopping..." );
        }
     }
 

@@ -72,6 +72,7 @@ namespace slurp {
         void statsChanged( int queued, int crawled );
         void progressChanged( int n );
         void newUrl( QUrl url );
+        void lastParserFinished();
     };
 
 }   /* namespace slurp */

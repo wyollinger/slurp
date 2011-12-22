@@ -98,10 +98,11 @@ int main(int argc, char **argv, char **env) {
     QObject::connect( &ev, SIGNAL( statsChanged(int, int) ),
                       &inter, SLOT( updateStats(int, int) ) );
 
-    QObject::connect( &ev, SIGNAL( progressChanged(int ) ),
-                      &inter, SLOT( updateProgress( int ) ) );
+    QObject::connect( &ev, SIGNAL( progressChanged(int) ),
+                      &inter, SLOT( updateProgress(int) ) );
 
-    /* TODO: handle textbrowser updates as well */
+    QObject::connect( &ev, SIGNAL( lastParserFinished() ),
+                      &inter, SLOT( stopComplete() ) );
 
     inter.show();
 
