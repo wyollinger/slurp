@@ -87,13 +87,16 @@ namespace slurp {
         setCentralWidget(centralwidget);
 
         QObject::connect( crawlButton, SIGNAL(clicked()),
-            this, SLOT(handleCrawlClicked()) );
+            this, SLOT(handleCrawl()) );
 
         QObject::connect( aboutButton, SIGNAL(clicked()),
             this, SLOT(handleAboutClicked()) );
 
         QObject::connect( urlEntry, SIGNAL(textChanged(const QString&)), 
             this, SLOT(handleUrlChange(const QString&)) );
+
+        QObject::connect( urlEntry, SIGNAL(returnPressed()),
+            this, SLOT(handleReturnPressed()) );
     }
 
     void Interacter::updateStats( int queued, int crawled ) {
@@ -130,7 +133,7 @@ namespace slurp {
         emit forceCrawlAbort();
     }
 
-    void Interacter::handleCrawlClicked() {
+    void Interacter::handleCrawl() {
         if( crawlButton -> text() == "Crawl" ) {
             QUrl seedUrl = QUrl( urlEntry->text() );
 
@@ -155,6 +158,13 @@ namespace slurp {
 
     void Interacter::handleAboutClicked() {
         aboutBox->show();
+    }
+
+    void Interacter::handleReturnPressed() {
+        if( crawlButton->text() == "Crawl" && 
+            Parser::validateUrl( urlEntry->text() ) ) {
+            emit handleCrawl();
+        }
     }
 
     void Interacter::handleUrlChange(const QString& newUrl) {

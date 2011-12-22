@@ -77,8 +77,9 @@ namespace slurp {
 
         private slots:
 
-            void handleCrawlClicked();
+            void handleCrawl();
             void handleAboutClicked();
+            void handleReturnPressed();
             void handleUrlChange(const QString& newUrl);
     };
 
