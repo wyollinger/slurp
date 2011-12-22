@@ -38,6 +38,7 @@
 
 #include "globals.h"
 #include "interacter.h"
+#include "parser.h"
 #include "about.h"
 
 namespace slurp {
@@ -122,9 +123,7 @@ namespace slurp {
         
             QUrl seedUrl = QUrl( urlEntry->text() );
 
-            if( seedUrl.isValid() && 
-                seedUrl.host() != "" && 
-                !seedUrl.isRelative() ) {
+            if( Parser::validateUrl( seedUrl ) ) {
 
                 emit crawlClicked( seedUrl );
                 emit crawlStarted();
