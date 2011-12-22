@@ -114,8 +114,12 @@ namespace slurp {
     }
 
     void Interacter::stopComplete() {
-        qDebug() << "interacter: received stopComplete signal";
-        crawlButton -> setText( "Crawl" );
+        qDebug() << "interacter: received stopComplete signal "
+                 << "crawl button had " << crawlButton -> text();
+
+        if( crawlButton -> text() == "Stopping..." ) {
+            crawlButton -> setText( "Crawl" );
+        }
     }
 
     void Interacter::handleCrawlClicked() {
