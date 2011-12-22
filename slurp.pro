@@ -17,7 +17,6 @@ QT = core gui network webkit
 HEADERS += \
     inc/eventer.h     \
     inc/parser.h      \
-    inc/util.h        \
     inc/globals.h     \ 
     inc/interacter.h  \ 
     inc/about.h       \
@@ -26,6 +25,5 @@ SOURCES += \
     src/slurper.cpp    \
     src/eventer.cpp    \
     src/parser.cpp     \
-    src/util.cpp       \
     src/interacter.cpp \ 
     src/about.cpp

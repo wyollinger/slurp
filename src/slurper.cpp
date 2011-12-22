@@ -23,7 +23,6 @@
 #include <QUrl>
 
 #include "globals.h"
-#include "util.h"
 #include "eventer.h"
 #include "interacter.h"
 
@@ -44,7 +43,6 @@ namespace slurp {
 
     const char *LOGFILE_NAME = "slurp.log";
 
-    QFile logFile; 
 
 } /* namespace slurp */ 
 
@@ -53,10 +51,10 @@ using namespace slurp;
 int main(int argc, char **argv) {
     QQueue < QString > seedUrls;
 
-    logFile.setFileName( LOGFILE_NAME );
-    logFile.open( QIODevice::ReadWrite );
+    Eventer::logFile.setFileName( LOGFILE_NAME );
+    Eventer::logFile.open( QIODevice::ReadWrite );
 
-    qInstallMsgHandler( debugHandler );
+    qInstallMsgHandler( Eventer::debugHandler );
  
 	qDebug() << "slurp started up";
 

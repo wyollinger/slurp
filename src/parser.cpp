@@ -28,7 +28,6 @@
 #include "globals.h"
 #include "parser.h"
 #include "eventer.h"
-#include "util.h"
 
 namespace slurp {
 

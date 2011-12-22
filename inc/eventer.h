@@ -26,6 +26,7 @@
 #include <QApplication>
 #include <QUrl>
 #include <QSet>
+#include <QFile>
 
 #include "globals.h"
 #include "parser.h"
@@ -47,6 +48,10 @@ namespace slurp {
 
         Eventer(int& argc, 
                 char** argv);
+
+        static QFile logFile; 
+        static void die(const char *errmsg, int errcode );
+        static void debugHandler(QtMsgType type, const char* msg);
 
     public slots:    
 

@@ -24,13 +24,15 @@
 #include <QVector>
 #include <QMetaType>
 #include <QSet>
+#include <QFile>
 
 #include "globals.h"
 #include "eventer.h"
-#include "util.h"
 #include "parser.h"
 
 namespace slurp {
+
+    QFile Eventer::logFile; 
 
     Eventer::Eventer(
         int& argc, 
@@ -52,6 +54,18 @@ namespace slurp {
 
             active = false;
         }
+
+    void Eventer::die(const char *errmsg, int errcode) {
+        qFatal(errmsg);
+        exit(errcode);
+    }
+
+    void Eventer::debugHandler(QtMsgType type, const char* msg ) {
+        (void)type;
+
+        logFile.write( msg, qstrlen( msg ) );
+        logFile.write( "\n", 1 );
+    }
 
     void Eventer::addUrl( QUrl url ) {
         if( retryMap.contains( url ) && retryMap[ url ] >= 3 ) {
