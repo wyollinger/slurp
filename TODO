@@ -3,3 +3,4 @@ improve progress reporting
 improve gui
 add more crawl options
 add the ability to push/pull crawl database to another instance of slurp over the network
+fix the memory leaks. code will exhaust available ram within the first fifty thousand crawls or so.
