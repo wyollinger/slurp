@@ -26,32 +26,12 @@
 #include "eventer.h"
 #include "interacter.h"
 
-namespace slurp {
-
-    const char *LICENSE_INFO =
-        "Copyright (C) 2011 Joseph Max DeLiso\n\n"
-        "This program is free software: you can redistribute it and/or modify\n"
-        "it under the terms of the GNU General Public License as published by\n"
-        "the Free Software Foundation, version 3 of the License.\n\n"
-        "This program is distributed in the hope that it will be useful,\n"
-        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-        "GNU General Public License for more details.\n\n"
-        "You should have received a copy of the GNU General Public License\n"
-        "along with this program.\n"
-        "If not, see <http://www.gnu.org/licenses/>.\n";
-
-    const char *LOGFILE_NAME = "slurp.log";
-
-
-} /* namespace slurp */ 
-
 using namespace slurp;
 
 int main(int argc, char **argv) {
     QQueue < QString > seedUrls;
 
-    Eventer::logFile.setFileName( LOGFILE_NAME );
+    Eventer::logFile.setFileName( "slurp.log" );
     Eventer::logFile.open( QIODevice::ReadWrite );
 
     qInstallMsgHandler( Eventer::debugHandler );

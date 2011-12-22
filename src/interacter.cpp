@@ -149,6 +149,7 @@ namespace slurp {
             * by resetting the page content 
             */
            QTimer::singleShot(1000, this, SLOT(forceCancel()));
+           /* TODO: make the interval configurable */
        }
     }
 
