@@ -185,6 +185,8 @@ namespace slurp {
     }
 
     void Eventer::forceStop() {
+        qDebug() << "forcing stop due to timeout...\n";
+
         foreach( Parser* parser, runningParsers ) {
             emit parser->reset();
         }
