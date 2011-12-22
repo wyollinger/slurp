@@ -157,10 +157,7 @@ namespace slurp {
            /* Wait for a small interval of time and then force the stop
             * by resetting the page content 
             */
-           QTimer *killTimer = new QTimer(this);
-           connect(killTimer, SIGNAL(timeout()), this, SLOT(forceCancel()));
-
-           killTimer->start(1000);
+           QTimer::singleShot(1000, this, SLOT(forceCancel()));
        }
     }
 

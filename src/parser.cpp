@@ -93,6 +93,7 @@ namespace slurp {
      * that need to be emitted in the future. */
     void Parser::cleanup() {
         qDebug() << "parser: cleaning up " << url;
+        delete page;
     }   
 
     void Parser::reset() {
