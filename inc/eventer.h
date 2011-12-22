@@ -39,6 +39,8 @@ namespace slurp {
         QQueue < Parser* > queuedParsers;
         QVector < Parser* > runningParsers;
         QSet < QUrl > visitedUrls;
+        QMap < QUrl , int > retryMap;
+
         int quota, flags;
         bool active;
 
@@ -53,7 +55,6 @@ namespace slurp {
     public slots:    
 
         void addUrl(QUrl url);
-        
         void parserFinished( parseResult urls );
         void crawlFinished();
         void stopCrawling();

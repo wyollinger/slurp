@@ -60,13 +60,17 @@ namespace slurp {
         }
 
     void Eventer::addUrl( QUrl url ) {
-        if( visitedUrls.contains( url ) ) {
+        if( retryMap.contains( url ) && retryMap[ url ] >= 3 ) {
+            qDebug() << "discarding url because we've failed to parse it thrice" 
+                     << url;
+            return;
+        } else if( visitedUrls.contains( url ) ) {
             qDebug() << "discarding duplicate" << url;
             return;
-        } else {
-			visitedUrls.insert( url );
-		}
-
+        }
+         
+		visitedUrls.insert( url );
+		
         queuedParsers.enqueue( new Parser( url ) );
         emit statsChanged( queuedParsers.count(), visitedUrls.count() );
 
@@ -149,8 +153,13 @@ namespace slurp {
     }
 
     void Eventer::handleParseFailure( QUrl url ) {
-        /* TODO: devise a scheme for retries */
-        
+        if( !retryMap.contains( url ) ) {
+            retryMap[ url ] = 1;
+        } else {
+            ++retryMap[ url ];
+        }
+
+        emit addUrl( url );
         emit dispatchParsers();
     }
 }    /* namespace slurp */
