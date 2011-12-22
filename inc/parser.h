@@ -47,6 +47,7 @@ namespace slurp {
         
         void requestPage();
         void cleanup();
+        void reset();
 
     signals:
 

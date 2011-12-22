@@ -93,6 +93,11 @@ namespace slurp {
 		/* TODO: stub */
     }   
 
+    void Parser::reset() {
+        page->mainFrame()->setHtml("<html><body></body></html");
+        qDebug() << "resetting parser due to timeout";
+    }
+
     /* The parse function is invoked after the loadFinished signal is received from 
      * the webkit code upon successfully parsing a page. From here, the entire DOM
      * can be manipulated and traversed really conveniently. The code right now

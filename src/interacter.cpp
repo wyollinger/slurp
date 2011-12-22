@@ -33,6 +33,7 @@
 #include <QtGui/QWidget>
 #include <QKeyEvent>
 #include <QMessageBox>
+#include <QTimer>
 
 #include <QDebug>
 
@@ -122,13 +123,15 @@ namespace slurp {
         }
     }
 
+    void Interacter::forceCancel() {
+        emit forceCrawlAbort();
+    }
+
     void Interacter::handleCrawlClicked() {
         if( crawlButton -> text() == "Crawl" ) {
-        
             QUrl seedUrl = QUrl( urlEntry->text() );
 
             if( Parser::validateUrl( seedUrl ) ) {
-
                 emit crawlClicked( seedUrl );
                 emit crawlStarted();
 
@@ -143,10 +146,19 @@ namespace slurp {
             }
 
        } else if( crawlButton -> text() == "Stop" ) {
-           qDebug() << "in interface: user aborted crawl";
+           qDebug() << "interface: user aborted crawl";
 
            emit crawlAborted();
+
            crawlButton -> setText( "Stopping..." );
+
+           /* Wait for a small interval of time and then force the stop
+            * by resetting the page content 
+            */
+           QTimer *killTimer = new QTimer(this);
+           connect(killTimer, SIGNAL(timeout()), this, SLOT(forceCancel()));
+
+           killTimer->start(1000);
        }
     }
 

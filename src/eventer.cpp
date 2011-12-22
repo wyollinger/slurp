@@ -130,8 +130,6 @@ namespace slurp {
 
     void Eventer::stopCrawling() {
         qDebug() << "user aborted crawl";
-
-        queuedParsers.clear();
         active = false;
     }
 
@@ -182,5 +180,11 @@ namespace slurp {
 
         emit addUrl( url );
         emit dispatchParsers();
+    }
+
+    void Eventer::forceStop() {
+        foreach( Parser* parser, runningParsers ) {
+            emit parser->reset();
+        }
     }
 }    /* namespace slurp */
