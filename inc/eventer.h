@@ -46,8 +46,7 @@ namespace slurp {
 
     public:
 
-        Eventer(int& argc, 
-                char** argv);
+        Eventer(int& argc, char** argv);
 
         static QFile logFile; 
         static void die(const char *errmsg, int errcode );
@@ -57,10 +56,9 @@ namespace slurp {
 
         void addUrl(QUrl url);
         void parserFinished( parseResult urls, Parser* parser );
-        void crawlFinished();
         void stopCrawling();
         void startCrawling();
-        void handleParseFailure( QUrl url );
+        void handleParseFailure( QUrl url, Parser* parser );
         void forceStop();
 
     private slots:

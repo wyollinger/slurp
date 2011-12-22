@@ -48,10 +48,6 @@ namespace slurp {
              */
             qRegisterMetaType<parseResult>("parseResult");
 
-            QObject::connect( 
-                this, SIGNAL(aboutToQuit()),
-                this, SLOT(crawlFinished()) );
-
             active = false;
         }
 
@@ -71,9 +67,12 @@ namespace slurp {
         if( retryMap.contains( url ) && retryMap[ url ] >= 3 ) {
             qDebug() << "discarding url because we've failed to parse it thrice" 
                      << url;
+            emit dispatchParsers();
             return;
-        } else if( queuedUrls.contains( url ) ) {
-            qDebug() << "discarding duplicate" << url;
+        } 
+        
+        if( queuedUrls.contains( url ) && !retryMap.contains( url) ) {
+            qDebug() << "discarding duplicate not in retry map" << url;
             return;
         }
          
@@ -82,10 +81,7 @@ namespace slurp {
         queuedParsers.enqueue( new Parser( url ) );
 
         emit statsChanged( queuedParsers.count(), queuedUrls.count() );
-
-        if( active ) {
-            emit dispatchParsers();
-        }
+        emit dispatchParsers();
     }
 
     void Eventer::parserFinished( parseResult urls, Parser* parser ) {
@@ -113,10 +109,7 @@ namespace slurp {
             qDebug() << "warning: got parserFinished() from an unknown source";
         }
 
-        if( active ) {
-            emit dispatchParsers(); 
-        }
-
+        emit dispatchParsers(); 
         emit consumedUrls();
         emit statsChanged( queuedParsers.count(), queuedUrls.count() );
 
@@ -130,10 +123,6 @@ namespace slurp {
         }
     } 
 
-    void Eventer::crawlFinished() {
-        qDebug() << "slurp shutting down";
-    }
-
     void Eventer::stopCrawling() {
         qDebug() << "user aborted crawl";
         active = false;
@@ -141,11 +130,19 @@ namespace slurp {
 
     void Eventer::startCrawling() {
         active = true;
+
+        runningParsers.clear();
+        retryMap.clear();
+
         emit dispatchParsers();
     }
 
     void Eventer::dispatchParsers() {
-        while( active && ! queuedParsers.isEmpty() && runningParsers.count() < 8 ) {
+        if( !active ) {
+            return;
+        }
+
+        while( !queuedParsers.isEmpty() && runningParsers.count() < 8 ) {
             qDebug() << "starting a new parser";
         
             Parser* queuedParser = queuedParsers.dequeue();
@@ -158,8 +155,8 @@ namespace slurp {
             QObject::connect(queuedParser, SIGNAL(progress(int)),
                 this, SLOT(parserProgress(int)));
 
-            QObject::connect(queuedParser, SIGNAL(parseFailed(QUrl)),
-                this, SLOT(handleParseFailure(QUrl)));
+            QObject::connect(queuedParser, SIGNAL(parseFailed(QUrl, Parser*)),
+                this, SLOT(handleParseFailure(QUrl, Parser*)));
                 
             QObject::connect(this, SIGNAL(consumedUrls()),
                 queuedParser, SLOT(cleanup()));
@@ -168,13 +165,22 @@ namespace slurp {
 			
 			qDebug() << "queued: " << queuedParsers.count();
         }
+
+        if( active && 
+            runningParsers.count() == 0 && 
+            queuedParsers.count() == 0 ) {
+                qDebug() << "eventer: in dispatch parsers with"
+                         << "nothing running and nothing queued";
+                active = false;
+                emit lastParserFinished();
+        }
     }
     
     void Eventer::parserProgress( int n ) {
         emit progressChanged( n );
     }
 
-    void Eventer::handleParseFailure( QUrl url ) {
+    void Eventer::handleParseFailure( QUrl url, Parser* parser ) {
         if( !retryMap.contains( url ) ) {
             retryMap[ url ] = 1;
         } else {
@@ -183,6 +189,14 @@ namespace slurp {
 
         qDebug() << url << " has failed to parse " 
                  << retryMap[url] << " times";
+
+        if( runningParsers.contains( parser ) ) {
+            runningParsers.erase( 
+                runningParsers.begin() +
+                runningParsers.indexOf( parser ) );
+        } else {
+            qDebug() << "warning: got parse failure for a parser not running";
+        }
 
         emit addUrl( url );
         emit dispatchParsers();
