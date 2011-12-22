@@ -119,12 +119,9 @@ namespace slurp {
     }
 
     void Interacter::stopComplete() {
-        qDebug() << "interacter: received stopComplete signal "
-                 << "crawl button had " << crawlButton -> text();
+        qDebug() << "interacter: received stopComplete signal ";
 
-        if( crawlButton -> text() == "Stopping..." ) {
-            crawlButton -> setText( "Crawl" );
-        }
+        crawlButton -> setText( "Crawl" );
     }
 
     void Interacter::forceCancel() {
@@ -135,12 +132,12 @@ namespace slurp {
 
     void Interacter::handleCrawl() {
         if( crawlButton -> text() == "Crawl" ) {
+            crawlButton -> setText( "Stop" );
+
             QUrl seedUrl = QUrl( urlEntry->text() );
 
             emit crawlClicked( seedUrl );
             emit crawlStarted();
-
-            crawlButton -> setText( "Stop" );
        } else if( crawlButton -> text() == "Stop" ) {
            qDebug() << "interface: user aborted crawl";
 

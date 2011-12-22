@@ -175,7 +175,7 @@ namespace slurp {
         } else { 
             qDebug() << "parser: failed to parse page " << url;
 
-            emit parseFailed(url);
+            emit parseFailed(url, this);
             /* TODO: discover the reason of the failure and pass this along 
              * with the parseFailed signal 
              */
