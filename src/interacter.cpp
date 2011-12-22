@@ -78,6 +78,7 @@ namespace slurp {
         splitter->addWidget(urlEntry);
 
         crawlButton = new QPushButton("Crawl", splitter);
+        crawlButton->setEnabled(false);
         splitter->addWidget(crawlButton);
 
         aboutButton = new QPushButton("About", splitter);
@@ -133,20 +134,10 @@ namespace slurp {
         if( crawlButton -> text() == "Crawl" ) {
             QUrl seedUrl = QUrl( urlEntry->text() );
 
-            if( Parser::validateUrl( seedUrl ) ) {
-                emit crawlClicked( seedUrl );
-                emit crawlStarted();
+            emit crawlClicked( seedUrl );
+            emit crawlStarted();
 
-                crawlButton -> setText( "Stop" );
-
-                qDebug() << "user clicked crawl with valid url. starting...";
-            } else {
-                qDebug() << "user clicked crawl but url was invalid. ignoring";
-                QMessageBox::warning( 
-                    this, 
-                    "Warning", "The URL you specified was invalid");
-            }
-
+            crawlButton -> setText( "Stop" );
        } else if( crawlButton -> text() == "Stop" ) {
            qDebug() << "interface: user aborted crawl";
 
@@ -166,7 +157,11 @@ namespace slurp {
     }
 
     void Interacter::handleUrlChange(const QString& newUrl) {
-        (void) newUrl;
+        if( Parser::validateUrl( newUrl ) ) {
+            crawlButton->setEnabled(true);
+        } else {
+            crawlButton->setEnabled(false);
+        }
     }
 
 }   /* namespace slurp */
