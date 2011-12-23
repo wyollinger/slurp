@@ -97,6 +97,8 @@ namespace slurp {
 
         QObject::connect( urlEntry, SIGNAL(returnPressed()),
             this, SLOT(handleReturnPressed()) );
+
+	emit urlEntry->setFocus();
     }
 
     void Interacter::updateStats( int queued, int crawled ) {
