@@ -103,6 +103,9 @@ namespace slurp {
             runningParsers.erase( 
                 runningParsers.begin() +
                 runningParsers.indexOf( senderParser ) );
+            //Start Messing with things I don't understand yet
+            //Deleting finished parser, will eventually probably write to a file or something
+            delete senderParser;
         } else {
             qDebug() << "warning: got parserFinished() from an unknown source";
         }
