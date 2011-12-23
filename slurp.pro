@@ -10,14 +10,14 @@ RCC_DIR = obj/rcc
 UI_DIR = obj/ui
 
 # Link in the required libraries
-CONFIG += qt debug console #release
+CONFIG += qt debug console 
 QT = core gui network webkit 
 
 # Input
 HEADERS += \
+    inc/globals.h     \ 
     inc/eventer.h     \
     inc/parser.h      \
-    inc/globals.h     \ 
     inc/interacter.h  \ 
     inc/about.h       \
 
