@@ -24,6 +24,7 @@
 namespace slurp {
 
     const static int VERSION_ID[3] = { 0, 1, 2 };
+    const static int MAX_PARSERS = 8;
  
 	typedef QList<QUrl> parseResult;
 

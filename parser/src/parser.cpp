@@ -25,14 +25,14 @@
 #include <QWidget>
 #include <QUrl>
 
-#include "globals.h"
+//#include "globals.h"
 #include "parser.h"
-#include "eventer.h"
+//#include "eventer.h"
 
-namespace slurp {
+namespace parser{
 
-    /* The parser constructor. It takes a target url and zeroes the page pointer */
-    Parser::Parser( QUrl url) {
+    /* The parser constructor. It takes a target url as argv[1], zeroes the page pointer and initiates the page request*/
+    Parser::Parser(QUrl url) {
         this->url = url;
         page = NULL;
     }
@@ -60,7 +60,7 @@ namespace slurp {
         }
 
         if( url.host() == "" ) {
-            qDebug() << "discarding url with no host aight" << url;
+            qDebug() << "discarding url with no host" << url;
             return false;
         }
         
@@ -148,6 +148,7 @@ namespace slurp {
             }
         }
 
+        qDebug() << "out of loop emitting finished\n";
         emit finished(parsedUrls, this);
     }
 

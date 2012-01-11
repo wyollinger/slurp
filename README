@@ -13,3 +13,6 @@ Bugs:
 
 Programmer:
   Max DeLiso
+
+Install
+qmake and make in both the top directory and in the parser directory

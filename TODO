@@ -1,5 +1,8 @@
+Fix stop button and reconnect/uncomment error handling functions/signals/slots and start using the retry map again
+Implement Timeout for parser processes
 periodically write results of crawl to a database
 improve progress reporting
 improve gui
+    Show # of parser process running and queued
 add more crawl options
 add the ability to push/pull crawl database to another instance of slurp over the network

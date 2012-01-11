@@ -49,6 +49,15 @@ namespace slurp {
             qRegisterMetaType<parseResult>("parseResult");
 
             active = false;
+            /*Queue up all the QProcess's and do all the signal/slot connections*/
+            QProcess* proc;
+            for(int i=0; i<8; ++i){
+                qDebug() << "Setting up Process " << i << endl;
+                proc = new QProcess(this);
+                QObject::connect(proc, SIGNAL(readyRead()), this, SLOT(readParserData()));
+                QObject::connect(proc, SIGNAL( finished(int, QProcess::ExitStatus) ), this, SLOT( parserFinished(int, QProcess::ExitStatus) ));
+                queuedParsers.enqueue(proc);
+            }
         }
 
     void Eventer::die(const char *errmsg, int errcode) {
@@ -71,19 +80,64 @@ namespace slurp {
             return;
         } 
         
-        if( queuedUrls.contains( url ) && !retryMap.contains( url) ) {
+        if( urlSet.contains( url ) && !retryMap.contains( url) ) {
             qDebug() << "discarding duplicate not in retry map" << url;
             return;
         }
+        qDebug() << "Inserting and enqueueing url: " << url.toString() << endl;
          
-		queuedUrls.insert( url );
+		urlSet.insert( url );
 		
-        queuedParsers.enqueue( new Parser( url ) );
-
-        emit statsChanged( queuedParsers.count(), queuedUrls.count() );
+        queuedUrls.enqueue( url );
+        
+        emit newUrl(QUrl(url));
+        emit statsChanged( queuedUrls.count(), urlSet.count() );
         emit dispatchParsers();
     }
+    void Eventer::readParserData(){
+        QProcess* proc = qobject_cast<QProcess *>(QObject::sender());
+        QByteArray ba;
+        QString url;
+        qDebug() << "Actually in readParserData so that's good" << endl;
+        for(ba = proc->readLine(); !ba.isEmpty(); ba = proc->readLine()){
+            if(ba.startsWith("URL: ")){
+                qDebug() << "Got formatted URL: " << ba << endl;
+                url = ba.mid(5);
+                emit addUrl(QUrl(url));
+            }
+            else{
+                qDebug() << "Got output that wasn't a URL\n\t " << ba << endl;
+                //TODO: Make this signal and handle parser error
+                //emit parserFailed();
+            }
+        }
+        qDebug() << "Totally just read some parser data " << endl;
+        
+    }
+    void Eventer::parserFinished(int exitCode, QProcess::ExitStatus status){
+        if(exitCode==1 || status==QProcess::CrashExit){
+            //emit parserFailed();
+            //TODO: Make this signal and handle parser error
+            return ;
+        }
+        QProcess * senderParser = qobject_cast<QProcess *>(QObject::sender());
+        if(runningParsers.contains(senderParser)){
+            runningParsers.erase(
+                    runningParsers.begin()+
+                    runningParsers.indexOf( senderParser ) );
+        }
+        else{
+            qDebug() << "warning: got parserFinished() from an unknown source";
+        }
+        queuedParsers.enqueue(senderParser);
+        qDebug() << "There are now " << queuedParsers.size() << " queued parsers" << endl;
+        emit dispatchParsers();
+        qDebug() << "there are now "
+                << runningParsers.count()
+                << " running parsers";
 
+    }
+    /*
     void Eventer::parserFinished( parseResult urls, Parser* parser ) {
         Parser* senderParser = 
             reinterpret_cast< Parser* > ( QObject::sender() );
@@ -104,8 +158,6 @@ namespace slurp {
                 runningParsers.begin() +
                 runningParsers.indexOf( senderParser ) );
             //Start Messing with things I don't understand yet
-            //Deleting finished parser, will eventually probably write to a file or something
-            delete senderParser;
         } else {
             qDebug() << "warning: got parserFinished() from an unknown source";
         }
@@ -123,7 +175,7 @@ namespace slurp {
                      << " running parsers";
         }
     } 
-
+*/
     void Eventer::stopCrawling() {
         qDebug() << "user aborted crawl";
         active = false;
@@ -139,18 +191,23 @@ namespace slurp {
     }
 
     void Eventer::dispatchParsers() {
+        qDebug() << "Actually in dispatchParsers which is active " << active << endl;
         if( !active ) {
             return;
         }
 
-        while( !queuedParsers.isEmpty() && runningParsers.count() < 8 ) {
+        while( !queuedUrls.isEmpty() && runningParsers.count() < 8 ) {
             qDebug() << "starting a new parser";
         
-            Parser* queuedParser = queuedParsers.dequeue();
-      
-            emit queuedParser -> requestPage();
+            QProcess* queuedParser = queuedParsers.dequeue();
+            QUrl url = queuedUrls.dequeue();
+            QStringList args; //Eventually may be used to pass on options to the Parser program
+            args << url.toString();
 
-            QObject::connect(queuedParser, SIGNAL(finished(parseResult, Parser*)), 
+            queuedParser->start("./parser/bin/parser", args);
+            qDebug() << "runing process on url: " << url.toString() << " with state " << queuedParser->state() << endl;
+
+            /*QObject::connect(queuedParser, SIGNAL(finished(parseResult, Parser*)), 
                 this, SLOT(parserFinished(parseResult, Parser*)));
                 
             QObject::connect(queuedParser, SIGNAL(progress(int)),
@@ -161,7 +218,7 @@ namespace slurp {
                 
             QObject::connect(this, SIGNAL(consumedUrls()),
                 queuedParser, SLOT(cleanup()));
-
+*/
             runningParsers.push_back( queuedParser );
 			
 			qDebug() << "queued: " << queuedParsers.count();
@@ -182,7 +239,8 @@ namespace slurp {
     }
 
     void Eventer::handleParseFailure( QUrl url, Parser* parser ) {
-        if( !retryMap.contains( url ) ) {
+        //TODO: Change parameter list and write new function body to handle process failures
+      /*  if( !retryMap.contains( url ) ) {
             retryMap[ url ] = 1;
         } else {
             ++retryMap[ url ];
@@ -201,13 +259,16 @@ namespace slurp {
 
         emit addUrl( url );
         emit dispatchParsers();
+        */
     }
 
     void Eventer::forceStop() {
+        //TODO: Fix this so it kills the remaining parser processes
         qDebug() << "forcing stop due to timeout...\n";
-
+/*
         foreach( Parser* parser, runningParsers ) {
             emit parser->reset();
         }
+        */
     }
 }    /* namespace slurp */
